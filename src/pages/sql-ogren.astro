@@ -45,522 +45,57 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
       };
     </script>
 
-<style is:global>
-    /* Ana sayfa arka plan ve metin stili */
-    body {
+    <style is:global>
+      body {
         background-color: #0a0e1a;
-        background-image:
-            radial-gradient(circle at 15% 10%, rgba(57,255,136,0.08), transparent 35%),
-            radial-gradient(circle at 85% 0%, rgba(79,214,255,0.08), transparent 35%);
+        background-image: radial-gradient(circle at 15% 10%, rgba(57,255,136,0.08), transparent 35%), radial-gradient(circle at 85% 0%, rgba(79,214,255,0.08), transparent 35%);
         color: #e5e7eb;
-    }
-
-    /* Ders içeriğindeki kod bloklarını düzenle (Beyaz arka planı yok eder) */
-    #lesson-content code {
-        background-color: #161f30; /* Panellerle uyumlu koyu renk */
-        color: #39ff88;           /* Neon yeşil */
+      }
+      #lesson-content code {
+        background-color: #161f30;
+        color: #39ff88;
         padding: 2px 6px;
         border-radius: 4px;
         font-family: 'Courier New', Courier, monospace;
         border: 1px solid #232f46;
-    }
-
-    /* Pixel köşeleri ve diğer dekoratif stiller */
-    .pixel-corners {
-        clip-path: polygon(
-            0px 8px, 8px 8px, 8px 0px,
-            calc(100% - 8px) 0px, calc(100% - 8px) 8px, 100% 8px,
-            100% calc(100% - 8px), calc(100% - 8px) calc(100% - 8px), calc(100% - 8px) 100%,
-            8px 100%, 8px calc(100% - 8px), 0px calc(100% - 8px)
-        );
-    }
-    
-    /* ...diğer stil tanımlarını buraya eklemeye devam edebilirsin... */
-</style>
-      /* is:global ekleyerek Astro'nun bu stilleri tüm bileşenlerde sorunsuz çalıştırmasını sağlıyoruz */
-      body {
-        background-color: #0a0e1a;
-        background-image:
-          radial-gradient(circle at 15% 10%, rgba(57,255,136,0.08), transparent 35%),
-          radial-gradient(circle at 85% 0%, rgba(79,214,255,0.08), transparent 35%);
-        color: #e5e7eb; /* Metin renginin beyaz/gri tonlarında görünmesini garanti altına alıyoruz */
       }
-
       .pixel-corners {
-        clip-path: polygon(
-          0px 8px, 8px 8px, 8px 0px,
-          calc(100% - 8px) 0px, calc(100% - 8px) 8px, 100% 8px,
-          100% calc(100% - 8px), calc(100% - 8px) calc(100% - 8px), calc(100% - 8px) 100%,
-          8px 100%, 8px calc(100% - 8px), 0px calc(100% - 8px)
-        );
+        clip-path: polygon(0px 8px, 8px 8px, 8px 0px, calc(100% - 8px) 0px, calc(100% - 8px) 8px, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 8px calc(100% - 8px), 0px calc(100% - 8px));
       }
-
-      .btn-pixel {
-        box-shadow: 4px 4px 0px 0px #04321a;
-        transition: transform 0.08s ease, box-shadow 0.08s ease;
-      }
-      .btn-pixel-gold {
-        box-shadow: 4px 4px 0px 0px #664d00;
-        transition: transform 0.08s ease, box-shadow 0.08s ease;
-      }
-      .btn-pixel:active, .btn-pixel-gold:active {
-        transform: translate(4px, 4px);
-        box-shadow: 0px 0px 0px 0px transparent;
-      }
-
-      .scanline-badge {
-        background-image: repeating-linear-gradient(
-          45deg,
-          rgba(57,255,136,0.12) 0px,
-          rgba(57,255,136,0.12) 2px,
-          transparent 2px,
-          transparent 6px
-        );
-      }
-
+      .btn-pixel { box-shadow: 4px 4px 0px 0px #04321a; transition: transform 0.08s ease, box-shadow 0.08s ease; }
+      .btn-pixel-gold { box-shadow: 4px 4px 0px 0px #664d00; transition: transform 0.08s ease, box-shadow 0.08s ease; }
+      .btn-pixel:active, .btn-pixel-gold:active { transform: translate(4px, 4px); box-shadow: 0px 0px 0px 0px transparent; }
+      .scanline-badge { background-image: repeating-linear-gradient(45deg, rgba(57,255,136,0.12) 0px, rgba(57,255,136,0.12) 2px, transparent 2px, transparent 6px); }
       ::-webkit-scrollbar { width: 10px; }
       ::-webkit-scrollbar-track { background: #0a0e1a; }
       ::-webkit-scrollbar-thumb { background: #232f46; border-radius: 8px; }
-
       .glow-text { text-shadow: 0 0 10px rgba(57,255,136,0.6); }
       .exercise-row:hover { background-color: #1b2436; }
-      .badge-slot { background-image: radial-gradient(circle, #1c2536 0%, #121a29 100%); }
-      
       .modal-overlay { display: none; }
       .modal-overlay.active { display: flex; }
       .code-editor { font-family: 'Courier New', Courier, monospace; }
-      
       table th { position: sticky; top: 0; }
-      
-      #editor-container {
-        transition: box-shadow 0.3s ease, border-color 0.3s ease;
-      }
+      #editor-container { transition: box-shadow 0.3s ease, border-color 0.3s ease; }
     </style>
 </head>
 
 <body class="bg-bg text-gray-200 font-sans antialiased">
-
-<Header />
-
-<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-  
-  <section class="pt-10 pb-10">
-    <div class="flex flex-col items-start">
-      <span class="scanline-badge border border-neon/40 text-neon font-pixel text-[9px] px-3 py-2 pixel-corners mb-6">
-        PROGRESS SAVED LOCALLY
-      </span>
-      <h1 class="font-pixel text-5xl sm:text-6xl md:text-7xl text-white glow-text mb-4 leading-tight">SQL</h1>
-      <p class="text-gray-400 text-base sm:text-lg max-w-xl mb-6">
-        İlerlemen artık tarayıcında saklanıyor. İstediğin zaman çıkıp geri dönebilirsin!
-      </p>
-    </div>
-  </section>
-
-  <div class="flex flex-col lg:flex-row gap-8">
-
-    <div class="w-full lg:w-[65%] flex flex-col gap-6">
-      <div class="bg-panel border border-border pixel-corners overflow-hidden shadow-pixel">
-        <div class="flex items-center justify-between px-5 py-4 border-b border-border">
-          <div class="flex items-center gap-3">
-            <div class="w-8 h-8 bg-neonBlue/20 pixel-corners flex items-center justify-center text-neonBlue"><i class="fa-solid fa-database text-sm"></i></div>
-            <h2 class="font-pixel text-xs sm:text-sm text-white m-0">1. Queries</h2>
-          </div>
+    <Header />
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <section class="pt-10 pb-10">
+            <h1 class="font-pixel text-5xl text-white glow-text mb-4">SQL</h1>
+            <p class="text-gray-400">İlerlemen artık tarayıcında saklanıyor.</p>
+        </section>
+        <div id="chapter-1-container"></div>
+        <div id="chapter-2-container"></div>
+        <div id="chapter-3-container"></div>
+        <div id="chapter-4-container"></div>
+    </main>
+    <div id="lesson-modal" class="modal-overlay fixed inset-0 z-[100] bg-bg/95 p-6">
         </div>
-        <div class="divide-y divide-border" id="chapter-1-container"></div>
-      </div>
-
-      <div class="bg-panel border border-border pixel-corners overflow-hidden shadow-pixel">
-        <div class="flex items-center justify-between px-5 py-4 border-b border-border">
-          <div class="flex items-center gap-3">
-            <div class="w-8 h-8 bg-gold/20 pixel-corners flex items-center justify-center text-gold"><i class="fa-solid fa-layer-group text-sm"></i></div>
-            <h2 class="font-pixel text-xs sm:text-sm text-white m-0">2. Aggregates</h2>
-          </div>
-        </div>
-        <div class="divide-y divide-border" id="chapter-2-container"></div>
-      </div>
-
-      <div class="bg-panel border border-border pixel-corners overflow-hidden shadow-pixel">
-        <div class="flex items-center justify-between px-5 py-4 border-b border-border">
-          <div class="flex items-center gap-3">
-            <div class="w-8 h-8 bg-neonPink/20 pixel-corners flex items-center justify-center text-neonPink"><i class="fa-solid fa-table text-sm"></i></div>
-            <h2 class="font-pixel text-xs sm:text-sm text-white m-0">3. New Table</h2>
-          </div>
-        </div>
-        <div class="divide-y divide-border" id="chapter-3-container"></div>
-      </div>
-
-      <div class="bg-panel border border-border pixel-corners overflow-hidden shadow-pixel">
-        <div class="flex items-center justify-between px-5 py-4 border-b border-border">
-          <div class="flex items-center gap-3">
-            <div class="w-8 h-8 bg-neon/20 pixel-corners flex items-center justify-center text-neon"><i class="fa-solid fa-diagram-project text-sm"></i></div>
-            <h2 class="font-pixel text-xs sm:text-sm text-white m-0">4. Multiple Tables</h2>
-          </div>
-        </div>
-        <div class="divide-y divide-border" id="chapter-4-container"></div>
-      </div>
-    </div>
-
-    <aside class="w-full lg:w-[35%]">
-      <div class="lg:sticky lg:top-24 flex flex-col gap-6">
-        <div class="bg-panel border border-border pixel-corners p-5 flex flex-col items-center text-center">
-          <img src="https://placehold.co/80x80/161f30/39ff88?text=%3A%29" alt="user avatar" class="w-16 h-16 pixel-corners mb-3" />
-          <span class="font-semibold text-white text-sm mb-1">Local Öğrenci</span>
-          <span class="font-pixel text-[9px] text-neonBlue mb-4">LEVEL 1</span>
-          <button onclick="resetProgress()" class="text-gray-500 hover:text-neonPink text-xs mt-2 underline cursor-pointer">İlerlemeyi Sıfırla</button>
-        </div>
-
-        <div class="bg-panel border border-border pixel-corners p-5 shadow-pixel">
-          <h3 class="font-pixel text-[10px] text-white mb-4">COURSE PROGRESS</h3>
-          <div class="w-full h-3 bg-panel2 border border-border pixel-corners mb-3 overflow-hidden relative">
-            <div id="progress-bar" class="h-full bg-neon transition-all duration-500" style="width: 0%"></div>
-          </div>
-          <div class="flex items-center justify-between text-xs text-gray-400 mb-1">
-            <span>Exercises</span>
-            <span id="ex-text" class="text-gray-200 font-semibold">0 / 27</span>
-          </div>
-          <div class="flex items-center justify-between text-xs text-gray-400">
-            <span>XP Earned</span>
-            <span id="xp-text" class="text-gray-200 font-semibold">0 / 405</span>
-          </div>
-        </div>
-      </div>
-    </aside>
-
-  </div>
-</main>
-
-<div id="lesson-modal" class="modal-overlay fixed inset-0 z-[100] bg-bg/95 backdrop-blur-md items-center justify-center p-2 sm:p-6">
-  <div class="bg-panel border-2 border-border pixel-corners w-full max-w-6xl h-full sm:h-[95vh] flex flex-col md:flex-row overflow-hidden relative shadow-neon">
-    
-    <button onclick="closeLesson()" class="absolute top-4 right-4 bg-bg border border-border text-gray-400 hover:text-white hover:border-white z-20 w-8 h-8 pixel-corners flex items-center justify-center">
-      <i class="fa-solid fa-xmark"></i>
-    </button>
-    
-    <div class="w-full md:w-5/12 bg-[#0a0e1a] border-r border-border p-6 sm:p-8 overflow-y-auto flex flex-col gap-6 custom-scroll">
-       <div class="flex items-center gap-3 border-b border-border pb-4">
-         <div id="lesson-number-badge" class="w-8 h-8 bg-neon/20 pixel-corners flex items-center justify-center text-neon font-pixel text-xs"></div>
-         <h2 id="lesson-title" class="font-pixel text-sm sm:text-base text-white leading-relaxed m-0"></h2>
-       </div>
-       <div id="lesson-content" class="text-gray-300 text-sm sm:text-base leading-relaxed space-y-5 font-sans">
-       </div>
-    </div>
-
-    <div class="w-full md:w-7/12 flex flex-col bg-panel2 h-full">
-       <div class="flex-none p-4 flex flex-col gap-2 relative border-b border-border" style="height: 40%;">
-          <div class="flex justify-between items-center text-xs text-gray-400 font-pixel mb-1">
-             <span><i class="fa-solid fa-code text-neonBlue"></i> query.sql</span>
-             <span id="live-status" class="hidden text-[10px]"></span>
-          </div>
-          <div id="editor-container" class="flex flex-1 bg-[#0a0e1a] border-2 border-border pixel-corners overflow-hidden">
-             <textarea id="sql-editor" oninput="checkLiveCode()" class="w-full h-full bg-transparent p-4 text-neonBlue code-editor resize-none focus:outline-none transition-colors text-sm sm:text-base border-none outline-none" spellcheck="false" placeholder="-- SQL sorgunu buraya yaz... 💖\n"></textarea>
-          </div>
-       </div>
-
-       <div class="p-4 bg-panel border-b border-border flex justify-between items-center z-10 flex-wrap gap-3">
-          <div class="flex gap-3">
-            <button onclick="runCode()" class="btn-pixel bg-neon text-bg font-bold text-xs sm:text-sm px-6 py-2.5 pixel-corners hover:brightness-110 flex items-center gap-2">
-              <i class="fa-solid fa-play"></i> Run Code
-            </button>
-            <button onclick="showHint()" class="btn-pixel-gold bg-gold text-bg font-bold text-xs sm:text-sm px-4 py-2.5 pixel-corners hover:brightness-110 flex items-center gap-2">
-              <i class="fa-solid fa-lightbulb"></i> İpucu
-            </button>
-          </div>
-          
-          <button id="next-btn" onclick="nextLesson()" class="hidden btn-pixel bg-neonBlue text-bg font-bold text-xs sm:text-sm px-6 py-2.5 pixel-corners hover:brightness-110">
-            Next <i class="fa-solid fa-arrow-right"></i>
-          </button>
-       </div>
-
-       <div class="flex-1 bg-black p-4 overflow-y-auto font-sans text-xs sm:text-sm custom-scroll flex flex-col gap-2" id="console-output">
-          <span class="text-gray-500 font-mono">> Veritabanı bağlantısı hazır. Tablo çıktıları burada görünecek...</span>
-       </div>
-    </div>
-  </div>
-</div>
-
-<Footer />
-
-<script is:inline>
-  let currentLesson = 1;
-  let xp = 0;
-  let completedLessons = new Set();
-  const STORAGE_KEY = "codedex_sql_progress";
-
-  function saveProgress() {
-    const dataToSave = {
-      xp: xp,
-      completedList: Array.from(completedLessons)
-    };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
-  }
-
-  function loadProgress() {
-    const savedData = localStorage.getItem(STORAGE_KEY);
-    if (savedData) {
-      try {
-        const parsed = JSON.parse(savedData);
-        xp = parsed.xp || 0;
-        completedLessons = new Set(parsed.completedList || []);
-      } catch (e) {
-        console.error("Progress yüklenirken hata oluştu:", e);
-      }
-    }
-  }
-
-  function updateProgressUI() {
-    document.getElementById('xp-text').innerText = `${xp} / 405`;
-    document.getElementById('ex-text').innerText = `${completedLessons.size} / 27`;
-    document.getElementById('progress-bar').style.width = `${(completedLessons.size / 27) * 100}%`;
-
-    completedLessons.forEach(id => {
-      const btn = document.getElementById('btn-lesson-' + id);
-      if(btn) {
-        btn.classList.remove('bg-neon', 'text-bg');
-        btn.classList.add('bg-panel2', 'text-neon', 'border', 'border-neon/50');
-        btn.innerHTML = 'Completed <i class="fa-solid fa-check ml-1"></i>';
-      }
-    });
-  }
-
-  function resetProgress() {
-    if(confirm("Tüm ilerlemeni sıfırlamak istediğine emin misin? Bu işlem geri alınamaz!")) {
-      localStorage.removeItem(STORAGE_KEY);
-      location.reload();
-    }
-  }
-
-  function initDatabase() {
-    alasql("CREATE TABLE shows (id INT, name STRING, genre STRING, network STRING, year INT, tomatometer INT)");
-    alasql("INSERT INTO shows VALUES (1, 'Stranger Things', 'Sci-Fi', 'Netflix', 2016, 92), (2, 'Game of Thrones', 'Fantasy', 'HBO', 2011, 89), (3, 'The Boys', 'Action', 'Amazon', 2019, 93), (4, 'Breaking Bad', 'Drama', 'AMC', 2008, 96), (5, 'Iron Fist', 'Action', 'Netflix', 2017, 37), (6, 'Chernobyl', 'Drama', 'HBO', 2019, 96), (7, 'Dark', 'Sci-Fi', 'Netflix', 2017, 95)");
-
-    alasql("CREATE TABLE restaurants (id INT, name STRING, rating FLOAT)");
-    alasql("INSERT INTO restaurants VALUES (1, 'Joe Pizza', 4.5), (2, 'Le Bernardin', 4.9), (3, 'Halal Guys', 4.2), (4, 'Katz Deli', 4.7), (5, 'Eleven Madison', 4.8)");
-
-    alasql("CREATE TABLE playlist (id INT, name STRING, genre STRING, duration INT, streams INT, release_year INT)");
-    alasql("INSERT INTO playlist VALUES (1, 'Blinding Lights', 'Pop', 200, 3000000, 2019), (2, 'Shape of You', 'Pop', 233, 3300000, 2017), (3, 'Bohemian Rhapsody', 'Rock', 354, 2000000, 1975), (4, 'Hotel California', 'Rock', 390, 1500000, 1976), (5, 'Bad Guy', 'Pop', 194, 2100000, 2019)");
-
-    alasql("CREATE TABLE video_games (id INT, name STRING, publisher STRING, sales INT)");
-    alasql("INSERT INTO video_games VALUES (1, 'Minecraft', 'Mojang', 3000000), (2, 'GTA V', 'Rockstar', 1850000), (3, 'Tetris', 'EA', 1000000), (4, 'Wii Sports', 'Nintendo', 820000)");
-
-    alasql("CREATE TABLE classes (id INT, class_name STRING)");
-    alasql("INSERT INTO classes VALUES (1, 'Math'), (2, 'Science')");
-    alasql("CREATE TABLE students (id INT, name STRING, class_id INT)");
-    alasql("INSERT INTO students VALUES (1, 'Alice', 1), (2, 'Bob', 2), (3, 'Charlie', 1)");
-    alasql("CREATE TABLE teachers (id INT, name STRING, class_id INT)");
-    alasql("INSERT INTO teachers VALUES (1, 'Mr. Smith', 1), (2, 'Mrs. Doe', 2)");
-    alasql("CREATE TABLE users (id INT, name STRING, course_id INT)");
-    alasql("INSERT INTO users VALUES (1, 'John', 101), (2, 'Jane', 102), (3, 'Dave', 999)");
-    alasql("CREATE TABLE courses (id INT, title STRING)");
-    alasql("INSERT INTO courses VALUES (101, 'SQL 101'), (102, 'Python 101')");
-    alasql("CREATE TABLE products (id INT, name STRING)");
-    alasql("INSERT INTO products VALUES (1, 'Laptop'), (2, 'Mouse')");
-    alasql("CREATE TABLE orders (id INT, user_id INT, product_id INT)");
-    alasql("INSERT INTO orders VALUES (1, 1, 1), (2, 2, 2)");
-  }
-
-  const lessonsData = [
-    { id: 1, ch: 1, name: "Introduction", title: "1. Introduction", content: `<p>Tüm verileri çekmek için <code>SELECT * FROM tablo_adi;</code> kullanılır.</p><h3 class="text-neon font-pixel text-[10px] mt-4">TALİMATLAR</h3><p><code>shows</code> tablosundaki tüm verileri getiren bir sorgu yaz.</p>`, validation: (c) => c.includes("SELECT") && c.includes("*") && c.includes("FROM SHOWS"), answer: "SELECT * FROM shows;" },
-    { id: 2, ch: 1, name: "Select", title: "2. Select", content: `<p>Sadece belirli sütunları seçebilirsin.</p><h3 class="text-neon font-pixel text-[10px] mt-4">TALİMATLAR</h3><p><code>shows</code> tablosundan sadece <b>name</b> ve <b>year</b> sütunlarını getir.</p>`, validation: (c) => c.includes("SELECT") && c.includes("NAME") && c.includes("YEAR") && c.includes("FROM SHOWS"), answer: "SELECT name, year FROM shows;" },
-    { id: 3, ch: 1, name: "Streaming Wars", title: "3. Streaming Wars", content: `<p>Benzersiz verileri bulmak için <code>DISTINCT</code> kullanırız.</p><h3 class="text-neon font-pixel text-[10px] mt-4">TALİMATLAR</h3><p><code>shows</code> tablosundan <b>network</b> sütunundaki değerleri tekrarsız getir.</p>`, validation: (c) => c.includes("SELECT DISTINCT") && c.includes("NETWORK") && c.includes("FROM SHOWS"), answer: "SELECT DISTINCT network FROM shows;" },
-    { id: 4, ch: 1, name: "Rotten Tomatoes", title: "4. Rotten Tomatoes", content: `<p>Verileri filtrelemek için <code>WHERE</code> kullanırız.</p><h3 class="text-neon font-pixel text-[10px] mt-4">TALİMATLAR</h3><p>Puanı (<b>tomatometer</b>) 90'dan büyük olan dizileri <code>shows</code> tablosundan filtrele (SELECT *).</p>`, validation: (c) => c.includes("WHERE") && c.includes("TOMATOMETER") && c.includes(">") && c.includes("90"), answer: "SELECT * FROM shows WHERE tomatometer > 90;" },
-    { id: 5, ch: 1, name: "Like", title: "5. Like", content: `<p>Kısmi eşleşme için <code>LIKE</code> kullanırız.</p><h3 class="text-neon font-pixel text-[10px] mt-4">TALİMATLAR</h3><p>Adında (<b>name</b>) "Things" geçen dizileri bul. (Joker: %)</p>`, validation: (c) => c.includes("LIKE") && c.includes("THINGS") && c.includes("%"), answer: "SELECT * FROM shows WHERE name LIKE '%Things%';" },
-    { id: 6, ch: 1, name: "Golden Age", title: "6. Golden Age", content: `<p>İki değer arasını bulmak için <code>BETWEEN ... AND ...</code> kullanılır.</p><h3 class="text-neon font-pixel text-[10px] mt-4">TALİMATLAR</h3><p>Yılı (<b>year</b>) 2011 ile 2017 arasında olan dizileri bul.</p>`, validation: (c) => c.includes("WHERE") && c.includes("YEAR") && c.includes("BETWEEN") && c.includes("2011") && c.includes("2017"), answer: "SELECT * FROM shows WHERE year BETWEEN 2011 AND 2017;" },
-    { id: 7, ch: 1, name: "ORDER BY", title: "7. ORDER BY", content: `<p>Sonuçları sıralamak için <code>ORDER BY</code> kullanırız. Azalan için <code>DESC</code>, artan için <code>ASC</code> ekleriz.</p><h3 class="text-neon font-pixel text-[10px] mt-4">TALİMATLAR</h3><p>Tüm dizileri <b>year</b> değerine göre azalan (DESC) sırada listele.</p>`, validation: (c) => c.includes("ORDER BY") && c.includes("YEAR") && c.includes("DESC"), answer: "SELECT * FROM shows ORDER BY year DESC;" },
-    { id: 8, ch: 1, name: "NYC Restaurants", title: "8. NYC Restaurants", content: `<p>Sonuç sayısını kısıtlamak için <code>LIMIT</code> kullanılır.</p><h3 class="text-neon font-pixel text-[10px] mt-4">TALİMATLAR</h3><p><code>restaurants</code> tablosunu puana (<b>rating</b>) göre büyükten küçüğe sırala ve sadece ilk 3 restoranı getir.</p>`, validation: (c) => c.includes("SELECT") && c.includes("RESTAURANTS") && c.includes("ORDER BY") && c.includes("RATING") && c.includes("DESC") && c.includes("LIMIT 3"), answer: "SELECT * FROM restaurants ORDER BY rating DESC LIMIT 3;" },
-    
-    // CHAPTER 2
-    { id: 9, ch: 2, name: "Music Playlist", title: "9. Aggregate Functions", content: `<p>SQL'de hesaplamalar yapmak için Aggregate (Kümeleme) fonksiyonları kullanırız.</p><h3 class="text-neon font-pixel text-[10px] mt-4">TALİMATLAR</h3><p><code>playlist</code> tablosundaki toplam şarkı sayısını bul (<code>COUNT(*)</code>).</p>`, validation: (c) => c.includes("SELECT") && c.includes("COUNT") && c.includes("FROM PLAYLIST"), answer: "SELECT COUNT(*) FROM playlist;" },
-    { id: 10, ch: 2, name: "Counting Rows", title: "10. Counting Rows", content: `<p>Sadece belirli koşula uyanları da sayabilirsin.</p><h3 class="text-neon font-pixel text-[10px] mt-4">TALİMATLAR</h3><p><code>playlist</code> tablosunda sadece türü (<b>genre</b>) 'Pop' olan şarkıları saydır.</p>`, validation: (c) => c.includes("COUNT") && c.includes("WHERE") && c.includes("GENRE") && c.includes("POP"), answer: "SELECT COUNT(*) FROM playlist WHERE genre = 'Pop';" },
-    { id: 11, ch: 2, name: "Old & New", title: "11. MIN / MAX", content: `<p>En küçük değeri <code>MIN()</code>, en büyük değeri <code>MAX()</code> ile buluruz.</p><h3 class="text-neon font-pixel text-[10px] mt-4">TALİMATLAR</h3><p><code>playlist</code> tablosundan <b>release_year</b> sütunu için en eski yılı <code>MIN()</code> ile bul.</p>`, validation: (c) => c.includes("SELECT") && c.includes("MIN") && c.includes("RELEASE_YEAR"), answer: "SELECT MIN(release_year) FROM playlist;" },
-    { id: 12, ch: 2, name: "Total Playtime", title: "12. SUM", content: `<p>Sayısal değerleri toplamak için <code>SUM()</code> kullanırız.</p><h3 class="text-neon font-pixel text-[10px] mt-4">TALİMATLAR</h3><p><code>playlist</code> tablosundaki şarkıların toplam süresini bulmak için <b>duration</b> sütununu <code>SUM()</code> ile topla.</p>`, validation: (c) => c.includes("SELECT") && c.includes("SUM") && c.includes("DURATION"), answer: "SELECT SUM(duration) FROM playlist;" },
-    { id: 13, ch: 2, name: "Billboard 100", title: "13. AVG", content: `<p>Ortalama hesaplamak için <code>AVG()</code> kullanırız.</p><h3 class="text-neon font-pixel text-[10px] mt-4">TALİMATLAR</h3><p>Şarkıların ortalama dinlenme sayısını bulmak için <b>streams</b> sütununu <code>AVG()</code> fonksiyonu ile seç.</p>`, validation: (c) => c.includes("SELECT") && c.includes("AVG") && c.includes("STREAMS"), answer: "SELECT AVG(streams) FROM playlist;" },
-    { id: 14, ch: 2, name: "GROUP BY", title: "14. GROUP BY", content: `<p>Aynı değere sahip satırları gruplamak için <code>GROUP BY</code> kullanılır.</p><h3 class="text-neon font-pixel text-[10px] mt-4">TALİMATLAR</h3><p><code>playlist</code> tablosundaki her <b>genre</b> (tür) için kaç şarkı olduğunu listele (genre, COUNT(*)).</p>`, validation: (c) => c.includes("SELECT") && c.includes("GENRE") && c.includes("COUNT") && c.includes("GROUP BY GENRE"), answer: "SELECT genre, COUNT(*) FROM playlist GROUP BY genre;" },
-    { id: 15, ch: 2, name: "Video Games", title: "15. HAVING", content: `<p>Gruplanmış veriler üzerinde filtrelemek için <code>HAVING</code> kullanırız.</p><h3 class="text-neon font-pixel text-[10px] mt-4">TALİMATLAR</h3><p><code>video_games</code> tablosunda, yayıncıları (<b>publisher</b>) grupla, <b>sales</b> toplamını al ve sadece 1 milyondan fazla satanları getir.</p>`, validation: (c) => c.includes("GROUP BY PUBLISHER") && c.includes("HAVING") && c.includes("SUM(SALES)") && c.includes(">"), answer: "SELECT publisher, SUM(sales) FROM video_games GROUP BY publisher HAVING SUM(sales) > 1000000;" },
-
-    // CHAPTER 3 
-    { id: 16, ch: 3, name: "Create Table", title: "16. CREATE TABLE", content: `<p>Yeni tablo oluşturmak için <code>CREATE TABLE</code> kullanılır.</p><h3 class="text-neon font-pixel text-[10px] mt-4">TALİMATLAR</h3><p><code>my_users</code> adında bir tablo oluştur. İçinde <code>id INTEGER</code> ve <code>name STRING</code> sütunları bulunsun.</p>`, validation: (c) => c.includes("CREATE TABLE MY_USERS") && c.includes("ID") && c.includes("NAME"), answer: "CREATE TABLE my_users (id INTEGER, name STRING);" },
-    { id: 17, ch: 3, name: "Insert Into", title: "17. INSERT INTO", content: `<p>Tabloya veri eklemek için <code>INSERT INTO</code> komutu kullanılır.</p><h3 class="text-neon font-pixel text-[10px] mt-4">TALİMATLAR</h3><p><code>my_users</code> tablosuna <code>VALUES (1, 'Ada Lovelace')</code> değerini ekle.</p>`, validation: (c) => c.includes("INSERT INTO MY_USERS") && c.includes("VALUES") && c.includes("1") && c.includes("ADA"), answer: "INSERT INTO my_users VALUES (1, 'Ada Lovelace');" },
-    { id: 18, ch: 3, name: "Alter Table", title: "18. ALTER TABLE", content: `<p>Varolan bir tabloya yeni bir sütun eklemek için <code>ALTER TABLE</code> kullanırız.</p><h3 class="text-neon font-pixel text-[10px] mt-4">TALİMATLAR</h3><p><code>my_users</code> tablosuna <code>age INT</code> adında yeni bir sütun (ADD COLUMN) ekle.</p>`, validation: (c) => c.includes("ALTER TABLE MY_USERS") && c.includes("ADD") && c.includes("AGE"), answer: "ALTER TABLE my_users ADD COLUMN age INT;" },
-    { id: 19, ch: 3, name: "Update Set", title: "19. UPDATE SET", content: `<p>Varolan veriyi güncellemek için <code>UPDATE</code> ve <code>SET</code> kullanırız.</p><h3 class="text-neon font-pixel text-[10px] mt-4">TALİMATLAR</h3><p><code>my_users</code> tablosunda, <b>id</b> değeri 1 olan kullanıcının <b>age</b> değerini 27 olarak güncelle.</p>`, validation: (c) => c.includes("UPDATE MY_USERS") && c.includes("SET AGE = 27") && c.includes("WHERE ID = 1"), answer: "UPDATE my_users SET age = 27 WHERE id = 1;" },
-    { id: 20, ch: 3, name: "Delete From", title: "20. DELETE FROM", content: `<p>Tablodan bir satır silmek için <code>DELETE FROM</code> kullanırız.</p><h3 class="text-neon font-pixel text-[10px] mt-4">TALİMATLAR</h3><p><code>my_users</code> tablosundan <b>id</b>'si 1 olan satırı sil.</p>`, validation: (c) => c.includes("DELETE FROM MY_USERS") && c.includes("WHERE ID = 1"), answer: "DELETE FROM my_users WHERE id = 1;" },
-    { id: 21, ch: 3, name: "BFFs", title: "21. Multiple Inserts", content: `<p>Tek seferde birden çok satır ekleyebiliriz.</p><h3 class="text-neon font-pixel text-[10px] mt-4">TALİMATLAR</h3><p><code>my_users</code> tablosuna (2, 'Bob', 25) ve (3, 'Charlie', 30) satırlarını tek sorguda ekle.</p>`, validation: (c) => c.includes("INSERT INTO MY_USERS") && c.includes("VALUES") && c.includes("BOB") && c.includes("CHARLIE"), answer: "INSERT INTO my_users VALUES (2, 'Bob', 25), (3, 'Charlie', 30);" },
-
-    // CHAPTER 4 
-    { id: 22, ch: 4, name: "Joins", title: "22. Basic JOIN", content: `<p>Tabloları birleştirmek için <code>JOIN</code> kullanırız.</p><h3 class="text-neon font-pixel text-[10px] mt-4">TALİMATLAR</h3><p><code>students</code> ve <code>classes</code> tablolarını <b>class_id</b> üzerinden bağla (<code>SELECT *</code>).</p>`, validation: (c) => c.includes("JOIN CLASSES") && c.includes("ON") && c.includes("STUDENTS.CLASS_ID"), answer: "SELECT * FROM students JOIN classes ON students.class_id = classes.id;" },
-    { id: 23, ch: 4, name: "Locked In", title: "23. Primary & Foreign Keys", content: `<p>Bir tablonun kendi kimliği (Primary Key) başka bir tablonun içinde referans (Foreign Key) gösterilir.</p><h3 class="text-neon font-pixel text-[10px] mt-4">TALİMATLAR</h3><p><code>users</code> ve <code>courses</code> tablolarını birleştir. <b>users.course_id</b> ile <b>courses.id</b> eşleşmelidir.</p>`, validation: (c) => c.includes("JOIN COURSES") && c.includes("ON") && c.includes("USERS.COURSE_ID = COURSES.ID"), answer: "SELECT * FROM users JOIN courses ON users.course_id = courses.id;" },
-    { id: 24, ch: 4, name: "Inner Join", title: "24. INNER JOIN", content: `<p>Sadece iki tabloda da <b>eşleşen</b> kayıtları getirir.</p><h3 class="text-neon font-pixel text-[10px] mt-4">TALİMATLAR</h3><p>Aynı sorguyu bu kez açıkça <code>INNER JOIN</code> yazarak gerçekleştirin (users ve courses).</p>`, validation: (c) => c.includes("INNER JOIN") && c.includes("COURSES") && c.includes("ON"), answer: "SELECT * FROM users INNER JOIN courses ON users.course_id = courses.id;" },
-    { id: 25, ch: 4, name: "Left Join", title: "25. LEFT JOIN", content: `<p>Sol tablodaki TÜM kayıtları getirir, sağda eşleşme yoksa NULL döner.</p><h3 class="text-neon font-pixel text-[10px] mt-4">TALİMATLAR</h3><p><code>users</code> tablosundaki herkesi getirmesi için <code>courses</code> ile <code>LEFT JOIN</code> işlemi yap.</p>`, validation: (c) => c.includes("LEFT JOIN COURSES") && c.includes("ON"), answer: "SELECT * FROM users LEFT JOIN courses ON users.course_id = courses.id;" },
-    { id: 26, ch: 4, name: "Students & Teachers", title: "26. Specific Columns", content: `<p>Sütunları <code>tablo_adi.sutun_adi</code> formatıyla belirtmeliyiz.</p><h3 class="text-neon font-pixel text-[10px] mt-4">TALİMATLAR</h3><p><code>students</code> ve <code>teachers</code> tablolarını <b>class_id</b> ile bağla. Sadece <b>students.name</b> ve <b>teachers.name</b> sütunlarını SELECT et.</p>`, validation: (c) => c.includes("SELECT STUDENTS.NAME") && c.includes("TEACHERS.NAME") && c.includes("JOIN TEACHERS"), answer: "SELECT students.name, teachers.name FROM students JOIN teachers ON students.class_id = teachers.class_id;" },
-    { id: 27, ch: 4, name: "Online Shop", title: "27. Three Tables", content: `<p>İkiden fazla tabloyu uç uca ekleyerek birleştirebiliriz.</p><h3 class="text-neon font-pixel text-[10px] mt-4">TALİMATLAR</h3><p>Son patron! <code>orders</code> tablosunu hem <code>users</code> ile (user_id = id), hem de <code>products</code> ile (product_id = id) bağlamak için iki kere JOIN yaz (SELECT *).</p>`, validation: (c) => c.includes("JOIN USERS") && c.includes("JOIN PRODUCTS") && c.includes("ON"), answer: "SELECT * FROM orders JOIN users ON orders.user_id = users.id JOIN products ON orders.product_id = products.id;" }
-  ];
-
-  function renderLessons() {
-    [1, 2, 3, 4].forEach(chapterId => {
-      const container = document.getElementById(`chapter-${chapterId}-container`);
-      container.innerHTML = "";
-      const chapterLessons = lessonsData.filter(l => l.ch === chapterId);
-      chapterLessons.forEach(lesson => {
-        container.innerHTML += `
-          <div class="exercise-row flex items-center justify-between px-5 py-4 transition-colors">
-            <div class="flex items-center gap-3">
-              <span class="w-6 h-6 flex items-center justify-center text-xs font-bold text-neon border border-neon/40 pixel-corners">${lesson.id}</span>
-              <span class="text-sm text-gray-200">${lesson.name}</span>
-            </div>
-            <button id="btn-lesson-${lesson.id}" onclick="openLesson(${lesson.id})" class="btn-pixel bg-neon text-bg font-bold text-xs px-4 py-1.5 pixel-corners hover:brightness-110">Start</button>
-          </div>
-        `;
-      });
-    });
-  }
-
-  function openLesson(id) {
-    currentLesson = id;
-    const lesson = lessonsData.find(l => l.id === id);
-    document.getElementById('lesson-title').innerText = lesson.title;
-    document.getElementById('lesson-number-badge').innerText = id;
-    document.getElementById('lesson-content').innerHTML = lesson.content;
-    
-    const editor = document.getElementById('sql-editor');
-    editor.value = "";
-    checkLiveCode();
-
-    document.getElementById('console-output').innerHTML = '<span class="text-gray-500 font-mono">> Veritabanı bağlantısı hazır. Tablo çıktıları burada görünecek...</span>';
-    document.getElementById('next-btn').classList.add('hidden');
-    document.getElementById('lesson-modal').classList.add('active');
-    document.body.style.overflow = "hidden"; 
-  }
-
-  function closeLesson() {
-    document.getElementById('lesson-modal').classList.remove('active');
-    document.body.style.overflow = "auto";
-  }
-
-  function checkLiveCode() {
-    const editor = document.getElementById('sql-editor');
-    const container = document.getElementById('editor-container');
-    const status = document.getElementById('live-status');
-    const codeRaw = editor.value;
-    const codeUpper = codeRaw.toUpperCase().replace(/\s+/g, ' ').trim();
-    const lesson = lessonsData.find(l => l.id === currentLesson);
-
-    if (codeUpper.length === 0) {
-      editor.classList.remove('text-neon', 'text-neonPink');
-      editor.classList.add('text-neonBlue');
-      container.style.borderColor = '#232f46';
-      container.style.boxShadow = 'none';
-      status.classList.add('hidden');
-    } else if (lesson.validation(codeUpper)) {
-      editor.classList.remove('text-neonBlue', 'text-neonPink');
-      editor.classList.add('text-neon');
-      container.style.borderColor = '#39ff88';
-      container.style.boxShadow = '0 0 12px rgba(57,255,136,0.55)';
-      status.innerHTML = '<i class="fa-solid fa-check text-neon"></i>';
-      status.classList.remove('hidden');
-    } else {
-      editor.classList.remove('text-neonBlue', 'text-neon');
-      editor.classList.add('text-neonPink');
-      container.style.borderColor = '#ff5fa2';
-      container.style.boxShadow = '0 0 8px rgba(255,95,162,0.3)';
-      status.innerHTML = '<i class="fa-solid fa-xmark text-neonPink"></i>';
-      status.classList.remove('hidden');
-    }
-  }
-
-  function showHint() {
-    const lesson = lessonsData.find(l => l.id === currentLesson);
-    const editor = document.getElementById('sql-editor');
-    editor.value = lesson.answer;
-    checkLiveCode();
-    
-    const consoleOut = document.getElementById('console-output');
-    consoleOut.innerHTML = `
-      <span class="text-gold font-mono block">> 💡 İpucu kullanıldı! Doğru cevap editöre eklendi.</span>
-      <span class="text-gray-500 font-mono">> Sonucu görmek için "Run Code" tuşuna basabilirsin.</span>
-    `;
-  }
-
-  function runCode() {
-    const codeRaw = document.getElementById('sql-editor').value;
-    const codeUpper = codeRaw.toUpperCase().replace(/\s+/g, ' ').trim();
-    const consoleOut = document.getElementById('console-output');
-    const lesson = lessonsData.find(l => l.id === currentLesson);
-
-    if(codeRaw.trim().length < 5) {
-       consoleOut.innerHTML = `<span class="text-gold font-mono">> Uyarı: Lütfen geçerli bir sorgu yazın!</span>`;
-       return;
-    }
-
-    try {
-      const res = alasql(codeRaw);
-      let tableHTML = "";
-
-      if (Array.isArray(res)) {
-        if (res.length === 0) {
-          tableHTML = `<div class="text-gray-400 mt-3 p-3 bg-panel border border-border pixel-corners font-sans text-sm">Tablo boş veya girdiğiniz şarta uyan veri bulunamadı.</div>`;
-        } else {
-          const headers = Object.keys(res[0]);
-          let ths = headers.map(h => `<th class="border-b-2 border-border p-3 text-neonBlue bg-panel font-semibold uppercase tracking-wider">${h}</th>`).join('');
-          let trs = res.map(row => {
-            let tds = headers.map(h => `<td class="border-b border-border p-3 text-gray-200">${row[h] !== undefined && row[h] !== null ? row[h] : '<span class="text-gray-500 italic">NULL</span>'}</td>`).join('');
-            return `<tr class="hover:bg-panel2 transition-colors">${tds}</tr>`;
-          }).join('');
-          
-          tableHTML = `
-            <div class="mt-4 overflow-x-auto custom-scroll border border-border pixel-corners shadow-lg">
-              <table class="w-full text-left font-sans text-xs sm:text-sm border-collapse bg-[#0a0e1a]">
-                <thead><tr>${ths}</tr></thead>
-                <tbody>${trs}</tbody>
-              </table>
-            </div>
-            <div class="text-right text-gray-500 mt-2 text-xs">Toplam Satır: ${res.length}</div>
-          `;
-        }
-      } else {
-        tableHTML = `<div class="text-neon mt-3 p-3 bg-panel border border-border pixel-corners font-sans text-sm">İşlem başarıyla gerçekleşti! (Etkilenen Satır veya Sonuç: ${res})</div>`;
-      }
-
-      const isCorrect = lesson.validation(codeUpper);
-
-      if(isCorrect) {
-         consoleOut.innerHTML = `
-          <span class="text-neon block font-mono font-bold">> [ BAŞARILI ] Sorgu çalıştırıldı.</span>
-          ${tableHTML}
-          <span class="text-gold font-pixel text-xs mt-4 block text-center bg-panel2 p-3 pixel-corners border border-gold/30">✨ MÜKEMMEL! +15 XP KAZANDIN! ✨</span>
-         `;
-         
-         if(!completedLessons.has(currentLesson)) {
-           completedLessons.add(currentLesson);
-           xp += 15;
-           saveProgress();
-           updateProgressUI();
-         }
-         if(currentLesson < 27) document.getElementById('next-btn').classList.remove('hidden');
-         
-      } else {
-         consoleOut.innerHTML = `
-          <span class="text-gold block font-mono font-bold">> [ UYARI ] Sorgu çalıştı ancak talimatları tam olarak karşılamıyor.</span>
-          ${tableHTML}
-         `;
-      }
-
-    } catch (error) {
-      consoleOut.innerHTML = `<span class="text-neonPink block font-mono">> Hata Oluştu: ${error.message}</span>`;
-    }
-  }
-
-  function nextLesson() {
-    if(currentLesson < 27) {
-      openLesson(currentLesson + 1);
-    }
-  }
-
-  window.onload = () => {
-    initDatabase();
-    loadProgress();
-    renderLessons();
-    updateProgressUI();
-  };
-</script>
-
+    <Footer />
+    <script is:inline>
+        // JS Kodlarını buraya eklemeye devam edebilirsin
+    </script>
 </body>
 </html>
