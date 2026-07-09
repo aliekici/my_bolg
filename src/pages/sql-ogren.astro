@@ -9,7 +9,6 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 <html lang="tr">
 <head>
     <BaseHead title={"SQL Öğren - " + SITE_TITLE} description={SITE_DESCRIPTION} />
-    
     <script src="https://cdn.tailwindcss.com" is:inline></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,85 +16,109 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js" crossorigin="anonymous" is:inline></script>
     <script src="https://cdn.jsdelivr.net/npm/alasql@4.3.3/dist/alasql.min.js" is:inline></script>
 
-    <script is:inline>
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              pixel: ['"Press Start 2P"', 'cursive'],
-              sans: ['Outfit', 'sans-serif'],
-            },
-            colors: {
-              bg: '#0a0e1a',
-              panel: '#111827',
-              panel2: '#161f30',
-              border: '#232f46',
-              neon: '#39ff88',
-              neonBlue: '#4fd6ff',
-              neonPink: '#ff5fa2',
-              gold: '#ffc84a',
-            },
-            boxShadow: {
-              pixel: '4px 4px 0px 0px rgba(0,0,0,0.5)',
-              neon: '0 0 12px rgba(57,255,136,0.55)',
-              neonPink: '0 0 12px rgba(255,95,162,0.55)',
-            },
-          },
-        },
-      };
-    </script>
-
     <style is:global>
-      body {
-        background-color: #0a0e1a;
-        background-image: radial-gradient(circle at 15% 10%, rgba(57,255,136,0.08), transparent 35%), radial-gradient(circle at 85% 0%, rgba(79,214,255,0.08), transparent 35%);
-        color: #e5e7eb;
-      }
-      #lesson-content code {
-        background-color: #161f30;
-        color: #39ff88;
-        padding: 2px 6px;
-        border-radius: 4px;
-        font-family: 'Courier New', Courier, monospace;
-        border: 1px solid #232f46;
-      }
-      .pixel-corners {
-        clip-path: polygon(0px 8px, 8px 8px, 8px 0px, calc(100% - 8px) 0px, calc(100% - 8px) 8px, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 8px calc(100% - 8px), 0px calc(100% - 8px));
-      }
-      .btn-pixel { box-shadow: 4px 4px 0px 0px #04321a; transition: transform 0.08s ease, box-shadow 0.08s ease; }
-      .btn-pixel-gold { box-shadow: 4px 4px 0px 0px #664d00; transition: transform 0.08s ease, box-shadow 0.08s ease; }
-      .btn-pixel:active, .btn-pixel-gold:active { transform: translate(4px, 4px); box-shadow: 0px 0px 0px 0px transparent; }
-      .scanline-badge { background-image: repeating-linear-gradient(45deg, rgba(57,255,136,0.12) 0px, rgba(57,255,136,0.12) 2px, transparent 2px, transparent 6px); }
-      ::-webkit-scrollbar { width: 10px; }
-      ::-webkit-scrollbar-track { background: #0a0e1a; }
-      ::-webkit-scrollbar-thumb { background: #232f46; border-radius: 8px; }
-      .glow-text { text-shadow: 0 0 10px rgba(57,255,136,0.6); }
-      .exercise-row:hover { background-color: #1b2436; }
-      .modal-overlay { display: none; }
-      .modal-overlay.active { display: flex; }
-      .code-editor { font-family: 'Courier New', Courier, monospace; }
-      table th { position: sticky; top: 0; }
-      #editor-container { transition: box-shadow 0.3s ease, border-color 0.3s ease; }
+        body { background-color: #0a0e1a; background-image: radial-gradient(circle at 15% 10%, rgba(57,255,136,0.08), transparent 35%), radial-gradient(circle at 85% 0%, rgba(79,214,255,0.08), transparent 35%); color: #e5e7eb; }
+        .pixel-corners { clip-path: polygon(0px 8px, 8px 8px, 8px 0px, calc(100% - 8px) 0px, calc(100% - 8px) 8px, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 8px calc(100% - 8px), 0px calc(100% - 8px)); }
+        .btn-pixel { box-shadow: 4px 4px 0px 0px #04321a; transition: transform 0.08s ease, box-shadow 0.08s ease; }
+        .btn-pixel-gold { box-shadow: 4px 4px 0px 0px #664d00; transition: transform 0.08s ease, box-shadow 0.08s ease; }
+        .btn-pixel:active, .btn-pixel-gold:active { transform: translate(4px, 4px); box-shadow: 0px 0px 0px 0px transparent; }
+        .scanline-badge { background-image: repeating-linear-gradient(45deg, rgba(57,255,136,0.12) 0px, rgba(57,255,136,0.12) 2px, transparent 2px, transparent 6px); }
+        .modal-overlay { display: none; } .modal-overlay.active { display: flex; }
+        #lesson-content code { background-color: #161f30; color: #39ff88; padding: 2px 6px; border-radius: 4px; border: 1px solid #232f46; font-family: monospace; }
+        .custom-scroll::-webkit-scrollbar { width: 6px; } .custom-scroll::-webkit-scrollbar-thumb { background: #232f46; }
     </style>
 </head>
 
-<body class="bg-bg text-gray-200 font-sans antialiased">
-    <Header />
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-        <section class="pt-10 pb-10">
-            <h1 class="font-pixel text-5xl text-white glow-text mb-4">SQL</h1>
-            <p class="text-gray-400">İlerlemen artık tarayıcında saklanıyor.</p>
-        </section>
-        <div id="chapter-1-container"></div>
-        <div id="chapter-2-container"></div>
-        <div id="chapter-3-container"></div>
-        <div id="chapter-4-container"></div>
-    </main>
-    <div id="lesson-modal" class="modal-overlay fixed inset-0 z-[100] bg-bg/95 p-6">
-        </div>
-    <Footer />
-    <script is:inline>
-        // JS Kodlarını buraya eklemeye devam edebilirsin
-    </script>
+<body class="bg-[#0a0e1a] font-sans antialiased">
+<Header />
+<main class="max-w-7xl mx-auto px-4 py-10">
+  <h1 class="font-pixel text-5xl text-white glow-text mb-4">SQL</h1>
+  <p class="text-gray-400 mb-10">İlerlemen artık tarayıcında saklanıyor.</p>
+  <div class="grid gap-8 lg:grid-cols-2">
+    <div id="chapter-1-container" class="bg-gray-900 p-4 border border-gray-700 pixel-corners"></div>
+    <div id="chapter-2-container" class="bg-gray-900 p-4 border border-gray-700 pixel-corners"></div>
+    <div id="chapter-3-container" class="bg-gray-900 p-4 border border-gray-700 pixel-corners"></div>
+    <div id="chapter-4-container" class="bg-gray-900 p-4 border border-gray-700 pixel-corners"></div>
+  </div>
+</main>
+
+<div id="lesson-modal" class="modal-overlay fixed inset-0 z-[100] bg-black/90 items-center justify-center p-4">
+  <div class="bg-gray-800 w-full max-w-5xl h-[90vh] flex flex-col md:flex-row overflow-hidden relative border border-gray-600">
+    <button onclick="closeLesson()" class="absolute top-4 right-4 text-white font-bold z-50">X</button>
+    <div class="w-full md:w-5/12 p-8 overflow-y-auto">
+        <h2 id="lesson-title" class="text-xl font-bold mb-4"></h2>
+        <div id="lesson-content" class="text-gray-300"></div>
+    </div>
+    <div class="w-full md:w-7/12 bg-black p-6 flex flex-col">
+        <textarea id="sql-editor" oninput="checkLiveCode()" class="w-full h-32 bg-gray-900 text-green-400 p-4 font-mono"></textarea>
+        <button onclick="runCode()" class="bg-green-600 px-4 py-2 mt-4 text-white">Run Code</button>
+        <div id="console-output" class="mt-4 p-4 bg-gray-900 border border-gray-700 text-sm"></div>
+        <button id="next-btn" onclick="nextLesson()" class="hidden bg-blue-600 px-4 py-2 mt-4">Next Lesson</button>
+    </div>
+  </div>
+</div>
+
+<Footer />
+
+<script is:inline>
+  let currentLesson = 1;
+  let xp = 0;
+  let completedLessons = new Set();
+  const STORAGE_KEY = "codedex_sql_progress";
+
+  function initDatabase() {
+    alasql("CREATE TABLE shows (id INT, name STRING, genre STRING, network STRING, year INT, tomatometer INT)");
+    alasql("INSERT INTO shows VALUES (1, 'Stranger Things', 'Sci-Fi', 'Netflix', 2016, 92), (2, 'Game of Thrones', 'Fantasy', 'HBO', 2011, 89), (3, 'The Boys', 'Action', 'Amazon', 2019, 93)");
+    alasql("CREATE TABLE restaurants (id INT, name STRING, rating FLOAT)");
+    alasql("INSERT INTO restaurants VALUES (1, 'Joe Pizza', 4.5), (2, 'Le Bernardin', 4.9)");
+    alasql("CREATE TABLE playlist (id INT, name STRING, genre STRING, duration INT, streams INT, release_year INT)");
+    alasql("INSERT INTO playlist VALUES (1, 'Blinding Lights', 'Pop', 200, 3000000, 2019)");
+    alasql("CREATE TABLE video_games (id INT, name STRING, publisher STRING, sales INT)");
+    alasql("INSERT INTO video_games VALUES (1, 'Minecraft', 'Mojang', 3000000)");
+    alasql("CREATE TABLE classes (id INT, class_name STRING)");
+    alasql("CREATE TABLE students (id INT, name STRING, class_id INT)");
+    alasql("CREATE TABLE teachers (id INT, name STRING, class_id INT)");
+    alasql("CREATE TABLE users (id INT, name STRING, course_id INT)");
+    alasql("CREATE TABLE courses (id INT, title STRING)");
+    alasql("CREATE TABLE products (id INT, name STRING)");
+    alasql("CREATE TABLE orders (id INT, user_id INT, product_id INT)");
+  }
+
+  const lessonsData = [
+    { id: 1, ch: 1, name: "Introduction", title: "1. Introduction", content: `<p>Tüm verileri çekmek için <code>SELECT * FROM tablo_adi;</code> kullanılır.</p>`, validation: (c) => c.includes("SELECT") && c.includes("*") && c.includes("FROM SHOWS"), answer: "SELECT * FROM shows;" },
+    { id: 25, ch: 4, name: "Left Join", title: "25. LEFT JOIN", content: `<p>Sol tablodaki TÜM kayıtları getirir.</p>`, validation: (c) => c.includes("LEFT JOIN") && c.includes("ON"), answer: "SELECT * FROM users LEFT JOIN courses ON users.course_id = courses.id;" }
+    // Diğer derslerini buraya ekle...
+  ];
+
+  function renderLessons() {
+    [1, 2, 3, 4].forEach(ch => {
+      const container = document.getElementById(`chapter-${ch}-container`);
+      lessonsData.filter(l => l.ch === ch).forEach(l => {
+        container.innerHTML += `<button onclick="openLesson(${l.id})" class="block w-full text-left p-2 border-b border-gray-700 hover:bg-gray-800">${l.name}</button>`;
+      });
+    });
+  }
+
+  function openLesson(id) {
+    currentLesson = id;
+    const l = lessonsData.find(x => x.id === id);
+    document.getElementById('lesson-title').innerText = l.title;
+    document.getElementById('lesson-content').innerHTML = l.content;
+    document.getElementById('lesson-modal').classList.add('active');
+  }
+
+  function closeLesson() { document.getElementById('lesson-modal').classList.remove('active'); }
+
+  function runCode() {
+    const code = document.getElementById('sql-editor').value;
+    const output = document.getElementById('console-output');
+    try {
+        const res = alasql(code);
+        output.innerText = JSON.stringify(res, null, 2);
+    } catch(e) { output.innerText = "Hata: " + e.message; }
+  }
+
+  window.onload = () => { initDatabase(); renderLessons(); };
+</script>
 </body>
 </html>
