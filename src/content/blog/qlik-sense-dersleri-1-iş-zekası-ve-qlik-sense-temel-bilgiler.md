@@ -1,11 +1,8 @@
 ---
 title: "Qlik Sense Dersleri 1 | İş Zekası ve Qlik Sense: Temel Bilgiler"
-description: İş zekası, büyük veri ve farklı kaynaklardan gelen bilgilerin
-  analiz edilerek işletme kararlarını desteklemek amacıyla
-  kullanılmasıdır.Veriyi anlamlı hale getirip, görsel raporlar ve panolar
-  (dashboard) oluşturur.Karar alma süreçlerinde hızlı, doğru ve etkili bilgi
-  sağlar.
+description: https://dqturkiye.com/assets/img/qlik-talend.jpg
 pubDate: 2026-07-09T22:39:00.000+03:00
+heroImage: https://dqturkiye.com/assets/img/qlik-talend.jpg
 ---
 **1.1. İş Zekası (Business Intelligence) Nedir?**
 
