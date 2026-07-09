@@ -1,136 +1,130 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+---
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>SQL Course | Ultimate Interactive Clone (Auto-Save)</title>
+    <BaseHead title={"SQL Öğren - " + SITE_TITLE} description={SITE_DESCRIPTION} />
+    
+    <script src="https://cdn.tailwindcss.com" is:inline></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js" crossorigin="anonymous" is:inline></script>
+    <script src="https://cdn.jsdelivr.net/npm/alasql@4.3.3/dist/alasql.min.js" is:inline></script>
 
-<script src="https://cdn.tailwindcss.com"></script>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js" crossorigin="anonymous"></script>
-
-<script src="https://cdn.jsdelivr.net/npm/alasql@4.3.3/dist/alasql.min.js"></script>
-
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        fontFamily: {
-          pixel: ['"Press Start 2P"', 'cursive'],
-          sans: ['Outfit', 'sans-serif'],
+    <script is:inline>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              pixel: ['"Press Start 2P"', 'cursive'],
+              sans: ['Outfit', 'sans-serif'],
+            },
+            colors: {
+              bg: '#0a0e1a',
+              panel: '#111827',
+              panel2: '#161f30',
+              border: '#232f46',
+              neon: '#39ff88',
+              neonBlue: '#4fd6ff',
+              neonPink: '#ff5fa2',
+              gold: '#ffc84a',
+            },
+            boxShadow: {
+              pixel: '4px 4px 0px 0px rgba(0,0,0,0.5)',
+              neon: '0 0 12px rgba(57,255,136,0.55)',
+              neonPink: '0 0 12px rgba(255,95,162,0.55)',
+            },
+          },
         },
-        colors: {
-          bg: '#0a0e1a',
-          panel: '#111827',
-          panel2: '#161f30',
-          border: '#232f46',
-          neon: '#39ff88',
-          neonBlue: '#4fd6ff',
-          neonPink: '#ff5fa2',
-          gold: '#ffc84a',
-        },
-        boxShadow: {
-          pixel: '4px 4px 0px 0px rgba(0,0,0,0.5)',
-          neon: '0 0 12px rgba(57,255,136,0.55)',
-          neonPink: '0 0 12px rgba(255,95,162,0.55)',
-        },
-      },
-    },
-  };
-</script>
+      };
+    </script>
 
-<style>
-  body {
-    background-color: #0a0e1a;
-    background-image:
-      radial-gradient(circle at 15% 10%, rgba(57,255,136,0.08), transparent 35%),
-      radial-gradient(circle at 85% 0%, rgba(79,214,255,0.08), transparent 35%);
-  }
+    <style is:global>
+      /* is:global ekleyerek Astro'nun bu stilleri tüm bileşenlerde sorunsuz çalıştırmasını sağlıyoruz */
+      body {
+        background-color: #0a0e1a;
+        background-image:
+          radial-gradient(circle at 15% 10%, rgba(57,255,136,0.08), transparent 35%),
+          radial-gradient(circle at 85% 0%, rgba(79,214,255,0.08), transparent 35%);
+        color: #e5e7eb; /* Metin renginin beyaz/gri tonlarında görünmesini garanti altına alıyoruz */
+      }
 
-  .pixel-corners {
-    clip-path: polygon(
-      0px 8px, 8px 8px, 8px 0px,
-      calc(100% - 8px) 0px, calc(100% - 8px) 8px, 100% 8px,
-      100% calc(100% - 8px), calc(100% - 8px) calc(100% - 8px), calc(100% - 8px) 100%,
-      8px 100%, 8px calc(100% - 8px), 0px calc(100% - 8px)
-    );
-  }
+      .pixel-corners {
+        clip-path: polygon(
+          0px 8px, 8px 8px, 8px 0px,
+          calc(100% - 8px) 0px, calc(100% - 8px) 8px, 100% 8px,
+          100% calc(100% - 8px), calc(100% - 8px) calc(100% - 8px), calc(100% - 8px) 100%,
+          8px 100%, 8px calc(100% - 8px), 0px calc(100% - 8px)
+        );
+      }
 
-  .btn-pixel {
-    box-shadow: 4px 4px 0px 0px #04321a;
-    transition: transform 0.08s ease, box-shadow 0.08s ease;
-  }
-  .btn-pixel-gold {
-    box-shadow: 4px 4px 0px 0px #664d00;
-    transition: transform 0.08s ease, box-shadow 0.08s ease;
-  }
-  .btn-pixel:active, .btn-pixel-gold:active {
-    transform: translate(4px, 4px);
-    box-shadow: 0px 0px 0px 0px transparent;
-  }
+      .btn-pixel {
+        box-shadow: 4px 4px 0px 0px #04321a;
+        transition: transform 0.08s ease, box-shadow 0.08s ease;
+      }
+      .btn-pixel-gold {
+        box-shadow: 4px 4px 0px 0px #664d00;
+        transition: transform 0.08s ease, box-shadow 0.08s ease;
+      }
+      .btn-pixel:active, .btn-pixel-gold:active {
+        transform: translate(4px, 4px);
+        box-shadow: 0px 0px 0px 0px transparent;
+      }
 
-  .scanline-badge {
-    background-image: repeating-linear-gradient(
-      45deg,
-      rgba(57,255,136,0.12) 0px,
-      rgba(57,255,136,0.12) 2px,
-      transparent 2px,
-      transparent 6px
-    );
-  }
+      .scanline-badge {
+        background-image: repeating-linear-gradient(
+          45deg,
+          rgba(57,255,136,0.12) 0px,
+          rgba(57,255,136,0.12) 2px,
+          transparent 2px,
+          transparent 6px
+        );
+      }
 
-  ::-webkit-scrollbar { width: 10px; }
-  ::-webkit-scrollbar-track { background: #0a0e1a; }
-  ::-webkit-scrollbar-thumb { background: #232f46; border-radius: 8px; }
+      ::-webkit-scrollbar { width: 10px; }
+      ::-webkit-scrollbar-track { background: #0a0e1a; }
+      ::-webkit-scrollbar-thumb { background: #232f46; border-radius: 8px; }
 
-  .glow-text { text-shadow: 0 0 10px rgba(57,255,136,0.6); }
-  .exercise-row:hover { background-color: #1b2436; }
-  .badge-slot { background-image: radial-gradient(circle, #1c2536 0%, #121a29 100%); }
-  
-  .modal-overlay { display: none; }
-  .modal-overlay.active { display: flex; }
-  .code-editor { font-family: 'Courier New', Courier, monospace; }
-  
-  table th { position: sticky; top: 0; }
-  
-  #editor-container {
-    transition: box-shadow 0.3s ease, border-color 0.3s ease;
-  }
-</style>
+      .glow-text { text-shadow: 0 0 10px rgba(57,255,136,0.6); }
+      .exercise-row:hover { background-color: #1b2436; }
+      .badge-slot { background-image: radial-gradient(circle, #1c2536 0%, #121a29 100%); }
+      
+      .modal-overlay { display: none; }
+      .modal-overlay.active { display: flex; }
+      .code-editor { font-family: 'Courier New', Courier, monospace; }
+      
+      table th { position: sticky; top: 0; }
+      
+      #editor-container {
+        transition: box-shadow 0.3s ease, border-color 0.3s ease;
+      }
+    </style>
 </head>
 
 <body class="bg-bg text-gray-200 font-sans antialiased">
 
-<header class="sticky top-0 z-50 bg-bg/90 backdrop-blur border-b border-border">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex items-center justify-between h-16">
-      <div class="flex items-center gap-2">
-        <div class="w-8 h-8 bg-neon pixel-corners flex items-center justify-center">
-          <i class="fa-solid fa-code text-bg text-sm"></i>
-        </div>
-        <span class="font-pixel text-xs sm:text-sm text-white">Codédex Clone</span>
-      </div>
-    </div>
-  </div>
-</header>
-
-<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-10">
-  <div class="flex flex-col items-start">
-    <span class="scanline-badge border border-neon/40 text-neon font-pixel text-[9px] px-3 py-2 pixel-corners mb-6">
-      PROGRESS SAVED LOCALLY
-    </span>
-    <h1 class="font-pixel text-5xl sm:text-6xl md:text-7xl text-white glow-text mb-4 leading-tight">SQL</h1>
-    <p class="text-gray-400 text-base sm:text-lg max-w-xl mb-6">
-      İlerlemen artık tarayıcında saklanıyor. İstediğin zaman çıkıp geri dönebilirsin!
-    </p>
-  </div>
-</section>
+<Header />
 
 <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+  
+  <section class="pt-10 pb-10">
+    <div class="flex flex-col items-start">
+      <span class="scanline-badge border border-neon/40 text-neon font-pixel text-[9px] px-3 py-2 pixel-corners mb-6">
+        PROGRESS SAVED LOCALLY
+      </span>
+      <h1 class="font-pixel text-5xl sm:text-6xl md:text-7xl text-white glow-text mb-4 leading-tight">SQL</h1>
+      <p class="text-gray-400 text-base sm:text-lg max-w-xl mb-6">
+        İlerlemen artık tarayıcında saklanıyor. İstediğin zaman çıkıp geri dönebilirsin!
+      </p>
+    </div>
+  </section>
+
   <div class="flex flex-col lg:flex-row gap-8">
 
     <div class="w-full lg:w-[65%] flex flex-col gap-6">
@@ -138,7 +132,7 @@
         <div class="flex items-center justify-between px-5 py-4 border-b border-border">
           <div class="flex items-center gap-3">
             <div class="w-8 h-8 bg-neonBlue/20 pixel-corners flex items-center justify-center text-neonBlue"><i class="fa-solid fa-database text-sm"></i></div>
-            <h2 class="font-pixel text-xs sm:text-sm text-white">1. Queries</h2>
+            <h2 class="font-pixel text-xs sm:text-sm text-white m-0">1. Queries</h2>
           </div>
         </div>
         <div class="divide-y divide-border" id="chapter-1-container"></div>
@@ -148,7 +142,7 @@
         <div class="flex items-center justify-between px-5 py-4 border-b border-border">
           <div class="flex items-center gap-3">
             <div class="w-8 h-8 bg-gold/20 pixel-corners flex items-center justify-center text-gold"><i class="fa-solid fa-layer-group text-sm"></i></div>
-            <h2 class="font-pixel text-xs sm:text-sm text-white">2. Aggregates</h2>
+            <h2 class="font-pixel text-xs sm:text-sm text-white m-0">2. Aggregates</h2>
           </div>
         </div>
         <div class="divide-y divide-border" id="chapter-2-container"></div>
@@ -158,7 +152,7 @@
         <div class="flex items-center justify-between px-5 py-4 border-b border-border">
           <div class="flex items-center gap-3">
             <div class="w-8 h-8 bg-neonPink/20 pixel-corners flex items-center justify-center text-neonPink"><i class="fa-solid fa-table text-sm"></i></div>
-            <h2 class="font-pixel text-xs sm:text-sm text-white">3. New Table</h2>
+            <h2 class="font-pixel text-xs sm:text-sm text-white m-0">3. New Table</h2>
           </div>
         </div>
         <div class="divide-y divide-border" id="chapter-3-container"></div>
@@ -168,7 +162,7 @@
         <div class="flex items-center justify-between px-5 py-4 border-b border-border">
           <div class="flex items-center gap-3">
             <div class="w-8 h-8 bg-neon/20 pixel-corners flex items-center justify-center text-neon"><i class="fa-solid fa-diagram-project text-sm"></i></div>
-            <h2 class="font-pixel text-xs sm:text-sm text-white">4. Multiple Tables</h2>
+            <h2 class="font-pixel text-xs sm:text-sm text-white m-0">4. Multiple Tables</h2>
           </div>
         </div>
         <div class="divide-y divide-border" id="chapter-4-container"></div>
@@ -214,7 +208,7 @@
     <div class="w-full md:w-5/12 bg-[#0a0e1a] border-r border-border p-6 sm:p-8 overflow-y-auto flex flex-col gap-6 custom-scroll">
        <div class="flex items-center gap-3 border-b border-border pb-4">
          <div id="lesson-number-badge" class="w-8 h-8 bg-neon/20 pixel-corners flex items-center justify-center text-neon font-pixel text-xs"></div>
-         <h2 id="lesson-title" class="font-pixel text-sm sm:text-base text-white leading-relaxed"></h2>
+         <h2 id="lesson-title" class="font-pixel text-sm sm:text-base text-white leading-relaxed m-0"></h2>
        </div>
        <div id="lesson-content" class="text-gray-300 text-sm sm:text-base leading-relaxed space-y-5 font-sans">
        </div>
@@ -227,7 +221,7 @@
              <span id="live-status" class="hidden text-[10px]"></span>
           </div>
           <div id="editor-container" class="flex flex-1 bg-[#0a0e1a] border-2 border-border pixel-corners overflow-hidden">
-            <textarea id="sql-editor" oninput="checkLiveCode()" class="w-full h-full bg-transparent p-4 text-neonBlue code-editor resize-none focus:outline-none transition-colors text-sm sm:text-base" spellcheck="false" placeholder="-- SQL sorgunu buraya yaz... 💖\n"></textarea>
+             <textarea id="sql-editor" oninput="checkLiveCode()" class="w-full h-full bg-transparent p-4 text-neonBlue code-editor resize-none focus:outline-none transition-colors text-sm sm:text-base border-none outline-none" spellcheck="false" placeholder="-- SQL sorgunu buraya yaz... 💖\n"></textarea>
           </div>
        </div>
 
@@ -253,18 +247,18 @@
   </div>
 </div>
 
-<script>
+<Footer />
+
+<script is:inline>
   let currentLesson = 1;
   let xp = 0;
   let completedLessons = new Set();
-
-  // --- LOCALSTORAGE (KAYDET/YÜKLE) MANTIĞI ---
   const STORAGE_KEY = "codedex_sql_progress";
 
   function saveProgress() {
     const dataToSave = {
       xp: xp,
-      completedList: Array.from(completedLessons) // Set yapısını Array'e çevirip kaydediyoruz
+      completedList: Array.from(completedLessons)
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
   }
@@ -283,12 +277,10 @@
   }
 
   function updateProgressUI() {
-    // Sağ menü barı güncellemesi
     document.getElementById('xp-text').innerText = `${xp} / 405`;
     document.getElementById('ex-text').innerText = `${completedLessons.size} / 27`;
     document.getElementById('progress-bar').style.width = `${(completedLessons.size / 27) * 100}%`;
 
-    // Daha önce tamamlanmış derslerin butonlarını "Completed" yap
     completedLessons.forEach(id => {
       const btn = document.getElementById('btn-lesson-' + id);
       if(btn) {
@@ -299,15 +291,13 @@
     });
   }
 
-  // İlerlemeyi manuel sıfırlama butonu
   function resetProgress() {
     if(confirm("Tüm ilerlemeni sıfırlamak istediğine emin misin? Bu işlem geri alınamaz!")) {
       localStorage.removeItem(STORAGE_KEY);
-      location.reload(); // Sayfayı yenile
+      location.reload();
     }
   }
 
-  // ----- VERİTABANI KURULUMU (ALASQL) -----
   function initDatabase() {
     alasql("CREATE TABLE shows (id INT, name STRING, genre STRING, network STRING, year INT, tomatometer INT)");
     alasql("INSERT INTO shows VALUES (1, 'Stranger Things', 'Sci-Fi', 'Netflix', 2016, 92), (2, 'Game of Thrones', 'Fantasy', 'HBO', 2011, 89), (3, 'The Boys', 'Action', 'Amazon', 2019, 93), (4, 'Breaking Bad', 'Drama', 'AMC', 2008, 96), (5, 'Iron Fist', 'Action', 'Netflix', 2017, 37), (6, 'Chernobyl', 'Drama', 'HBO', 2019, 96), (7, 'Dark', 'Sci-Fi', 'Netflix', 2017, 95)");
@@ -337,7 +327,6 @@
     alasql("INSERT INTO orders VALUES (1, 1, 1), (2, 2, 2)");
   }
 
-  // DERS MÜFREDATI
   const lessonsData = [
     { id: 1, ch: 1, name: "Introduction", title: "1. Introduction", content: `<p>Tüm verileri çekmek için <code>SELECT * FROM tablo_adi;</code> kullanılır.</p><h3 class="text-neon font-pixel text-[10px] mt-4">TALİMATLAR</h3><p><code>shows</code> tablosundaki tüm verileri getiren bir sorgu yaz.</p>`, validation: (c) => c.includes("SELECT") && c.includes("*") && c.includes("FROM SHOWS"), answer: "SELECT * FROM shows;" },
     { id: 2, ch: 1, name: "Select", title: "2. Select", content: `<p>Sadece belirli sütunları seçebilirsin.</p><h3 class="text-neon font-pixel text-[10px] mt-4">TALİMATLAR</h3><p><code>shows</code> tablosundan sadece <b>name</b> ve <b>year</b> sütunlarını getir.</p>`, validation: (c) => c.includes("SELECT") && c.includes("NAME") && c.includes("YEAR") && c.includes("FROM SHOWS"), answer: "SELECT name, year FROM shows;" },
@@ -511,8 +500,8 @@
          if(!completedLessons.has(currentLesson)) {
            completedLessons.add(currentLesson);
            xp += 15;
-           saveProgress(); // <<< KAYDETME İŞLEMİ BURADA YAPILIYOR
-           updateProgressUI(); // UI GÜNCELLEMESİ YAPILIYOR
+           saveProgress();
+           updateProgressUI();
          }
          if(currentLesson < 27) document.getElementById('next-btn').classList.remove('hidden');
          
@@ -534,12 +523,11 @@
     }
   }
 
-  // --- SAYFA YÜKLENDİĞİNDE ---
   window.onload = () => {
     initDatabase();
-    loadProgress();    // 1. Önce kayıtları yükle
-    renderLessons();   // 2. HTML iskeletini çiz
-    updateProgressUI();// 3. Yüklenen kayıtları HTML iskeletinin üzerine giydir
+    loadProgress();
+    renderLessons();
+    updateProgressUI();
   };
 </script>
 
