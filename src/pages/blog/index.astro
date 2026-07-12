@@ -7,108 +7,249 @@ import FormattedDate from '../../components/FormattedDate.astro';
 import Header from '../../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
 
+// Markdown/MDX dosyalarını çekip tarihe göre sıralayan orijinal kodun
 const posts = (await getCollection('blog')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="tr">
 	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<BaseHead title={`Blog | ${SITE_TITLE}`} description={SITE_DESCRIPTION} />
+		<!-- Yeni tasarımımız için fontlar ve ikonlar -->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+		
 		<style>
-			main {
-				width: 960px;
+			:root {
+				--bg-dark: #0a0e17; 
+				--bg-darker: #02060f;
+				--text-main: #f0f6fc;
+				--text-muted: #8b949e;
+				--border-color: #30363d;
+				--accent: #f59e0b;
 			}
-			ul {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 2rem;
+
+			body {
+				font-family: 'Inter', sans-serif;
+				background-color: var(--bg-dark);
+				color: var(--text-main);
+				line-height: 1.6;
+				margin: 0;
+			}
+
+			.container {
+				max-width: 1100px;
+				margin: 0 auto;
+				padding: 0 20px;
+			}
+
+			/* HEADER (SAYFA BAŞLIĞI) */
+			.page-header {
+				padding: 80px 0 60px;
+				text-align: center;
+				background: linear-gradient(180deg, rgba(2,6,15,1) 0%, var(--bg-dark) 100%);
+				border-bottom: 1px solid var(--border-color);
+			}
+
+			.page-header h1 {
+				font-size: 2.8rem;
+				font-weight: 700;
+				margin-bottom: 15px;
+				letter-spacing: -1px;
+				color: var(--text-main);
+			}
+
+			.page-header p {
+				color: var(--text-muted);
+				font-size: 1.15rem;
+				max-width: 600px;
+				margin: 0 auto;
+			}
+
+			/* BLOG LİSTESİ (IZGARA) */
+			.blog-section {
+				padding: 60px 0 100px;
+			}
+
+			.blog-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+				gap: 2.5rem;
 				list-style-type: none;
 				margin: 0;
 				padding: 0;
 			}
-			ul li {
-				width: calc(50% - 1rem);
-			}
-			ul li * {
-				text-decoration: none;
-				transition: 0.2s ease;
-			}
-			ul li:first-child {
-				width: 100%;
-				margin-bottom: 1rem;
-				text-align: center;
-			}
-			ul li:first-child img {
-				width: 100%;
-			}
-			ul li:first-child .title {
-				font-size: 2.369rem;
-			}
-			ul li img {
-				margin-bottom: 0.5rem;
+
+			.blog-card {
+				background-color: #0d1117;
+				border: 1px solid var(--border-color);
 				border-radius: 12px;
+				overflow: hidden;
+				transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+				display: flex;
+				flex-direction: column;
 			}
-			ul li a {
-				display: block;
+
+			.blog-card:hover {
+				transform: translateY(-5px);
+				border-color: #4b5563;
+				box-shadow: 0 10px 30px rgba(0,0,0,0.4);
 			}
-			.title {
-				margin: 0;
-				color: rgb(var(--black));
-				line-height: 1;
+
+			.card-image {
+				position: relative;
+				height: 200px;
+				background-color: #161b22;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				border-bottom: 1px solid var(--border-color);
 			}
-			.date {
-				margin: 0;
-				color: rgb(var(--gray));
+
+			.card-image img {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
 			}
-			ul li a:hover h4,
-			ul li a:hover .date {
-				color: rgb(var(--accent));
+
+			.image-placeholder {
+				font-size: 3rem;
+				color: #30363d;
 			}
-			ul a:hover img {
-				box-shadow: var(--box-shadow);
+
+			.category-badge {
+				position: absolute;
+				top: 15px;
+				left: 15px;
+				padding: 5px 12px;
+				border-radius: 20px;
+				font-size: 0.75rem;
+				font-weight: 600;
+				color: #fff;
+				background-color: rgba(59, 130, 246, 0.8); /* Varsayılan renk */
 			}
-			@media (max-width: 720px) {
-				ul {
-					gap: 0.5em;
-				}
-				ul li {
-					width: 100%;
-					text-align: center;
-				}
-				ul li:first-child {
-					margin-bottom: 0;
-				}
-				ul li:first-child .title {
-					font-size: 1.563em;
-				}
+
+			.card-content {
+				padding: 1.5rem;
+				display: flex;
+				flex-direction: column;
+				flex: 1;
+			}
+
+			.post-meta {
+				display: flex;
+				gap: 1rem;
+				margin-bottom: 1rem;
+			}
+
+			.post-meta span {
+				font-size: 0.8rem;
+				color: var(--text-muted);
+				display: flex;
+				align-items: center;
+				gap: 6px;
+			}
+
+			.card-content h2 {
+				font-size: 1.25rem;
+				line-height: 1.4;
+				margin-bottom: 1rem;
+				margin-top: 0;
+			}
+
+			.card-content h2 a {
+				color: var(--text-main);
+				text-decoration: none;
+				transition: color 0.2s;
+			}
+
+			.card-content h2 a:hover {
+				color: var(--accent);
+			}
+
+			.card-content p {
+				color: var(--text-muted);
+				font-size: 0.95rem;
+				margin-bottom: 1.5rem;
+				flex: 1;
+			}
+
+			.read-more {
+				display: inline-flex;
+				align-items: center;
+				gap: 8px;
+				color: var(--accent);
+				text-decoration: none;
+				font-weight: 600;
+				font-size: 0.9rem;
+				transition: gap 0.2s;
+				margin-top: auto;
+			}
+
+			.read-more:hover {
+				gap: 12px;
+			}
+
+			@media (max-width: 768px) {
+				.page-header h1 { font-size: 2.2rem; }
 			}
 		</style>
 	</head>
 	<body>
+		<!-- Temanın orijinal Header bileşeni -->
 		<Header />
+		
 		<main>
-			<section>
-				<ul>
-					{
-						posts.map((post) => (
-							<li>
-								<a href={`/blog/${post.id}/`}>
-									{post.data.heroImage && (
-										<Image width={720} height={360} src={post.data.heroImage} alt="" />
-									)}
-									<h4 class="title">{post.data.title}</h4>
-									<p class="date">
-										<FormattedDate date={post.data.pubDate} />
-									</p>
-								</a>
-							</li>
-						))
-					}
-				</ul>
+			<!-- BLOG BAŞLIĞI -->
+			<header class="page-header">
+				<div class="container">
+					<h1>BIPlaybook Blog</h1>
+					<p>Veri dünyasındaki son trendler, kariyer tavsiyeleri ve sektörel içgörüler.</p>
+				</div>
+			</header>
+
+			<!-- DİNAMİK BLOG LİSTESİ -->
+			<section class="blog-section">
+				<div class="container">
+					<ul class="blog-grid">
+						{
+							posts.map((post) => (
+								<li>
+									<article class="blog-card">
+										<div class="card-image">
+											{post.data.heroImage ? (
+												<Image width={720} height={360} src={post.data.heroImage} alt={post.data.title} />
+											) : (
+												<div class="image-placeholder"><i class="fa-solid fa-file-lines"></i></div>
+											)}
+											<span class="category-badge">Makale</span>
+										</div>
+										<div class="card-content">
+											<div class="post-meta">
+												<span>
+													<i class="fa-regular fa-calendar"></i> 
+													<FormattedDate date={post.data.pubDate} />
+												</span>
+											</div>
+											<h2><a href={`/blog/${post.id}/`}>{post.data.title}</a></h2>
+											<!-- Eğer Markdown içinde açıklama (description) varsa göster, yoksa varsayılan metin yaz -->
+											<p>{post.data.description || 'Bu yazının detaylarını ve kod örneklerini incelemek için tıklayın...'}</p>
+											<a href={`/blog/${post.id}/`} class="read-more">Devamını Oku <i class="fa-solid fa-arrow-right"></i></a>
+										</div>
+									</article>
+								</li>
+							))
+						}
+					</ul>
+				</div>
 			</section>
 		</main>
+
+		<!-- Temanın orijinal Footer bileşeni -->
 		<Footer />
 	</body>
 </html>

@@ -1,49 +1,363 @@
 ---
+// src/pages/index.astro
 import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 ---
 
 <!doctype html>
-<html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header />
-		<main>
-			<h1>🧑‍🚀 Hello, Astronaut!</h1>
-			<p>
-				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This template
-				serves as a lightweight, minimally-styled starting point for anyone looking to build a personal
-				website, blog, or portfolio with Astro.
-			</p>
-			<p>
-				This template comes with a few integrations already configured in your
-				<code>astro.config.mjs</code> file. You can customize your setup with
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like Tailwind,
-				React, or Vue to your project.
-			</p>
-			<p>Here are a few ideas on how to get started with the template:</p>
-			<ul>
-				<li>Edit this page in <code>src/pages/index.astro</code></li>
-				<li>Edit the site header items in <code>src/components/Header.astro</code></li>
-				<li>Add your name to the footer in <code>src/components/Footer.astro</code></li>
-				<li>Check out the included blog posts in <code>src/content/blog/</code></li>
-				<li>Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code></li>
-			</ul>
-			<p>
-				Have fun! If you get stuck, remember to
-				<a href="https://docs.astro.build/">read the docs</a>
-				or <a href="https://astro.build/chat">join us on Discord</a> to ask questions.
-			</p>
-			<p>
-				Looking for a blog template with a bit more personality? Check out
-				<a href="https://github.com/Charca/astro-blog-template">astro-blog-template</a>
-				by <a href="https://twitter.com/Charca">Maxi Ferreira</a>.
-			</p>
-		</main>
-		<Footer />
-	</body>
+<html lang="tr">
+<head>
+    <BaseHead title={`Ana Sayfa | ${SITE_TITLE}`} description={SITE_DESCRIPTION || "Veri dünyasını keşfedin."} />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-dark text-main">
+    <Header />
+
+    <main>
+        <!-- DİNAMİK HERO ALANI -->
+        <section class="hero relative overflow-hidden">
+            <div class="glow-bg top-glow"></div>
+            <div class="container hero-container reveal fade-bottom">
+                
+                <div class="hero-text">
+                    <div class="badge-modern">
+                        <span class="pulse-dot"></span> İş Zekası & Veri Analitiği Platformu
+                    </div>
+                    <h1 class="hero-title">
+                        Veri Yığınlarını <br>
+                        <span class="text-gradient">Stratejik Kararlara</span> Dönüştürün
+                    </h1>
+                    <p class="hero-desc">
+                        Qlik Sense ile dinamik dashboardlar tasarlayın, SAP mimarisini çözümleyin ve tarayıcı içi interaktif laboratuvarımızda teoriyi anında pratiğe dökün.
+                    </p>
+                    <div class="hero-actions">
+                        <a href="/kategori/bi" class="btn-glow">
+                            İş Zekasını Keşfet <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                        <a href="/egitimler" class="btn-outline">
+                            <i class="fa-solid fa-flask"></i> İnteraktif Eğitimler
+                        </a>
+                    </div>
+                </div>
+
+                <!-- DÜZELTİLMİŞ PREMIUM EKOSİSTEM GÖRSELİ -->
+                <div class="hero-visual">
+                    <div class="premium-ecosystem">
+                        <!-- Arka Plan Radar Halkaları -->
+                        <div class="eco-rings">
+                            <div class="ring ring-1"></div>
+                            <div class="ring ring-2"></div>
+                            <div class="ring ring-3"></div>
+                        </div>
+
+                        <!-- Merkez Düğüm: Microsoft SQL Server (Veri Ambarı) -->
+                        <div class="p-node center-node">
+                            <div class="p-icon sql-icon">
+                                <i class="fa-solid fa-database"></i>
+                            </div>
+                            <span class="p-label">Veri Ambarı</span>
+                        </div>
+
+                        <!-- Yörünge Düğümleri -->
+                        <!-- SAP -->
+                        <div class="p-node sap-pos">
+                            <div class="p-icon sap-icon">
+                                <img src="https://cdn.simpleicons.org/sap/008EEA" alt="SAP ERP" />
+                            </div>
+                            <span class="p-label">SAP ERP</span>
+                        </div>
+
+                        <!-- ETL Pipeline -->
+                        <div class="p-node etl-pos">
+                            <div class="p-icon etl-icon">
+                                <i class="fa-solid fa-route"></i>
+                            </div>
+                            <span class="p-label">ETL Pipeline</span>
+                        </div>
+
+                        <!-- Qlik Sense -->
+                        <div class="p-node qlik-pos">
+                            <div class="p-icon qlik-icon">
+                                <img src="https://cdn.simpleicons.org/qlik/009845" alt="Qlik Sense" />
+                            </div>
+                            <span class="p-label">Qlik Sense</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- BENTO GRID: YÖNLENDİRME MERKEZİ -->
+        <section class="bento-section">
+            <div class="container">
+                <div class="section-heading reveal fade-bottom">
+                    <h2>Uzmanlık Rotaları</h2>
+                    <p>Kendinizi geliştirmek istediğiniz alanı seçin. Her rota; özel rehberler, projeler ve simülasyonlar içerir.</p>
+                </div>
+
+                <div class="bento-grid">
+                    
+                    <!-- BÜYÜK KART: İŞ ZEKASI -->
+                    <a href="/kategori/bi" class="bento-card bento-large bi-card reveal fade-left delay-100">
+                        <div class="bento-bg"></div>
+                        <div class="card-top">
+                            <div class="icon-box"><i class="fa-solid fa-chart-line"></i></div>
+                            <span class="level-tag">Popüler Rota</span>
+                        </div>
+                        <h3>İş Zekası & Dashboard Tasarımı</h3>
+                        <p>Qlik Sense ve PowerBI pratikleriyle ham veriyi yönetici özetlerine (C-Level) dönüştürme sanatı. Optimizasyonlar ve projeler.</p>
+                        <span class="action-link">Merkeze Git <i class="fa-solid fa-arrow-right"></i></span>
+                    </a>
+
+                    <!-- BÜYÜK KART: SAP -->
+                    <a href="/kategori/sap" class="bento-card bento-large sap-card reveal fade-right delay-200">
+                        <div class="bento-bg"></div>
+                        <div class="card-top">
+                            <div class="icon-box"><i class="fa-solid fa-cube"></i></div>
+                            <span class="level-tag">Mimari Rota</span>
+                        </div>
+                        <h3>SAP Veri Ekosistemi</h3>
+                        <p>SD, MM ve FI modüllerinin anatomisi. Kurumsal ERP sistemlerinden veri çekme, tablo ilişkileri kurma (Join) ve veri küpleri oluşturma.</p>
+                        <span class="action-link">Merkeze Git <i class="fa-solid fa-arrow-right"></i></span>
+                    </a>
+
+                    <!-- ORTA KART: İNTERAKTİF EĞİTİMLER -->
+                    <a href="/egitimler" class="bento-card egitim-card reveal fade-up delay-100">
+                        <div class="card-top">
+                            <div class="icon-box"><i class="fa-solid fa-terminal"></i></div>
+                        </div>
+                        <h3>İnteraktif Laboratuvar</h3>
+                        <p>Sadece okumayın, uygulayın. Tarayıcınızda gerçek senaryolarla kod yazarak öğrenin.</p>
+                        <span class="action-link">Eğitimleri Gör</span>
+                    </a>
+
+                    <!-- ORTA KART: BLOG VE VİZYON -->
+                    <a href="/blog" class="bento-card blog-card reveal fade-up delay-200">
+                        <div class="card-top">
+                            <div class="icon-box"><i class="fa-solid fa-book-open"></i></div>
+                        </div>
+                        <h3>Vizyon & Rehberler</h3>
+                        <p>Veri mimarileri (Medallion vs.), kariyer tavsiyeleri ve sektördeki en güncel haberler.</p>
+                        <span class="action-link">Bloga Git</span>
+                    </a>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- MİNİ İSTATİSTİK / GÜVEN BÖLÜMÜ -->
+        <section class="stats-section reveal fade-bottom delay-300">
+            <div class="container stats-container">
+                <div class="stat-item">
+                    <h4>Pratik Odaklı</h4>
+                    <p>Sıfır kurulum, %100 tarayıcı içi simülasyon</p>
+                </div>
+                <div class="stat-item">
+                    <h4>Gerçek Senaryolar</h4>
+                    <p>Sektörde karşılaşılan gerçek iş problemleri</p>
+                </div>
+                <div class="stat-item">
+                    <h4>Sürekli Güncel</h4>
+                    <p>En yeni teknolojiler ve mimari trendler</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <Footer />
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const reveals = document.querySelectorAll('.reveal');
+            const observerOptions = { root: null, rootMargin: '0px', threshold: 0.15 };
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+            reveals.forEach(reveal => { observer.observe(reveal); });
+        });
+    </script>
+</body>
 </html>
+
+<style>
+    :root {
+        --bg-dark: #070b14;
+        --bg-card: #0d121c;
+        --border-light: rgba(255, 255, 255, 0.08);
+        --text-main: #f8fafc;
+        --text-muted: #94a3b8;
+        --bi-color: #10b981;  
+        --sap-color: #3b82f6; 
+        --accent: #8b5cf6;    
+    }
+
+    body { margin: 0; overflow-x: hidden; }
+    .bg-dark { background-color: var(--bg-dark); }
+    .text-main { color: var(--text-main); }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    /* --- HERO BÖLÜMÜ --- */
+    .hero { min-height: 85vh; display: flex; align-items: center; position: relative; padding: 60px 0; }
+    .glow-bg { position: absolute; width: 60vw; height: 60vw; background: radial-gradient(circle, rgba(16,185,129,0.08) 0%, rgba(7,11,20,0) 60%); top: -20%; right: -10%; border-radius: 50%; z-index: 0; pointer-events: none; }
+    .hero-container { display: flex; align-items: center; gap: 40px; position: relative; z-index: 1; }
+    .hero-text { flex: 1.1; }
+
+    .badge-modern { display: inline-flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-light); padding: 6px 16px; border-radius: 30px; font-size: 0.85rem; font-weight: 500; color: var(--text-muted); margin-bottom: 24px; backdrop-filter: blur(10px); }
+    .pulse-dot { width: 8px; height: 8px; background-color: var(--bi-color); border-radius: 50%; box-shadow: 0 0 10px var(--bi-color); animation: pulse 2s infinite; }
+    @keyframes pulse { 0% { transform: scale(0.95); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.5; } 100% { transform: scale(0.95); opacity: 1; } }
+
+    .hero-title { font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1; font-weight: 800; margin-bottom: 24px; letter-spacing: -1px; }
+    .text-gradient { background: linear-gradient(135deg, #10b981, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero-desc { font-size: 1.15rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 40px; max-width: 90%; }
+    .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+
+    .btn-glow { background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 14px 28px; border-radius: 12px; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4); transition: all 0.3s; }
+    .btn-glow:hover { transform: translateY(-3px); box-shadow: 0 15px 30px -5px rgba(16, 185, 129, 0.6); }
+    .btn-outline { background: transparent; color: var(--text-main); padding: 14px 28px; border-radius: 12px; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 10px; border: 1px solid var(--border-light); transition: all 0.3s; }
+    .btn-outline:hover { background: rgba(255, 255, 255, 0.05); transform: translateY(-3px); }
+
+    /* --- DÜZELTİLMİŞ EKOSİSTEM GÖRSELİ --- */
+    .hero-visual { flex: 0.9; display: flex; justify-content: center; align-items: center; }
+
+    .premium-ecosystem {
+        position: relative;
+        width: 400px;
+        height: 400px;
+    }
+
+    .eco-rings { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; z-index: 0; pointer-events: none; }
+    .ring { position: absolute; border-radius: 50%; border: 1px dashed rgba(255,255,255,0.08); }
+    .ring-1 { width: 70%; height: 70%; animation: spin-slow 30s linear infinite; }
+    .ring-2 { width: 100%; height: 100%; border: 1px solid rgba(255,255,255,0.03); }
+    .ring-3 { width: 40%; height: 40%; border-style: dotted; border-color: rgba(255,255,255,0.15); animation: spin-slow 20s linear infinite reverse; }
+    @keyframes spin-slow { 100% { transform: rotate(360deg); } }
+
+    /* Düğümler Sabit Boyut ve Pozisyon */
+    .p-node {
+        position: absolute;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        width: 100px;
+    }
+
+    .p-icon {
+        width: 72px; height: 72px;
+        background: rgba(13, 18, 28, 0.6);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 20px;
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .p-node:hover .p-icon { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.7); }
+    .p-icon img { width: 36px; height: 36px; object-fit: contain; }
+    .p-icon i { font-size: 2rem; }
+
+    .p-label {
+        font-size: 0.8rem; font-weight: 600; color: var(--text-main);
+        background: rgba(13, 18, 28, 0.8); padding: 6px 14px;
+        border-radius: 20px; border: 1px solid rgba(255,255,255,0.08);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4); white-space: nowrap; backdrop-filter: blur(5px);
+    }
+
+    /* Animasyon (Y Ekseninde Çakışmayan Süzülme) */
+    @keyframes float-y {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-15px); }
+    }
+
+    /* Nokta Koordinatları (Margin kullanıldı, transform çakışması önlendi) */
+    .center-node { top: 50%; left: 50%; margin-top: -65px; margin-left: -50px; z-index: 3; }
+    .center-node .p-icon { width: 90px; height: 90px; box-shadow: 0 0 40px rgba(204, 41, 43, 0.15); border-color: rgba(204, 41, 43, 0.3); }
+    .center-node .p-icon i { font-size: 2.5rem; color: #CC292B; } /* MS SQL Kırmızı */
+
+    .sap-pos { top: 0%; left: 0%; animation: float-y 6s ease-in-out infinite; }
+    .sap-icon { box-shadow: 0 0 30px rgba(0, 142, 234, 0.15); border-color: rgba(0, 142, 234, 0.3); }
+
+    .etl-pos { top: 25%; right: 0%; animation: float-y 7s ease-in-out infinite 1s; }
+    .etl-icon { box-shadow: 0 0 30px rgba(255, 105, 75, 0.15); border-color: rgba(255, 105, 75, 0.3); }
+    .etl-icon i { color: #FF694B; } /* dbt Turuncu */
+
+    .qlik-pos { bottom: 0%; left: 50%; margin-left: -50px; animation: float-y 5s ease-in-out infinite 0.5s; }
+    .qlik-icon { box-shadow: 0 0 30px rgba(0, 152, 69, 0.15); border-color: rgba(0, 152, 69, 0.3); }
+
+
+    /* --- BENTO GRID BÖLÜMÜ --- */
+    .bento-section { padding: 100px 0; background-color: #05080f; }
+    .section-heading { text-align: center; margin-bottom: 60px; }
+    .section-heading h2 { font-size: 2.5rem; font-weight: 700; margin-bottom: 15px; }
+    .section-heading p { color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+    .bento-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+
+    .bento-card { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 24px; padding: 32px; text-decoration: none; color: var(--text-main); position: relative; overflow: hidden; display: flex; flex-direction: column; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+    .bento-large { grid-column: span 2; }
+    .bento-card:not(.bento-large) { grid-column: span 2; }
+    .bento-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 0.4s; z-index: 0; }
+    .bi-card .bento-bg { background: radial-gradient(circle at bottom right, rgba(16,185,129,0.1), transparent 60%); }
+    .sap-card .bento-bg { background: radial-gradient(circle at bottom right, rgba(59,130,246,0.1), transparent 60%); }
+    .bento-card:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.2); }
+    .bento-card:hover .bento-bg { opacity: 1; }
+
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; position: relative; z-index: 1; }
+    .icon-box { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border-light); }
+    .bi-card .icon-box { color: var(--bi-color); }
+    .sap-card .icon-box { color: var(--sap-color); }
+    .egitim-card .icon-box { color: #f59e0b; }
+    .blog-card .icon-box { color: var(--accent); }
+    .level-tag { font-size: 0.75rem; background: rgba(255,255,255,0.05); padding: 4px 12px; border-radius: 20px; color: var(--text-muted); border: 1px solid var(--border-light); }
+    .bento-card h3 { font-size: 1.5rem; margin-bottom: 12px; position: relative; z-index: 1; }
+    .bento-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 24px; flex: 1; position: relative; z-index: 1; }
+    .action-link { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.95rem; position: relative; z-index: 1; transition: gap 0.2s; }
+    .bi-card .action-link { color: var(--bi-color); }
+    .sap-card .action-link { color: var(--sap-color); }
+    .egitim-card .action-link { color: #f59e0b; }
+    .blog-card .action-link { color: var(--accent); }
+    .bento-card:hover .action-link { gap: 12px; }
+
+    /* --- MİNİ İSTATİSTİKLER --- */
+    .stats-section { padding: 40px 0 80px 0; background-color: #05080f; border-bottom: 1px solid var(--border-light); }
+    .stats-container { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; border-top: 1px solid var(--border-light); padding-top: 40px; }
+    .stat-item { flex: 1; min-width: 250px; }
+    .stat-item h4 { font-size: 1.2rem; color: var(--text-main); margin-bottom: 8px; }
+    .stat-item p { color: var(--text-muted); font-size: 0.9rem; }
+
+    /* --- SCROLL REVEAL --- */
+    .reveal { opacity: 0; visibility: hidden; transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
+    .reveal.active { opacity: 1; visibility: visible; transform: translate(0, 0) scale(1); }
+    .fade-bottom { transform: translateY(50px); }
+    .fade-up { transform: translateY(30px); }
+    .fade-left { transform: translateX(-50px); }
+    .fade-right { transform: translateX(50px); }
+    .delay-100 { transition-delay: 100ms; }
+    .delay-200 { transition-delay: 200ms; }
+    .delay-300 { transition-delay: 300ms; }
+
+    /* --- MOBİL UYUM --- */
+    @media (max-width: 992px) {
+        .hero-container { flex-direction: column; text-align: center; gap: 60px; }
+        .hero-desc { margin: 0 auto 30px auto; }
+        .hero-actions { justify-content: center; }
+        .badge-modern { margin: 0 auto 24px auto; }
+        .bento-large { grid-column: span 4; }
+        .bento-card:not(.bento-large) { grid-column: span 2; }
+    }
+    @media (max-width: 768px) {
+        .bento-card:not(.bento-large) { grid-column: span 4; }
+        .hero-title { font-size: 2.2rem; }
+        .premium-ecosystem { transform: scale(0.85); margin: -40px 0; }
+    }
+</style>

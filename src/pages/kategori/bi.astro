@@ -1,0 +1,90 @@
+---
+// src/pages/kategori/bi.astro
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { SITE_TITLE } from '../../consts';
+---
+
+<html lang="tr">
+<head>
+    <BaseHead title={`İş Zekası ve Qlik | ${SITE_TITLE}`} description="Qlik Sense ile dinamik dashboard tasarımları ve iş zekası pratikleri." />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #0a0e17; 
+            --bg-darker: #02060f;
+            --text-main: #f0f6fc;
+            --text-muted: #8b949e;
+            --border-color: #30363d;
+            --bi-color: #10b981; /* BI Yeşil Tema */
+        }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-dark); color: var(--text-main); margin: 0; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+        
+        .hub-header { padding: 80px 0 60px; text-align: center; border-bottom: 1px solid var(--border-color); background: radial-gradient(circle at top, rgba(16, 185, 129, 0.1), var(--bg-dark) 70%); }
+        .hub-icon { font-size: 3.5rem; color: var(--bi-color); margin-bottom: 20px; }
+        .hub-header h1 { font-size: 2.8rem; font-weight: 700; margin-bottom: 15px; }
+        .hub-header p { color: var(--text-muted); font-size: 1.15rem; max-width: 600px; margin: 0 auto; }
+        
+        .content-section { padding: 60px 0; }
+        .section-title { font-size: 1.5rem; margin-bottom: 30px; border-left: 4px solid var(--bi-color); padding-left: 15px; }
+        
+        .grid-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+        
+        .hub-card { background-color: #0d1117; border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; transition: all 0.3s; display: flex; flex-direction: column; }
+        .hub-card:hover { transform: translateY(-5px); border-color: var(--bi-color); box-shadow: 0 10px 30px rgba(16, 185, 129, 0.1); }
+        .card-tag { font-size: 0.75rem; background: rgba(16, 185, 129, 0.2); color: var(--bi-color); padding: 4px 10px; border-radius: 12px; align-self: flex-start; margin-bottom: 15px; font-weight: 600; }
+        .hub-card h3 { font-size: 1.25rem; margin: 0 0 10px 0; line-height: 1.4; }
+        .hub-card p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px; flex: 1; }
+        .hub-card a { color: var(--bi-color); text-decoration: none; font-weight: 600; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 8px; transition: gap 0.2s; }
+        .hub-card a:hover { gap: 12px; }
+    </style>
+</head>
+<body>
+    <Header />
+    
+    <main>
+        <header class="hub-header">
+            <div class="container">
+                <i class="fa-solid fa-chart-pie hub-icon"></i>
+                <h1>İş Zekası ve Qlik</h1>
+                <p>Karmaşık veri yığınlarını yönetici seviyesinde anlaşılır, interaktif ve dinamik dashboard'lara dönüştürme sanatı.</p>
+            </div>
+        </header>
+
+        <section class="content-section">
+            <div class="container">
+                <h2 class="section-title">Rehberler ve Projeler</h2>
+                <div class="grid-layout">
+                    
+                    <article class="hub-card">
+                        <span class="card-tag">Örnek Proje</span>
+                        <h3>Spor Verileriyle Dashboard: Turnuva Fikstür Analizi</h3>
+                        <p>Şirket içi voleybol turnuvaları veya spor müsabakaları için Qlik Sense kullanarak fikstür verilerini modelleme ve dinamik raporlama ekranları tasarlama ipuçları.</p>
+                        <a href="#">Makaleyi Oku <i class="fa-solid fa-arrow-right"></i></a>
+                    </article>
+
+                    <article class="hub-card">
+                        <span class="card-tag">Teknik Rehber</span>
+                        <h3>Qlik Sense'de Performanslı Veri Modeli Kurmak</h3>
+                        <p>Set Analysis ve gelişmiş fonksiyonlar kullanarak büyük veri setlerinde (Big Data) bile hızlı çalışan iş zekası uygulamaları tasarlamanın yolları.</p>
+                        <a href="#">Makaleyi Oku <i class="fa-solid fa-arrow-right"></i></a>
+                    </article>
+
+                    <article class="hub-card" style="opacity: 0.7;">
+                        <span class="card-tag" style="background: #1f2937; color: #9ca3af;">İnteraktif</span>
+                        <h3>Dashboard Optimizasyon Atölyesi</h3>
+                        <p>Hatalı kurgulanmış bir dashboard'u alıp, en iyi pratikleri (Best Practices) uygulayarak adım adım nasıl optimize edeceğinizi test edin.</p>
+                        <a href="#" style="color: #9ca3af; cursor: not-allowed;"><i class="fa-solid fa-clock"></i> Çok Yakında</a>
+                    </article>
+
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <Footer />
+</body>
+</html>

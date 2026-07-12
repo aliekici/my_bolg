@@ -1,63 +1,614 @@
 ---
-import AboutHeroImage from '../assets/blog-placeholder-about.jpg';
-import Layout from '../layouts/BlogPost.astro';
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE } from '../consts';
 ---
 
-<Layout
-	title="About Me"
-	description="Lorem ipsum dolor sit amet"
-	pubDate={new Date('August 08 2021')}
-	heroImage={AboutHeroImage}
->
-	<p>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-		labore et dolore magna aliqua. Vitae ultricies leo integer malesuada nunc vel risus commodo
-		viverra. Adipiscing enim eu turpis egestas pretium. Euismod elementum nisi quis eleifend quam
-		adipiscing. In hac habitasse platea dictumst vestibulum. Sagittis purus sit amet volutpat. Netus
-		et malesuada fames ac turpis egestas. Eget magna fermentum iaculis eu non diam phasellus
-		vestibulum lorem. Varius sit amet mattis vulputate enim. Habitasse platea dictumst quisque
-		sagittis. Integer quis auctor elit sed vulputate mi. Dictumst quisque sagittis purus sit amet.
-	</p>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <BaseHead title={"Hakkımda - " + SITE_TITLE} description={"Ali Rıza Ekici - İş Zekâsı Geliştiricisi ve Endüstri Mühendisi"} />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js" crossorigin="anonymous" is:inline></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 
-	<p>
-		Morbi tristique senectus et netus. Id semper risus in hendrerit gravida rutrum quisque non
-		tellus. Habitasse platea dictumst quisque sagittis purus sit amet. Tellus molestie nunc non
-		blandit massa. Cursus vitae congue mauris rhoncus. Accumsan tortor posuere ac ut. Fringilla urna
-		porttitor rhoncus dolor. Elit ullamcorper dignissim cras tincidunt lobortis. In cursus turpis
-		massa tincidunt dui ut ornare lectus. Integer feugiat scelerisque varius morbi enim nunc.
-		Bibendum neque egestas congue quisque egestas diam. Cras ornare arcu dui vivamus arcu felis
-		bibendum. Dignissim suspendisse in est ante in nibh mauris. Sed tempus urna et pharetra pharetra
-		massa massa ultricies mi.
-	</p>
+    <style>
+        /* YENİ KARANLIK TEMA VE PREMIUM TASARIM DEĞİŞKENLERİ */
+        :root {
+            --bg-dark: #0a0e17; 
+            --nav-bg: #0d1117;
+            --card-bg: #111827;
+            --text-main: #f0f6fc;
+            --text-muted: #8b949e;
+            --accent: #f59e0b; /* Turuncu/Sarı vurgu */
+            --accent-cool: #14b8a6; /* Teal vurgu (Eski tasarımdaki rengin modern hali) */
+            --border-color: #30363d;
+            --box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
+        }
 
-	<p>
-		Mollis nunc sed id semper risus in. Convallis a cras semper auctor neque. Diam sit amet nisl
-		suscipit. Lacus viverra vitae congue eu consequat ac felis donec. Egestas integer eget aliquet
-		nibh praesent tristique magna sit amet. Eget magna fermentum iaculis eu non diam. In vitae
-		turpis massa sed elementum. Tristique et egestas quis ipsum suspendisse ultrices. Eget lorem
-		dolor sed viverra ipsum. Vel turpis nunc eget lorem dolor sed viverra. Posuere ac ut consequat
-		semper viverra nam. Laoreet suspendisse interdum consectetur libero id faucibus. Diam phasellus
-		vestibulum lorem sed risus ultricies tristique. Rhoncus dolor purus non enim praesent elementum
-		facilisis. Ultrices tincidunt arcu non sodales neque. Tempus egestas sed sed risus pretium quam
-		vulputate. Viverra suspendisse potenti nullam ac tortor vitae purus faucibus ornare. Fringilla
-		urna porttitor rhoncus dolor purus non. Amet dictum sit amet justo donec enim.
-	</p>
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
 
-	<p>
-		Mattis ullamcorper velit sed ullamcorper morbi tincidunt. Tortor posuere ac ut consequat semper
-		viverra. Tellus mauris a diam maecenas sed enim ut sem viverra. Venenatis urna cursus eget nunc
-		scelerisque viverra mauris in. Arcu ac tortor dignissim convallis aenean et tortor at. Curabitur
-		gravida arcu ac tortor dignissim convallis aenean et tortor. Egestas tellus rutrum tellus
-		pellentesque eu. Fusce ut placerat orci nulla pellentesque dignissim enim sit amet. Ut enim
-		blandit volutpat maecenas volutpat blandit aliquam etiam. Id donec ultrices tincidunt arcu. Id
-		cursus metus aliquam eleifend mi.
-	</p>
+        .about-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 3em;
+            position: relative;
+            z-index: 1;
+            margin-top: 2em;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 0 20px;
+        }
 
-	<p>
-		Tempus quam pellentesque nec nam aliquam sem. Risus at ultrices mi tempus imperdiet. Id porta
-		nibh venenatis cras sed felis eget velit. Ipsum a arcu cursus vitae. Facilisis magna etiam
-		tempor orci eu lobortis elementum. Tincidunt dui ut ornare lectus sit. Quisque non tellus orci
-		ac. Blandit libero volutpat sed cras. Nec tincidunt praesent semper feugiat nibh sed pulvinar
-		proin gravida. Egestas integer eget aliquet nibh praesent tristique magna.
-	</p>
-</Layout>
+        @media (min-width: 900px) {
+            .about-wrapper {
+                flex-direction: row;
+                align-items: flex-start;
+            }
+            .sidebar {
+                flex: 1;
+                max-width: 350px;
+                position: sticky;
+                top: 90px; /* Navbar'dan sonra yapışması için */
+            }
+            .content {
+                flex: 2;
+            }
+        }
+
+        /* PROFİL KARTI (SOL MENÜ) */
+        .profile-card {
+            background-color: var(--nav-bg);
+            border: 1px solid var(--border-color);
+            padding: 2.5em 2em;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: var(--box-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-glow {
+            position: absolute;
+            top: -50px;
+            left: -50px;
+            width: 150px;
+            height: 150px;
+            background-color: rgba(20, 184, 166, 0.15);
+            border-radius: 50%;
+            filter: blur(50px);
+            z-index: 0;
+        }
+
+        .profile-img {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-cool);
+            margin: 0 auto 1.5em auto;
+            object-fit: cover;
+            display: block;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 0 20px rgba(20, 184, 166, 0.2);
+        }
+
+        .profile-card h1 {
+            font-size: 1.6em;
+            margin-bottom: 0.2em;
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+
+        .profile-card .subtitle {
+            color: var(--accent-cool);
+            font-weight: 600;
+            margin-bottom: 1.5em;
+            line-height: 1.4;
+            position: relative;
+            z-index: 1;
+        }
+
+        .info-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 1.5em 0;
+            text-align: left;
+            font-size: 0.9em;
+            position: relative;
+            z-index: 1;
+        }
+
+        .info-list li {
+            border-bottom: 1px solid var(--border-color);
+            padding: 1em 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1em;
+        }
+
+        .info-list li:last-child { border-bottom: none; }
+        
+        .info-label { color: var(--text-muted); display: flex; align-items: center; gap: 8px; }
+        .info-label i { width: 16px; text-align: center; }
+        .info-value { color: var(--text-main); font-weight: 500; text-align: right; }
+        
+        .info-link { color: var(--text-main); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+        .info-link:hover { color: var(--accent); }
+
+        .social-links {
+            display: flex;
+            gap: 1em;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+            margin-top: 1em;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background-color: rgba(20, 184, 166, 0.1);
+            border-color: var(--accent-cool);
+            color: var(--accent-cool);
+            transform: translateY(-3px);
+        }
+
+        /* İÇERİK ALANI (SAĞ KISIM) */
+        .content-section { margin-bottom: 4em; }
+
+        .terminal-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            color: white;
+            letter-spacing: -1px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5em;
+        }
+
+        .prompt { font-family: 'Fira Code', monospace; color: var(--text-muted); margin-right: 15px; font-weight: 400; }
+        .cursor { font-family: 'Fira Code', monospace; color: var(--accent); animation: blink 1s step-end infinite; margin-left: 2px; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .content-section h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5em;
+            margin-bottom: 1.5em;
+            font-size: 1.5em;
+            color: white;
+        }
+        .content-section h3 i { color: var(--accent); }
+
+        .content-section p {
+            color: #cbd5e1;
+            font-size: 1.05em;
+            margin-bottom: 1.2em;
+        }
+        .content-section strong { color: white; }
+
+        /* DENEYİM ZAMAN ÇİZELGESİ */
+        .timeline {
+            position: relative;
+            padding-left: 1.8em;
+            border-left: 2px solid var(--border-color);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2.5em;
+        }
+
+        .timeline-item:last-child { margin-bottom: 0; }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2.25em;
+            top: 0.35em;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--bg-dark);
+            border: 3px solid var(--accent-cool);
+            box-shadow: 0 0 10px rgba(20, 184, 166, 0.4);
+        }
+
+        .timeline-item .role { font-weight: bold; font-size: 1.15em; color: white; margin-bottom: 0.2em; }
+        .timeline-item .meta { font-size: 0.9em; color: var(--text-muted); margin-bottom: 1em; }
+        .timeline-item ul { margin: 0; padding-left: 1.2em; font-size: 0.95em; color: #cbd5e1; }
+        .timeline-item ul li { margin-bottom: 0.6em; }
+        .timeline-item ul li strong { color: var(--accent-cool); }
+
+        .highlight-box {
+            background-color: rgba(245, 158, 11, 0.05);
+            border-left: 4px solid var(--accent);
+            padding: 1.2em;
+            border-radius: 0 8px 8px 0;
+            margin-top: 2em;
+            font-size: 0.95em;
+            color: #cbd5e1;
+            border-top: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* YETENEKLER GRID */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5em;
+        }
+
+        @media (min-width: 768px) { .skills-grid { grid-template-columns: 1fr 1fr; } }
+
+        .skill-box {
+            background-color: var(--nav-bg);
+            border: 1px solid var(--border-color);
+            padding: 1.8em;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .skill-box:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .skill-box h4 {
+            font-size: 1.15em;
+            margin-top: 0;
+            margin-bottom: 0.8em;
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+            color: white;
+        }
+
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6em;
+            margin-top: 1.2em;
+        }
+
+        .tag-container code {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85em;
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            padding: 4px 10px;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+
+        .skill-box:hover .tag-container code {
+            border-color: rgba(20, 184, 166, 0.3);
+            color: var(--text-main);
+        }
+
+        /* PROJE KARTLARI */
+        .project-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.2em;
+        }
+
+        @media (min-width: 768px) { .project-grid { grid-template-columns: 1fr 1fr; } }
+
+        .project-card {
+            background-color: var(--nav-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1.5em;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .project-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+            background-color: var(--border-color); transition: background-color 0.3s;
+        }
+
+        .project-card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.1); }
+        .project-card:hover::before { background-color: var(--accent); }
+
+        .project-card h4 { margin: 0 0 0.8em 0; font-size: 1.05em; color: white; }
+        .project-card p { font-size: 0.9em; margin: 0; color: var(--text-muted); line-height: 1.6; }
+
+        /* SERTİFİKALAR */
+        .cert-list {
+            list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr; gap: 0.8em;
+        }
+
+        @media (min-width: 768px) { .cert-list { grid-template-columns: 1fr 1fr; } }
+
+        .cert-list li {
+            font-size: 0.9em;
+            background-color: var(--nav-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.8em 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1em;
+            transition: border-color 0.2s;
+        }
+        .cert-list li:hover { border-color: var(--accent-cool); }
+        .cert-list li span.cert-name { color: var(--text-main); font-weight: 500; }
+        .cert-list li span.cert-date { color: var(--text-muted); white-space: nowrap; font-size: 0.85em; font-family: 'Fira Code', monospace; }
+
+        /* SALLANAN LİNKEDIN İKONU */
+        .shake-icon { display: inline-block; animation: shake 2.5s infinite ease-in-out; color: #0a66c2; }
+        @keyframes shake {
+            0%, 100% { transform: rotate(0deg); }
+            10%, 30%, 50%, 70%, 90% { transform: rotate(-8deg); }
+            20%, 40%, 60%, 80% { transform: rotate(8deg); }
+        }
+
+        /* DİNAMİK ARKA PLAN ANİMASYONU */
+        .dynamic-bg {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none; z-index: 0; overflow: hidden;
+        }
+        .float-item {
+            position: absolute; bottom: -100px;
+            color: var(--accent-cool); opacity: 0.03;
+            font-family: 'Fira Code', monospace; font-weight: bold; font-size: 2rem;
+            animation: floatUp linear infinite;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.04; }
+            90% { opacity: 0.04; }
+            100% { transform: translateY(-120vh) rotate(90deg); opacity: 0; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dynamic-bg">
+        <div class="float-item" style="left: 10%; animation-duration: 25s; font-size: 2.5rem;">SELECT *</div>
+        <div class="float-item" style="left: 85%; animation-duration: 20s; animation-delay: 2s; color: var(--accent);">JOIN</div>
+        <div class="float-item" style="left: 45%; animation-duration: 22s; animation-delay: 5s;">ETL</div>
+        <div class="float-item" style="left: 70%; animation-duration: 28s; animation-delay: 1s; font-size: 3rem;">{ }</div>
+        <div class="float-item" style="left: 20%; animation-duration: 24s; animation-delay: 7s; color: var(--accent);">GROUP BY</div>
+        <div class="float-item" style="left: 90%; animation-duration: 18s; animation-delay: 4s;">&lt;/&gt;</div>
+        <div class="float-item" style="left: 5%; animation-duration: 26s; animation-delay: 9s;">SAP</div>
+    </div>
+
+    <Header />
+
+    <main>
+        <div class="about-wrapper">
+
+            <!-- SOL BÖLÜM: PROFİL KARTI -->
+            <aside class="sidebar">
+                <div class="profile-card">
+                    <div class="profile-glow"></div>
+                    <img src="https://ui-avatars.com/api/?name=Ali+Riza+Ekici&background=0d1117&color=14b8a6&size=256" alt="Ali Rıza Ekici" class="profile-img" />
+                    <h1>Ali Rıza EKİCİ</h1>
+                    <p class="subtitle">İş Zekâsı Geliştiricisi <br> <span style="font-size: 0.85em; color: var(--text-muted); font-weight: 400;">Endüstri Mühendisi</span></p>
+
+                    <ul class="info-list">
+                        <li>
+                            <span class="info-label"><i class="fa-solid fa-location-dot"></i> Konum</span>
+                            <span class="info-value">Türkiye</span>
+                        </li>
+                        <li>
+                            <span class="info-label"><i class="fa-solid fa-envelope"></i> Email</span>
+                            <a class="info-link" href="mailto:aliekici329@gmail.com">aliekici329@gmail.com</a>
+                        </li>
+                        <li>
+                            <span class="info-label"><i class="fa-brands fa-linkedin shake-icon"></i> LinkedIn</span>
+                            <a class="info-link" href="https://www.linkedin.com/in/alirizaekici/" target="_blank" rel="noopener noreferrer" style="color: var(--accent-cool); text-decoration: underline;">Profilime Git</a>
+                        </li>
+                        <li>
+                            <span class="info-label"><i class="fa-solid fa-phone"></i> Telefon</span>
+                            <span class="info-value">+90 539 944 3374</span>
+                        </li>
+                        <li>
+                            <span class="info-label"><i class="fa-solid fa-briefcase"></i> Şirket</span>
+                            <span class="info-value">Erciyes Anadolu Hld.</span>
+                        </li>
+                        <li>
+                            <span class="info-label"><i class="fa-solid fa-graduation-cap"></i> Eğitim</span>
+                            <span class="info-value" style="font-size: 0.9em; max-width: 140px; line-height: 1.3;">End. Müh. Yüksek Lisans (2025-Devam)</span>
+                        </li>
+                    </ul>
+
+                    <div class="social-links">
+                        <a href="https://www.linkedin.com/in/alirizaekici/?skipRedirect=true" target="_blank" title="LinkedIn">
+                            <i class="fa-brands fa-linkedin-in"></i>
+                        </a>
+                        <a href="https://alirizadigital.com" target="_blank" title="Web Sitesi">
+                            <i class="fa-solid fa-globe"></i>
+                        </a>
+                        <a href="https://github.com" target="_blank" title="GitHub">
+                            <i class="fa-brands fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- SAĞ BÖLÜM: İÇERİK -->
+            <section class="content">
+
+                <!-- Hakkımda -->
+                <div class="content-section">
+                    <h2 class="terminal-title">
+                        <span class="prompt">&gt;_</span> Hakkımda<span class="cursor">|</span>
+                    </h2>
+                    <p>
+                        2002 yılında Nevşehir'de doğdum. Erciyes Üniversitesi <strong>Endüstri Mühendisliği</strong> bölümünden 2024 Ağustos ayında (3,34 ortalama ile) mezun oldum ve halihazırda aynı bölümde <strong>yüksek lisans</strong> eğitimime devam ediyorum. Mühendislik eğitimim boyunca süreç iyileştirme ve karar destek sistemlerine duyduğum ilgi, beni verinin büyüleyici dünyasına çekti.
+                    </p>
+                    <p>
+                        Şu anda <strong>Erciyes Anadolu Holding</strong> bünyesinde <strong>İş Zekâsı ve ETL Uzman Yardımcısı</strong> olarak görev alıyorum. İstikbal ve Bellona gibi grup şirketlerinin devasa veri setleriyle çalışarak; uçtan uca QlikView'dan Qlik Sense'e geçiş (migration) projelerini yönetme, SAP entegrasyonlarını sağlama ve N-Printing/Q-Mail altyapılarını kurgulama konularında derinlemesine tecrübe kazandım.
+                    </p>
+                    <p>
+                        Çok katmanlı ETL mimarisi ve QMC (Qlik Admin) yönetimi yetkinliklerimi, endüstri mühendisliğinden gelen analitik bakış açımla birleştirerek kurumsal raporlama süreçlerini optimize ediyorum.
+                    </p>
+                </div>
+
+                <!-- Deneyim -->
+                <div class="content-section">
+                    <h3><i class="fa-solid fa-briefcase"></i> Deneyim</h3>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="role">İş Zekâsı ve ETL Uzman Yardımcısı</div>
+                            <div class="meta">Erciyes Anadolu Holding, Kayseri / Hibrit · Ekim 2024 - Devam ediyor</div>
+                            <ul>
+                                <li><strong>Veri Mimarisi:</strong> İstikbal ve Bellona'nın devasa veri setleri için Star/Snowflake modelleme ile yüksek performanslı DWH altyapıları tasarlamak.</li>
+                                <li><strong>Migration:</strong> Legacy QlikView raporlarının Qlik Sense ortamına uçtan uca aktarımını ve mimari optimizasyonunu yönetmek.</li>
+                                <li><strong>Otomasyon:</strong> N-Printing ve Q-Mail ile otomatik raporlama döngüleri kurgulayarak operasyonel verimlilik sağlamak.</li>
+                                <li><strong>Qlik Admin:</strong> QMC üzerinden lisans, reload jobs ve performans takibi; Section Access ile satır bazlı veri güvenliği.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong style="color: var(--accent);">Staj Deneyimi:</strong> Kariyerime başlamadan önce Sersim/Simfer, Yataş, Boytrans Lojistik, Doqu Home, Kayseri Model Fabrika ve Mondi Home gibi farklı sektörlerden 6 şirkette SAP, Power BI ve yalın üretim odaklı stajlar yaparak sahada geniş bir tecrübe edindim.
+                    </div>
+                </div>
+
+                <!-- Yetenekler -->
+                <div class="content-section">
+                    <h3><i class="fa-solid fa-layer-group"></i> Yetenekler</h3>
+                    <div class="skills-grid">
+                        <div class="skill-box">
+                            <h4><i class="fa-solid fa-chart-pie" style="color: var(--accent-cool);"></i> BI & Raporlama</h4>
+                            <p style="font-size: 0.9em; margin-bottom: 0; color: var(--text-muted);">İnteraktif dashboard tasarımı, otomatik raporlama döngüleri ve rol bazlı veri güvenliği (Section Access / RLS).</p>
+                            <div class="tag-container">
+                                <code>Qlik Sense</code>
+                                <code>QlikView</code>
+                                <code>Power BI</code>
+                                <code>N-Printing</code>
+                                <code>Q-Mail</code>
+                            </div>
+                        </div>
+
+                        <div class="skill-box">
+                            <h4><i class="fa-solid fa-database" style="color: var(--accent);"></i> Veri Müh. & ETL</h4>
+                            <p style="font-size: 0.9em; margin-bottom: 0; color: var(--text-muted);">SAP, MS SQL kaynaklarından veri çekme; Star/Snowflake modelleme, SSAS küpleri ve yüksek performanslı DWH altyapıları.</p>
+                            <div class="tag-container">
+                                <code>İleri SQL</code>
+                                <code>SSIS & SSAS Küp</code>
+                                <code>Qlik Load Script</code>
+                                <code>DWH Modelleme</code>
+                                <code>Medallion Mimarisi</code>
+                            </div>
+                        </div>
+
+                        <div class="skill-box">
+                            <h4><i class="fa-solid fa-cubes" style="color: var(--accent-cool);"></i> ERP & Sistemler</h4>
+                            <p style="font-size: 0.9em; margin-bottom: 0; color: var(--text-muted);">SAP ERP modüllerinde veri entegrasyonu, veri ambarı modellemesi ve iş süreçleri raporlaması konusunda uygulamalı tecrübe.</p>
+                            <div class="tag-container">
+                                <code>SAP FI / MM / SD</code>
+                                <code>SAP Veri Ambarı</code>
+                                <code>QMC Admin</code>
+                            </div>
+                        </div>
+
+                        <div class="skill-box">
+                            <h4><i class="fa-solid fa-code" style="color: var(--accent);"></i> Analiz & Otomasyon</h4>
+                            <p style="font-size: 0.9em; margin-bottom: 0; color: var(--text-muted);">Veri hikayeleştirme, Excel çözümleri, iş akışı otomasyonu ve yapay zeka (lokal AI) destekli çözümler.</p>
+                            <div class="tag-container">
+                                <code>Python</code>
+                                <code>Excel</code>
+                                <code>n8n Otomasyon</code>
+                                <code>Lokal AI</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Projeler -->
+                <div class="content-section">
+                    <h3><i class="fa-solid fa-diagram-project"></i> Öne Çıkan Projeler</h3>
+                    <div class="project-grid">
+                        <div class="project-card">
+                            <h4>QlikView → Qlik Sense Modernizasyonu</h4>
+                            <p>İstikbal Mobilya bünyesindeki tüm legacy QlikView raporlarının modern Qlik Sense mimarisine aktarılması sürecine liderlik ettim.</p>
+                        </div>
+                        <div class="project-card">
+                            <h4>Q-Mail Kurumsal Bildirim Entegrasyonu</h4>
+                            <p>Şirket genelinde veri odaklı karar almayı hızlandırmak için dinamik veri uyarıları ve otomatik mail bildirim süreçleri kurguladım.</p>
+                        </div>
+                        <div class="project-card">
+                            <h4>N-Printing Raporlama Yönetimi</h4>
+                            <p>Bellona Mali İşler ve grup şirketleri için karmaşık finansal/operasyonel raporların otomatik dağıtım kanallarını tasarladım.</p>
+                        </div>
+                        <div class="project-card">
+                            <h4>SAP FI Risk Analizi ve Bayi Karnesi</h4>
+                            <p>Erciyes Anadolu Holding ana bayilerinin SAP FI verilerini modelleyerek dinamik risk karneleri ve üst yönetim dashboardları oluşturdum.</p>
+                        </div>
+                        <div class="project-card">
+                            <h4>Üretim ve Stok Veri Entegrasyonu (ETL)</h4>
+                            <p>SAP COOIS ve MB51 tablolarını kullanarak İstikbal, Bellona ve Doqu Home için stok ve üretim ETL süreçlerini tamamladım.</p>
+                        </div>
+                        <!-- Profesyonel hedeflerini yansıtan yeni eklenmiş vizyon projesi -->
+                        <div class="project-card">
+                            <h4>SQL ve Medallion Veri Modelleme Eğitim Seti</h4>
+                            <p>Kursiyerler için 10.000+ satırlık gerçekçi SAP (SD, MM, FI) veritabanı kurgulayarak uçtan uca uygulamalı eğitim içerikleri planlıyorum.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sertifikalar -->
+                <div class="content-section">
+                    <h3><i class="fa-solid fa-certificate"></i> Sertifikalar</h3>
+                    <ul class="cert-list">
+                        <li><span class="cert-name">SAP-ABAP</span> <span class="cert-date">Mar 2025</span></li>
+                        <li><span class="cert-name">Qlik Sense Veri Modelleme ve Görselleştirme</span> <span class="cert-date">Kas 2024</span></li>
+                        <li><span class="cert-name">İleri Düzey Excel | Dashboard | Excel İpuçları</span> <span class="cert-date">Haz 2024</span></li>
+                        <li><span class="cert-name">SAP MM: Key User ve Modül Eğitimi</span> <span class="cert-date">May 2024</span></li>
+                        <li><span class="cert-name">SAP ERP Uygulama ve İş Süreçleri Raporlama</span> <span class="cert-date">May 2024</span></li>
+                        <li><span class="cert-name">Power Query | Power Pivot | Power BI | DAX</span> <span class="cert-date">Mar 2024</span></li>
+                        <li><span class="cert-name">Sabancı "Yarınlar Seninle Mümkün" Programı</span> <span class="cert-date">Şub 2024</span></li>
+                        <li><span class="cert-name">BTK Akademi İngilizce A1-A2-B1</span> <span class="cert-date">Mar 2024</span></li>
+                        <li><span class="cert-name">Yalın Üretim Sertifikası (KMF)</span> <span class="cert-date">Şub 2023</span></li>
+                        <li><span class="cert-name">SQL Bootcamp (Techcareer)</span> <span class="cert-date">Oca 2023</span></li>
+                    </ul>
+                </div>
+
+            </section>
+
+        </div>
+    </main>
+
+    <Footer />
+</body>
+</html>

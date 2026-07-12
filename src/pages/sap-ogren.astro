@@ -1,0 +1,1572 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SAP | İnteraktif Öğren</title>
+
+<script src="https://cdn.tailwindcss.com" is:inline></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js" crossorigin="anonymous" is:inline></script>
+
+<script is:inline>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          pixel: ['"Press Start 2P"', 'cursive'],
+          sans: ['Outfit', 'sans-serif'],
+        },
+        colors: {
+          bg: '#0a0e1a',
+          panel: '#111827',
+          panel2: '#161f30',
+          border: '#232f46',
+          neon: '#39ff88',
+          neonBlue: '#4fd6ff',
+          neonPink: '#ff5fa2',
+          gold: '#ffc84a',
+          sapBlue: '#008fd3',
+        },
+        boxShadow: {
+          pixel: '4px 4px 0px 0px rgba(0,0,0,0.5)',
+          neon: '0 0 12px rgba(57,255,136,0.55)',
+          sapNeon: '0 0 12px rgba(0,143,211,0.55)',
+        },
+      },
+    },
+  };
+</script>
+
+<style is:global>
+  body {
+    background-color: #0a0e1a;
+    background-image:
+      radial-gradient(circle at 15% 10%, rgba(0,143,211,0.08), transparent 35%),
+      radial-gradient(circle at 85% 0%, rgba(79,214,255,0.08), transparent 35%);
+  }
+
+  code {
+    background-color: #161f30 !important;
+    color: #4fd6ff !important;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-weight: bold;
+  }
+
+  .pixel-corners {
+    clip-path: polygon(
+      0px 8px, 8px 8px, 8px 0px,
+      calc(100% - 8px) 0px, calc(100% - 8px) 8px, 100% 8px,
+      100% calc(100% - 8px), calc(100% - 8px) calc(100% - 8px), calc(100% - 8px) 100%,
+      8px 100%, 8px calc(100% - 8px), 0px calc(100% - 8px)
+    );
+  }
+
+  .btn-pixel {
+    box-shadow: 4px 4px 0px 0px #04321a;
+    transition: transform 0.08s ease, box-shadow 0.08s ease;
+  }
+  .btn-pixel-blue {
+    box-shadow: 4px 4px 0px 0px #003a57;
+    transition: transform 0.08s ease, box-shadow 0.08s ease;
+  }
+  .btn-pixel-gold {
+    box-shadow: 4px 4px 0px 0px #664d00;
+    transition: transform 0.08s ease, box-shadow 0.08s ease;
+  }
+  .btn-pixel:active, .btn-pixel-blue:active, .btn-pixel-gold:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0px 0px 0px 0px transparent;
+  }
+
+  .scanline-badge {
+    background-image: repeating-linear-gradient(
+      45deg,
+      rgba(0,143,211,0.12) 0px,
+      rgba(0,143,211,0.12) 2px,
+      transparent 2px,
+      transparent 6px
+    );
+  }
+
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-track { background: #0a0e1a; }
+  ::-webkit-scrollbar-thumb { background: #232f46; border-radius: 8px; }
+
+  .glow-text { text-shadow: 0 0 10px rgba(0,143,211,0.6); }
+  .exercise-row:hover { background-color: #1b2436; cursor: pointer; }
+
+  .modal-overlay { display: none; }
+  .modal-overlay.active { display: flex; }
+  .code-editor { font-family: 'Courier New', Courier, monospace; font-weight: bold; font-size: 1.2rem; text-transform: uppercase; }
+
+  #editor-container {
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+
+  .custom-scroll::-webkit-scrollbar { width: 8px; }
+  .custom-scroll::-webkit-scrollbar-thumb { background: #232f46; border-radius: 6px; }
+
+  .tf-input, .tf-select {
+    width: 100%;
+    background: #0a0e1a;
+    border: 1px solid #232f46;
+    color: #fff;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+    outline: none;
+  }
+  .tf-input:focus, .tf-select:focus { border-color: #008fd3; }
+  .tf-label { font-size: 10px; color: #8b96ab; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+
+  table.se16n-table th, table.se16n-table td { white-space: nowrap; }
+
+  /* ============================= CLASSIC SAP GUI REPLICA ============================= */
+  .sap-window {
+    font-family: Arial, Tahoma, "Segoe UI", sans-serif;
+    color: #000;
+    background: #eceff1;
+    border: 1px solid #0a3d67;
+  }
+  .sap-titlebar {
+    background: linear-gradient(180deg, #5b93c9 0%, #2f6bab 45%, #0e4a82 100%);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 6px;
+    font-size: 12px;
+    font-weight: bold;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.35);
+  }
+  .sap-titlebar .sap-title-icons { display: flex; gap: 3px; }
+  .sap-titlebar .win-btn {
+    width: 17px; height: 15px;
+    background: linear-gradient(180deg, #f5f5f5, #c8c8c8);
+    border: 1px solid #5c6672;
+    color: #000;
+    font-size: 9px;
+    font-weight: bold;
+    display: flex; align-items: center; justify-content: center;
+    line-height: 1;
+    text-shadow: none;
+  }
+  .sap-menubar {
+    background: #ece9d8;
+    border-bottom: 1px solid #aca899;
+    display: flex;
+    gap: 14px;
+    padding: 3px 8px;
+    font-size: 11px;
+    color: #000;
+  }
+  .sap-menubar span { cursor: default; padding: 1px 3px; }
+  .sap-menubar span:hover { background: #316ac5; color: #fff; }
+  .sap-toolbar {
+    background: #ece9d8;
+    border-bottom: 1px solid #aca899;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 3px 5px;
+  }
+  .sap-tool-btn {
+    width: 25px; height: 23px;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    color: #2b2b2b;
+    font-size: 12px;
+    background: transparent;
+    cursor: pointer;
+  }
+  .sap-tool-btn:hover { border-color: #7fa8d9; background: #dcebfb; }
+  .sap-tool-btn:active { background: #b8d3f5; }
+  .sap-tool-sep { width: 1px; height: 20px; background: #b7b39f; margin: 0 4px; }
+  .sap-tabstrip { display: flex; gap: 2px; background: #c8c4b8; padding: 6px 6px 0; flex-wrap: wrap; }
+  .sap-tab {
+    padding: 5px 14px;
+    font-size: 11px;
+    font-weight: bold;
+    background: #d4d0c8;
+    border: 1px solid #8c8c8c;
+    border-bottom: none;
+    color: #565656;
+    position: relative;
+    top: 1px;
+    cursor: pointer;
+  }
+  .sap-tab:hover { background: #dcd8cc; }
+  .sap-tab.active { background: #eceff1; color: #000; border-bottom: 1px solid #eceff1; top: 0; }
+  .sap-body { background: #eceff1; border-top: 1px solid #fff; padding: 14px; }
+  .sap-groupbox {
+    border: 1px solid #9c9c9c;
+    padding: 14px 12px 12px;
+    margin-bottom: 14px;
+    position: relative;
+    background: #eceff1;
+  }
+  .sap-groupbox .gb-label {
+    position: absolute;
+    top: -9px; left: 10px;
+    background: #eceff1;
+    padding: 0 6px;
+    font-size: 11px;
+    font-weight: bold;
+    color: #0a3d67;
+  }
+  .sap-field-label { font-size: 11px; color: #000; margin-bottom: 2px; display: block; }
+  .sap-required-mark { color: #b30000; font-weight: bold; }
+  .sap-field-input {
+    border: 1px solid #6b6b6b;
+    background: #fff;
+    padding: 3px 5px;
+    font-size: 12px;
+    width: 100%;
+    height: 23px;
+    color: #000;
+  }
+  .sap-field-input:focus { outline: 2px solid #316ac5; outline-offset: -1px; }
+  .sap-field-required .sap-field-input { background: #ffffcc; }
+  select.sap-field-input { height: 23px; }
+  .sap-btn {
+    background: linear-gradient(180deg, #fefefe, #d4d0c8);
+    border: 1px solid #6b6b6b;
+    box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080;
+    padding: 5px 14px;
+    font-size: 11px;
+    font-weight: bold;
+    color: #000;
+    cursor: pointer;
+  }
+  .sap-btn:active { box-shadow: inset -1px -1px 0 #fff, inset 1px 1px 0 #808080; }
+  .sap-statusbar {
+    background: #ece9d8;
+    border-top: 1px solid #aca899;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    font-size: 11px;
+    color: #333;
+  }
+  table.sap-alv {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 11px;
+    font-family: Arial, sans-serif;
+    color: #000;
+  }
+  table.sap-alv th {
+    background: linear-gradient(180deg, #f5f5f5, #dcdcdc);
+    border: 1px solid #b8b8b8;
+    padding: 3px 6px;
+    text-align: left;
+    font-weight: bold;
+    white-space: nowrap;
+  }
+  table.sap-alv td {
+    border: 1px solid #d8d8d8;
+    padding: 2px 6px;
+    white-space: nowrap;
+  }
+  table.sap-alv tbody tr:nth-child(even) td { background: #f2f6fc; }
+  table.sap-alv tbody tr:hover td { background: #d9ebfc; }
+</style>
+</head>
+
+<body class="bg-bg text-gray-200 font-sans antialiased">
+
+<header class="sticky top-0 z-50 bg-bg/90 backdrop-blur border-b border-border">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 bg-sapBlue pixel-corners flex items-center justify-center">
+          <i class="fa-solid fa-server text-white text-sm"></i>
+        </div>
+        <span class="font-pixel text-xs sm:text-sm text-white">SAP Eğitim Simülatörü</span>
+      </div>
+
+      <a href="/" class="btn-pixel-blue bg-panel2 text-neonBlue border border-sapBlue/40 font-bold text-xs px-4 py-2.5 pixel-corners hover:brightness-110 flex items-center gap-2">
+        <i class="fa-solid fa-arrow-left-long"></i> Geri Dön
+      </a>
+    </div>
+  </div>
+</header>
+
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-10">
+  <div class="flex flex-col items-start">
+    <span class="scanline-badge border border-sapBlue/40 text-sapBlue font-pixel text-[9px] px-3 py-2 pixel-corners mb-6">
+      MODULES: MM | SD | FI
+    </span>
+    <h1 class="font-pixel text-4xl sm:text-5xl md:text-6xl text-white glow-text mb-4 leading-tight">SAP ERP<br>T-Code Bootcamp</h1>
+    <p class="text-gray-400 text-base sm:text-lg max-w-2xl mb-6">
+      Kursiyerler için hazırlanmış uçtan uca ERP simülasyonu. Doğru T-Code'u girerek gerçek bir SAP ekranı gibi işlem formunu aç, kendi verini üret, kaydet — ve verinin arka planda hangi tablolara hangi alanlarla yazıldığını canlı olarak gör. Belgeler birbirine bağlıdır: yarattığın malzeme ve siparişler bir sonraki adımda karşına çıkar.
+    </p>
+  </div>
+</section>
+
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+  <div class="flex flex-col lg:flex-row gap-8">
+
+    <div class="w-full lg:w-[65%] flex flex-col gap-6">
+      <div class="bg-panel border border-border pixel-corners overflow-hidden shadow-pixel">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-border bg-gradient-to-r from-panel to-panel2">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-sapBlue/20 pixel-corners flex items-center justify-center text-sapBlue"><i class="fa-solid fa-boxes-stacked text-sm"></i></div>
+            <h2 class="font-pixel text-xs sm:text-sm text-white m-0">1. Malzeme Yönetimi (MM)</h2>
+          </div>
+        </div>
+        <div class="divide-y divide-border" id="chapter-1-container"></div>
+      </div>
+
+      <div class="bg-panel border border-border pixel-corners overflow-hidden shadow-pixel">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-border bg-gradient-to-r from-panel to-panel2">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-neon/20 pixel-corners flex items-center justify-center text-neon"><i class="fa-solid fa-truck-fast text-sm"></i></div>
+            <h2 class="font-pixel text-xs sm:text-sm text-white m-0">2. Satış ve Dağıtım (SD)</h2>
+          </div>
+        </div>
+        <div class="divide-y divide-border" id="chapter-2-container"></div>
+      </div>
+
+      <div class="bg-panel border border-border pixel-corners overflow-hidden shadow-pixel">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-border bg-gradient-to-r from-panel to-panel2">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-gold/20 pixel-corners flex items-center justify-center text-gold"><i class="fa-solid fa-file-invoice-dollar text-sm"></i></div>
+            <h2 class="font-pixel text-xs sm:text-sm text-white m-0">3. Finans & Tablolar (FI/BI)</h2>
+          </div>
+        </div>
+        <div class="divide-y divide-border" id="chapter-3-container"></div>
+      </div>
+    </div>
+
+    <aside class="w-full lg:w-[35%]">
+      <div class="lg:sticky lg:top-24 flex flex-col gap-6">
+        <div class="bg-panel border border-border pixel-corners p-5 flex flex-col items-center text-center">
+          <img src="https://ui-avatars.com/api/?name=Key+User&background=008fd3&color=fff&size=80" alt="user avatar" class="w-16 h-16 pixel-corners mb-3" />
+          <span class="font-semibold text-white text-sm mb-1">Key User Adayı</span>
+          <span class="font-pixel text-[9px] text-sapBlue mb-4">MODÜL: TÜMÜ</span>
+          <button onclick="resetProgress()" class="text-gray-500 hover:text-neonPink text-xs mt-2 underline cursor-pointer">Sistemi Sıfırla (/nEX)</button>
+        </div>
+
+        <div class="bg-panel border border-border pixel-corners p-5 shadow-pixel">
+          <h3 class="font-pixel text-[10px] text-white mb-4">EĞİTİM İLERLEMESİ</h3>
+          <div class="w-full h-3 bg-panel2 border border-border pixel-corners mb-3 overflow-hidden relative">
+            <div id="progress-bar" class="h-full bg-sapBlue transition-all duration-500" style="width: 0%"></div>
+          </div>
+          <div class="flex items-center justify-between text-xs text-gray-400 mb-1">
+            <span>Senaryolar</span>
+            <span id="ex-text" class="text-gray-200 font-semibold">0 / 13</span>
+          </div>
+          <div class="flex items-center justify-between text-xs text-gray-400">
+            <span>SAP Puanı</span>
+            <span id="xp-text" class="text-gray-200 font-semibold">0 / 650</span>
+          </div>
+        </div>
+
+        <div class="bg-panel border border-border pixel-corners p-5 shadow-pixel">
+          <h3 class="font-pixel text-[10px] text-white mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-database text-sapBlue"></i> CANLI VERİTABANI
+          </h3>
+          <div id="db-summary" class="text-[11px] text-gray-400 space-y-1 font-mono max-h-64 overflow-y-auto custom-scroll pr-1"></div>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+</main>
+
+<div id="lesson-modal" class="modal-overlay fixed inset-0 z-[100] bg-bg/95 backdrop-blur-md items-center justify-center p-2 sm:p-6">
+  <div class="bg-panel border-2 border-border pixel-corners w-full max-w-6xl h-full sm:h-[95vh] flex flex-col md:flex-row overflow-hidden relative shadow-sapNeon">
+
+    <button onclick="closeLesson()" class="absolute top-4 right-4 bg-bg border border-border text-gray-400 hover:text-white hover:border-white z-20 w-8 h-8 pixel-corners flex items-center justify-center">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+
+    <div class="w-full md:w-5/12 bg-[#0a0e1a] border-r border-border p-6 sm:p-8 overflow-y-auto flex flex-col gap-6 custom-scroll">
+       <div class="flex items-center gap-3 border-b border-border pb-4">
+         <div id="lesson-number-badge" class="w-8 h-8 bg-sapBlue/20 pixel-corners flex items-center justify-center text-sapBlue font-pixel text-xs"></div>
+         <h2 id="lesson-title" class="font-pixel text-sm sm:text-base text-white leading-relaxed m-0"></h2>
+       </div>
+       <div id="lesson-content" class="text-gray-300 text-sm sm:text-base leading-relaxed space-y-5 font-sans">
+       </div>
+    </div>
+
+    <div class="w-full md:w-7/12 flex flex-col bg-panel2 h-full">
+       <div class="flex-none p-4 flex flex-col gap-2 relative border-b border-border">
+          <div class="flex justify-between items-center text-xs text-gray-400 font-pixel mb-1">
+             <span><i class="fa-solid fa-terminal text-sapBlue"></i> Komut Alanı (OK-Code)</span>
+             <span id="live-status" class="hidden text-[10px]"></span>
+          </div>
+          <div id="editor-container" class="flex bg-white border-2 border-border pixel-corners overflow-hidden items-center px-4 h-12">
+            <span class="text-black font-bold mr-2">✔</span>
+            <input type="text" id="sql-editor" oninput="checkLiveCode()" onkeypress="handleEnter(event)" class="w-full bg-transparent text-black code-editor focus:outline-none" spellcheck="false" autocomplete="off" placeholder="T-Code Girin... (Örn: MM01)"/>
+          </div>
+       </div>
+
+       <div class="p-4 bg-panel border-b border-border flex justify-between items-center z-10 flex-wrap gap-3">
+          <div class="flex gap-3">
+            <button onclick="runCode()" class="btn-pixel-blue bg-sapBlue text-white font-bold text-xs sm:text-sm px-6 py-2.5 pixel-corners hover:brightness-110 flex items-center gap-2">
+              <i class="fa-solid fa-play"></i> Ekranı Aç (Enter)
+            </button>
+            <button onclick="showHint()" class="btn-pixel-gold bg-gold text-bg font-bold text-xs sm:text-sm px-4 py-2.5 pixel-corners hover:brightness-110 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb"></i> T-Code Unuttum
+            </button>
+          </div>
+
+          <button id="next-btn" onclick="nextLesson()" class="hidden btn-pixel bg-neon text-bg font-bold text-xs sm:text-sm px-6 py-2.5 pixel-corners hover:brightness-110">
+            Sonraki Senaryo <i class="fa-solid fa-arrow-right"></i>
+          </button>
+       </div>
+
+       <div class="flex-1 bg-[#111827] p-4 overflow-y-auto font-sans text-xs sm:text-sm custom-scroll flex flex-col gap-2" id="console-output">
+          <span class="text-gray-500 font-mono">> SAP Sistemine Bağlanıldı (Client 100). Bekleniyor...</span>
+       </div>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  /* ============================= STATE ============================= */
+  let currentLesson = 1;
+  let xp = 0;
+  let completedLessons = new Set();
+  const STORAGE_KEY = "sap_bootcamp_progress_v2";
+
+  function defaultDB() {
+    return { MARA: [], MARC: [], EKKO: [], EKPO: [], MKPF: [], MSEG: [], MARD: [],
+             VBAK: [], VBAP: [], LIKP: [], LIPS: [], VBRK: [], VBRP: [], BKPF: [], BSEG: [] };
+  }
+  function defaultCounters() {
+    return { mat: 10004534, po: 4500023199, matdoc: 5000012431, so: 20004561,
+             dlv: 80001235, bill: 90045122, miro: 5105600010, fb: 100000456 };
+  }
+  let db = defaultDB();
+  let counters = defaultCounters();
+
+  const TABLE_META = {
+    MARA: { desc: 'Genel Malzeme Verileri', cols: ['MATNR','MAKTX','MTART','MEINS','MATKL','BISMT'] },
+    MARC: { desc: 'Fabrika Verileri (Malzeme)', cols: ['MATNR','WERKS','LGORT','NTGEW'] },
+    EKKO: { desc: 'Satınalma Belgesi Başlık', cols: ['EBELN','LIFNR','BUKRS','WAERS','BEDAT'] },
+    EKPO: { desc: 'Satınalma Belgesi Kalem', cols: ['EBELN','EBELP','MATNR','MENGE','NETPR','WERKS'] },
+    MKPF: { desc: 'Malzeme Belgesi Başlık', cols: ['MBLNR','BLDAT','BUDAT'] },
+    MSEG: { desc: 'Malzeme Belgesi Segment', cols: ['MBLNR','ZEILE','MATNR','WERKS','MENGE','BWART'] },
+    MARD: { desc: 'Depo Yeri Stok Verisi', cols: ['MATNR','WERKS','LGORT','LABST'] },
+    VBAK: { desc: 'Satış Belgesi Başlık', cols: ['VBELN','VKORG','KUNNR','VTWEG','SPART'] },
+    VBAP: { desc: 'Satış Belgesi Kalem', cols: ['VBELN','POSNR','MATNR','KWMENG','NETPR'] },
+    LIKP: { desc: 'Teslimat Başlık', cols: ['VBELN','VSTEL','LFDAT'] },
+    LIPS: { desc: 'Teslimat Kalem', cols: ['VBELN','POSNR','MATNR','LFIMG','VGBEL'] },
+    VBRK: { desc: 'Fatura Başlık', cols: ['VBELN','FKART','NETWR','WAERK'] },
+    VBRP: { desc: 'Fatura Kalem', cols: ['VBELN','POSNR','MATNR','FKIMG','NETWR'] },
+    BKPF: { desc: 'Muhasebe Belgesi Başlık', cols: ['BELNR','BUKRS','BLART','BUDAT'] },
+    BSEG: { desc: 'Muhasebe Belgesi Kalem', cols: ['BELNR','BUZEI','HKONT','SHKZG','WRBTR'] },
+  };
+
+  function todayStr() { return new Date().toISOString().slice(0, 10); }
+
+  /* ============================= LESSONS ============================= */
+  const lessonsData = [
+    // BÖLÜM 1: MM (MALZEME YÖNETİMİ)
+    {
+      id: 1, ch: 1, name: "Malzeme Yaratma (Material Master)", title: "1. MM01 - Malzeme Yaratma",
+      content: `<span class="inline-block text-[9px] font-pixel text-sapBlue border border-sapBlue/40 px-2 py-1 pixel-corners mb-1">MODÜL: MM &nbsp;|&nbsp; KATEGORİ: ANA VERİ (MASTER DATA)</span>
+                <p>SAP sisteminde her şey bir ana veri (Master Data) ile başlar. Bir ürün alıp satabilmek için önce sistemde onu tanımlamalısın. <b>MM01</b>, gerçek SAP projelerinde en çok kullanılan işlem kodlarından biridir; çünkü stok, satınalma, üretim ve satış — hepsi bir malzeme kaydına bağlıdır.</p>
+                <div class="bg-panel p-3 border border-sapBlue/40 pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-sapBlue font-bold block mb-1">📍 SAP Menü Yolu:</span>
+                  Lojistik → Malzeme Yönetimi → Malzeme Ana Verisi → Malzeme → Yarat (Genel) → Hemen
+                  <div class="mt-2 text-gray-400">İlgili T-Code'lar: <code>MM02</code> (değiştir), <code>MM03</code> (görüntüle), <code>MM06</code> (silme işareti), <code>MASS</code> (toplu değişiklik)</div>
+                </div>
+                <div class="bg-panel p-3 border border-border pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-sapBlue font-bold block mb-1">Veri Ambarı (ETL) Notu:</span>
+                  Burada yarattığın malzeme ana verisi veritabanında <b>MARA</b> (Genel Veriler) ve <b>MARC</b> (Üretim Yeri Verileri) tablolarına yazılır. Gerçek SAP'de malzeme onlarca görünüm (Temel Veri, Satış, MRP, Muhasebe...) içerir; biz burada en kritik iki tabloya odaklanıyoruz.
+                </div>
+                <div class="bg-panel p-3 border border-neon/40 pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-neon font-bold block mb-1">💡 Pratik Bilgi:</span>
+                  Malzeme Türü (MTART) seçimi kritik bir karardır — sonradan değiştirilemez! <b>ROH</b> hammadde, <b>HAWA</b> ticari mal, <b>FERT</b> mamül, <b>DIEN</b> hizmet malzemesi anlamına gelir ve her biri farklı görünüm setleri açar.
+                </div>
+                <h3 class="text-sapBlue font-pixel text-[10px] mt-4">SENARYO GÖREVİ</h3>
+                <p>Komut alanına malzeme yaratma işlem kodunu yaz: <code>MM01</code>. Ekran açıldığında kendi malzemeni tanımla ve kaydet.</p>`,
+      validation: (c) => c === "MM01" || c === "/NMM01", answer: "MM01",
+      tabs: [
+        { label: "Temel Veriler 1", fields: [
+          { id: 'matDesc', label: 'Malzeme Kısa Metni', type: 'text', required: true, placeholder: 'Örn: Kablosuz Mouse' },
+          { id: 'matType', label: 'Malzeme Türü', type: 'select', required: true, default: 'HAWA', options: [
+            { v: 'FERT', t: 'FERT — Mamül' }, { v: 'HAWA', t: 'HAWA — Ticari Mal' },
+            { v: 'ROH', t: 'ROH — Hammadde' }, { v: 'DIEN', t: 'DIEN — Hizmet' } ] },
+          { id: 'baseUnit', label: 'Temel Ölçü Birimi', type: 'select', required: true, default: 'ST', options: [
+            { v: 'ST', t: 'ST — Adet' }, { v: 'KG', t: 'KG — Kilogram' }, { v: 'L', t: 'L — Litre' }, { v: 'M', t: 'M — Metre' } ] },
+          { id: 'matGroup', label: 'Malzeme Grubu', type: 'text', required: false, placeholder: 'Örn: 001' },
+        ]},
+        { label: "Fabrika Verileri", fields: [
+          { id: 'plant', label: 'Fabrika', type: 'select', required: true, default: '1000', options: [
+            { v: '1000', t: '1000 — İstanbul Fabrikası' }, { v: '2000', t: '2000 — İzmir Fabrikası' } ] },
+          { id: 'storLoc', label: 'Depo Yeri', type: 'select', required: true, default: '0001', options: [
+            { v: '0001', t: '0001 — Ana Depo' }, { v: '0002', t: '0002 — Yedek Parça Deposu' } ] },
+          { id: 'netWeight', label: 'Net Ağırlık (KG)', type: 'number', required: false, placeholder: '0' },
+        ]},
+      ],
+      onSave: (v, db) => {
+        const matnr = counters.mat++;
+        const maraRow = { MATNR: matnr, MAKTX: v.matDesc, MTART: v.matType, MEINS: v.baseUnit, MATKL: v.matGroup || '-', BISMT: '-' };
+        const marcRow = { MATNR: matnr, WERKS: v.plant, LGORT: v.storLoc, NTGEW: v.netWeight ?? 0 };
+        db.MARA.push(maraRow); db.MARC.push(marcRow);
+        return { success: true, message: `Malzeme ${matnr} başarıyla yaratıldı.`, tables: [{ name: 'MARA', row: maraRow }, { name: 'MARC', row: marcRow }] };
+      }
+    },
+    {
+      id: 2, ch: 1, name: "Satınalma Siparişi (PO)", title: "2. ME21N - Satınalma Siparişi",
+      content: `<span class="inline-block text-[9px] font-pixel text-sapBlue border border-sapBlue/40 px-2 py-1 pixel-corners mb-1">MODÜL: MM &nbsp;|&nbsp; KATEGORİ: SATINALMA (PROCUREMENT)</span>
+                <p>Depomuzdaki stoklar azaldığında tedarikçiden ürün istemeliyiz. Bunun için Satınalma Siparişi (Purchase Order) oluşturulur. Bu belge, tedarikçiyle aramızdaki hukuki bir anlaşma niteliğindedir ve "Procure-to-Pay" (P2P) sürecinin ilk adımıdır.</p>
+                <div class="bg-panel p-3 border border-sapBlue/40 pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-sapBlue font-bold block mb-1">📍 SAP Menü Yolu:</span>
+                  Lojistik → Malzeme Yönetimi → Satınalma → Sipariş → Yarat → Tedarikçi/Bilinen Biliniyor
+                  <div class="mt-2 text-gray-400">İlgili T-Code'lar: <code>ME22N</code> (değiştir), <code>ME23N</code> (görüntüle), <code>ME2N</code> (siparişleri listele), <code>ME59N</code> (talebe göre otomatik yaratma)</div>
+                </div>
+                <div class="bg-panel p-3 border border-border pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-sapBlue font-bold block mb-1">Veri Ambarı (ETL) Notu:</span>
+                  Satınalma başlık verileri <b>EKKO</b>, kalem verileri ise <b>EKPO</b> tablolarında tutulur. Bu iki tablo neredeyse her satınalma raporunun temelini oluşturur (EBELN üzerinden JOIN edilir).
+                </div>
+                <div class="bg-panel p-3 border border-gold/40 pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-gold font-bold block mb-1">⚠ Ön Koşul:</span>
+                  Sipariş kalemi için bir malzeme seçmen gerekiyor. Önce <b>MM01</b> ile bir malzeme yaratmadıysan, o ekrana geri dönmelisin.
+                </div>
+                <div class="bg-panel p-3 border border-neon/40 pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-neon font-bold block mb-1">💡 Pratik Bilgi:</span>
+                  Gerçek SAP'de sipariş kaydedilince arka planda "onay iş akışı" (Release Strategy) tetiklenebilir — belirli tutarın üzerindeki siparişler bir yöneticinin onayına düşer.
+                </div>
+                <h3 class="text-sapBlue font-pixel text-[10px] mt-4">SENARYO GÖREVİ</h3>
+                <p>Yeni bir satınalma siparişi yaratmak için şu kodu kullan: <code>ME21N</code></p>`,
+      validation: (c) => c === "ME21N" || c === "/NME21N", answer: "ME21N",
+      tabs: [
+        { label: "Sipariş Başlığı", fields: [
+          { id: 'vendor', label: 'Tedarikçi (Vendor)', type: 'text', required: true, placeholder: 'Örn: ABC Tedarik A.Ş.' },
+          { id: 'currency', label: 'Para Birimi', type: 'select', required: true, default: 'TRY', options: [{ v: 'TRY', t: 'TRY' }, { v: 'USD', t: 'USD' }, { v: 'EUR', t: 'EUR' }] },
+          { id: 'docDate', label: 'Belge Tarihi', type: 'date', required: true },
+        ]},
+        { label: "Sipariş Kalemi", fields: [
+          { id: 'material', label: 'Malzeme', type: 'ref', required: true, sourceTable: 'MARA', valueField: 'MATNR', display: r => `${r.MATNR} — ${r.MAKTX}`, emptyHint: 'Önce MM01 ile bir malzeme yaratmalısınız.' },
+          { id: 'plant', label: 'Fabrika', type: 'select', required: true, default: '1000', options: [{ v: '1000', t: '1000 — İstanbul Fabrikası' }, { v: '2000', t: '2000 — İzmir Fabrikası' }] },
+          { id: 'qty', label: 'Sipariş Miktarı', type: 'number', required: true, placeholder: 'Örn: 100' },
+          { id: 'netPrice', label: 'Net Fiyat (Birim)', type: 'number', required: true, placeholder: 'Örn: 25.50' },
+        ]},
+      ],
+      onSave: (v, db) => {
+        if (db.MARA.length === 0) return { success: false, message: 'Önce MM01 ile bir malzeme yaratmalısınız (MARA tablosunda kayıt yok).' };
+        if (!v.material) return { success: false, message: 'Lütfen sipariş kalemi için bir malzeme seçin.' };
+        const ebeln = counters.po++;
+        const ekkoRow = { EBELN: ebeln, LIFNR: v.vendor, BUKRS: '1000', WAERS: v.currency, BEDAT: v.docDate };
+        const ekpoRow = { EBELN: ebeln, EBELP: '00010', MATNR: v.material, MENGE: v.qty, NETPR: v.netPrice, WERKS: v.plant };
+        db.EKKO.push(ekkoRow); db.EKPO.push(ekpoRow);
+        return { success: true, message: `Satınalma Siparişi ${ebeln} yaratıldı.`, tables: [{ name: 'EKKO', row: ekkoRow }, { name: 'EKPO', row: ekpoRow }] };
+      }
+    },
+    {
+      id: 3, ch: 1, name: "Mal Girişi (GR)", title: "3. MIGO - Mal Hareketi",
+      content: `<span class="inline-block text-[9px] font-pixel text-sapBlue border border-sapBlue/40 px-2 py-1 pixel-corners mb-1">MODÜL: MM &nbsp;|&nbsp; KATEGORİ: ENVANTER YÖNETİMİ (INVENTORY MGMT)</span>
+                <p>Tedarikçi ürünleri getirdiğinde depoya mal girişi yapmamız gerekir. Bu işlem stok miktarını artırır ve finansal olarak "GR/IR" (Mal Girişi / Fatura Girişi) hesabına geçici bir borç kaydı oluşturur.</p>
+                <div class="bg-panel p-3 border border-sapBlue/40 pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-sapBlue font-bold block mb-1">📍 SAP Menü Yolu:</span>
+                  Lojistik → Malzeme Yönetimi → Envanter Yönetimi → Mal Hareketi → MIGO
+                  <div class="mt-2 text-gray-400">İlgili T-Code'lar: <code>MB1A</code> (mal çıkışı - klasik ekran), <code>MB51</code> (malzeme belgesi listesi), <code>MMBE</code> (stok genel bakış), <code>MB1C</code> (diğer girişler)</div>
+                </div>
+                <div class="bg-panel p-3 border border-border pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-sapBlue font-bold block mb-1">Veri Ambarı (ETL) Notu:</span>
+                  Stok miktarı <b>MARD</b> tablosunda güncellenir. Hareket belgeleri ise <b>MKPF</b> (başlık) ve <b>MSEG</b> (kalem) tablolarında saklanır. Hareket Türü (BWART) alanı, verinin nasıl yorumlanacağını belirleyen en önemli alandır.
+                </div>
+                <div class="bg-panel p-3 border border-gold/40 pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-gold font-bold block mb-1">⚠ Ön Koşul:</span>
+                  Mal girişi yapabilmek için önce <b>ME21N</b> ile açık bir sipariş olmalı.
+                </div>
+                <div class="bg-panel p-3 border border-neon/40 pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-neon font-bold block mb-1">💡 Pratik Bilgi:</span>
+                  Hareket Türü <b>101</b> siparişe karşı mal girişi, <b>102</b> ise bu girişin iptalidir (ters kayıt). Depo ekiplerinin günlük en sık kullandığı iki koddur.
+                </div>
+                <h3 class="text-sapBlue font-pixel text-[10px] mt-4">SENARYO GÖREVİ</h3>
+                <p>Mal girişi yapmak için komut satırına yaz: <code>MIGO</code></p>`,
+      validation: (c) => c === "MIGO" || c === "/NMIGO", answer: "MIGO",
+      tabs: [
+        { label: "Mal Hareketi", fields: [
+          { id: 'poRef', label: 'Satınalma Siparişi', type: 'ref', required: true, sourceTable: 'EKKO', valueField: 'EBELN', display: r => `${r.EBELN} — ${r.LIFNR}`, emptyHint: 'Önce ME21N ile bir satınalma siparişi oluşturmalısınız.' },
+          { id: 'movementType', label: 'Hareket Türü', type: 'select', required: true, default: '101', options: [{ v: '101', t: '101 — Mal Girişi (Siparişe Karşı)' }, { v: '102', t: '102 — Mal Girişi İptali' }] },
+          { id: 'qty', label: 'Miktar', type: 'number', required: true, placeholder: 'Örn: 100' },
+        ]},
+      ],
+      onSave: (v, db) => {
+        if (db.EKKO.length === 0) return { success: false, message: 'Önce ME21N ile bir satınalma siparişi oluşturmalısınız (EKKO tablosunda kayıt yok).' };
+        const ekpo = db.EKPO.find(e => String(e.EBELN) === String(v.poRef));
+        if (!ekpo) return { success: false, message: 'Seçilen sipariş için kalem verisi bulunamadı.' };
+        const mblnr = counters.matdoc++;
+        const mkpfRow = { MBLNR: mblnr, BLDAT: todayStr(), BUDAT: todayStr() };
+        const msegRow = { MBLNR: mblnr, ZEILE: '0001', MATNR: ekpo.MATNR, WERKS: ekpo.WERKS, MENGE: v.qty, BWART: v.movementType, EBELN: v.poRef };
+        db.MKPF.push(mkpfRow); db.MSEG.push(msegRow);
+        const delta = v.movementType === '102' ? -Number(v.qty) : Number(v.qty);
+        let mard = db.MARD.find(m => String(m.MATNR) === String(ekpo.MATNR) && m.WERKS === ekpo.WERKS);
+        if (mard) { mard.LABST = (mard.LABST || 0) + delta; }
+        else { mard = { MATNR: ekpo.MATNR, WERKS: ekpo.WERKS, LGORT: '0001', LABST: delta }; db.MARD.push(mard); }
+        return { success: true, message: `Malzeme Belgesi ${mblnr} kaydedildi. Depo stoğu güncellendi.`, tables: [{ name: 'MKPF', row: mkpfRow }, { name: 'MSEG', row: msegRow }, { name: 'MARD', row: mard }] };
+      }
+    },
+    {
+      id: 10, ch: 1, name: "Malzeme Değiştirme (Change)", title: "10. MM02 - Malzeme Ana Verisi Değiştirme",
+      content: `<span class="inline-block text-[9px] font-pixel text-sapBlue border border-sapBlue/40 px-2 py-1 pixel-corners mb-1">MODÜL: MM &nbsp;|&nbsp; KATEGORİ: ANA VERİ BAKIMI (MASTER DATA MAINTENANCE)</span>
+                <p>Ana veriler zamanla değişir: bir ürünün açıklaması güncellenir, malzeme grubu düzeltilir. SAP'de "Yarat" (01) ve "Değiştir" (02) her zaman ayrı T-Code'lardır — bu, sistemin en temel deseni olan <b>Create / Change / Display</b> üçlüsünün bir örneğidir (MM01/MM02/MM03, VA01/VA02/VA03, ME21N/ME22N/ME23N gibi).</p>
+                <div class="bg-panel p-3 border border-sapBlue/40 pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-sapBlue font-bold block mb-1">📍 SAP Menü Yolu:</span>
+                  Lojistik → Malzeme Yönetimi → Malzeme Ana Verisi → Malzeme → Değiştir (Genel) → Hemen
+                  <div class="mt-2 text-gray-400">İlgili T-Code'lar: <code>MM01</code> (yarat), <code>MM03</code> (sadece görüntüle), <code>MM06</code> (silme işareti koy)</div>
+                </div>
+                <div class="bg-panel p-3 border border-border pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-sapBlue font-bold block mb-1">Veri Ambarı (ETL) Notu:</span>
+                  Bu işlem yeni bir satır yaratmaz; mevcut <b>MARA</b> satırını <b>UPDATE</b> eder. Gerçek SAP'de her değişiklik, denetim (audit) amacıyla <b>CDHDR/CDPOS</b> (Change Document) tablolarına da ayrıca loglanır.
+                </div>
+                <div class="bg-panel p-3 border border-gold/40 pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-gold font-bold block mb-1">⚠ Ön Koşul:</span>
+                  Değiştirilecek bir malzeme lazım — önce <b>MM01</b> ile bir malzeme yaratmış olmalısın.
+                </div>
+                <h3 class="text-sapBlue font-pixel text-[10px] mt-4">SENARYO GÖREVİ</h3>
+                <p>Bir malzemenin açıklamasını güncellemek için komut satırına yaz: <code>MM02</code></p>`,
+      validation: (c) => c === "MM02" || c === "/NMM02", answer: "MM02",
+      tabs: [
+        { label: "Malzeme Seçimi", fields: [
+          { id: 'material', label: 'Malzeme', type: 'ref', required: true, sourceTable: 'MARA', valueField: 'MATNR', display: r => `${r.MATNR} — ${r.MAKTX}`, emptyHint: 'Önce MM01 ile bir malzeme yaratmalısınız.' },
+        ]},
+        { label: "Yeni Değerler", fields: [
+          { id: 'newDesc', label: 'Yeni Malzeme Kısa Metni', type: 'text', required: true, placeholder: 'Örn: Kablosuz Mouse Pro (Güncel)' },
+          { id: 'newGroup', label: 'Yeni Malzeme Grubu', type: 'text', required: false, placeholder: 'Örn: 002' },
+        ]},
+      ],
+      onSave: (v, db) => {
+        if (db.MARA.length === 0) return { success: false, message: 'Önce MM01 ile bir malzeme yaratmalısınız (MARA tablosunda kayıt yok).' };
+        const mara = db.MARA.find(m => String(m.MATNR) === String(v.material));
+        if (!mara) return { success: false, message: 'Lütfen değiştirilecek bir malzeme seçin.' };
+        mara.MAKTX = v.newDesc;
+        if (v.newGroup) mara.MATKL = v.newGroup;
+        return { success: true, message: `Malzeme ${mara.MATNR} ana verisi güncellendi.`, tables: [{ name: 'MARA', row: mara }] };
+      }
+    },
+    {
+      id: 11, ch: 1, name: "Stok Genel Bakış", title: "11. MMBE - Stok Genel Bakış",
+      content: `<span class="inline-block text-[9px] font-pixel text-sapBlue border border-sapBlue/40 px-2 py-1 pixel-corners mb-1">MODÜL: MM &nbsp;|&nbsp; KATEGORİ: RAPORLAMA (STOCK REPORTING)</span>
+                <p>Depo yöneticileri ve planlamacılar günde defalarca "elimde bu üründen ne kadar var?" sorusunu sorar. <b>MMBE</b> tam olarak bu soruyu cevaplayan, gerçek SAP projelerinde en sık açılan raporlardan biridir.</p>
+                <div class="bg-panel p-3 border border-sapBlue/40 pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-sapBlue font-bold block mb-1">📍 SAP Menü Yolu:</span>
+                  Lojistik → Malzeme Yönetimi → Envanter Yönetimi → Ortam → Stok → Stok Genel Bakış
+                  <div class="mt-2 text-gray-400">İlgili T-Code'lar: <code>MB52</code> (depo stok listesi), <code>MB5B</code> (belirli tarihteki stok/değer), <code>MC.9</code> (fabrika stok analizi)</div>
+                </div>
+                <div class="bg-panel p-3 border border-border pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-sapBlue font-bold block mb-1">Veri Ambarı (ETL) Notu:</span>
+                  Bu ekran yeni veri yazmaz, sadece <b>MARD</b> (Depo Yeri Stoğu) tablosunu <b>MARA</b> ile JOIN ederek okunabilir bir liste sunar — klasik bir ALV Grid raporudur.
+                </div>
+                <div class="bg-panel p-3 border border-neon/40 pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-neon font-bold block mb-1">💡 Pratik Bilgi:</span>
+                  Gerçek MMBE ekranında stok; "Serbest Kullanılabilir", "Kalite Kontrolde" ve "Bloke" olmak üzere kategorilere ayrılır. Biz burada basitleştirilmiş tek bir "Serbest Kullanılabilir Stok" (LABST) alanı gösteriyoruz.
+                </div>
+                <h3 class="text-sapBlue font-pixel text-[10px] mt-4">SENARYO GÖREVİ</h3>
+                <p>Güncel depo stoklarını görüntülemek için komut satırına yaz: <code>MMBE</code></p>`,
+      validation: (c) => c === "MMBE" || c === "/NMMBE", answer: "MMBE",
+      isStockOverview: true,
+    },
+
+    // BÖLÜM 2: SD (SATIŞ VE DAĞITIM)
+    {
+      id: 4, ch: 2, name: "Satış Siparişi (Sales Order)", title: "4. VA01 - Sipariş Yaratma",
+      content: `<span class="inline-block text-[9px] font-pixel text-neon border border-neon/40 px-2 py-1 pixel-corners mb-1">MODÜL: SD &nbsp;|&nbsp; KATEGORİ: SATIŞ SÜRECİ (ORDER-TO-CASH)</span>
+                <p>Müşteri bizden ürün talep ettiğinde bir Satış Siparişi açılır. <b>VA01</b>, "Order-to-Cash" (Siparişten Nakde) sürecinin ilk halkasıdır ve bu bootcamp'te birazdan göreceğin VL01N (teslimat) ve VF01 (fatura) adımlarının temelini oluşturur.</p>
+                <div class="bg-panel p-3 border border-sapBlue/40 pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-sapBlue font-bold block mb-1">📍 SAP Menü Yolu:</span>
+                  Lojistik → Satış ve Dağıtım → Satış → Sipariş → Yarat
+                  <div class="mt-2 text-gray-400">İlgili T-Code'lar: <code>VA02</code> (değiştir), <code>VA03</code> (görüntüle), <code>VA05</code> (sipariş listesi), <code>VOV8</code> (sipariş türü ayarları)</div>
+                </div>
+                <div class="bg-panel p-3 border border-border pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-sapBlue font-bold block mb-1">Medallion Mimarisi (Bronze Katman):</span>
+                  Başlık verileri <b>VBAK</b>, kalemleri ise <b>VBAP</b> tablolarına akar. Bu tablolar SD raporlamasının (COPA, LIS) temel veri kaynağıdır.
+                </div>
+                <div class="bg-panel p-3 border border-gold/40 pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-gold font-bold block mb-1">⚠ Ön Koşul:</span>
+                  Satılacak bir malzeme lazım — MM01 ile yaratılmış olmalı.
+                </div>
+                <div class="bg-panel p-3 border border-neon/40 pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-neon font-bold block mb-1">💡 Pratik Bilgi:</span>
+                  Satış Organizasyonu + Dağıtım Kanalı + Bölüm (VKORG+VTWEG+SPART) üçlüsüne SAP'de "Satış Alanı" (Sales Area) denir ve fiyatlandırma/vergi kurallarını belirler.
+                </div>
+                <h3 class="text-sapBlue font-pixel text-[10px] mt-4">SENARYO GÖREVİ</h3>
+                <p>Satış siparişi oluşturma ekranına gitmek için yaz: <code>VA01</code></p>`,
+      validation: (c) => c === "VA01" || c === "/NVA01", answer: "VA01",
+      tabs: [
+        { label: "Sipariş Başlığı", fields: [
+          { id: 'soldTo', label: 'Alıcı (Sold-To Party)', type: 'text', required: true, placeholder: 'Örn: Mehmet Yılmaz Ltd.' },
+          { id: 'salesOrg', label: 'Satış Organizasyonu', type: 'select', required: true, default: '1000', options: [{ v: '1000', t: '1000 — Yurt İçi Satış' }] },
+          { id: 'distrChannel', label: 'Dağıtım Kanalı', type: 'select', required: true, default: '10', options: [{ v: '10', t: '10 — Bayi Satışı' }, { v: '12', t: '12 — Perakende' }] },
+        ]},
+        { label: "Sipariş Kalemi", fields: [
+          { id: 'material', label: 'Malzeme', type: 'ref', required: true, sourceTable: 'MARA', valueField: 'MATNR', display: r => `${r.MATNR} — ${r.MAKTX}`, emptyHint: 'Önce MM01 ile bir malzeme yaratmalısınız.' },
+          { id: 'qty', label: 'Sipariş Miktarı', type: 'number', required: true, placeholder: 'Örn: 10' },
+          { id: 'price', label: 'Net Fiyat (Birim)', type: 'number', required: true, placeholder: 'Örn: 149.90' },
+        ]},
+      ],
+      onSave: (v, db) => {
+        if (db.MARA.length === 0) return { success: false, message: 'Önce MM01 ile bir malzeme yaratmalısınız.' };
+        const vbeln = counters.so++;
+        const vbakRow = { VBELN: vbeln, VKORG: v.salesOrg, KUNNR: v.soldTo, VTWEG: v.distrChannel, SPART: '00' };
+        const vbapRow = { VBELN: vbeln, POSNR: '000010', MATNR: v.material, KWMENG: v.qty, NETPR: v.price };
+        db.VBAK.push(vbakRow); db.VBAP.push(vbapRow);
+        return { success: true, message: `Satış Siparişi ${vbeln} kaydedildi.`, tables: [{ name: 'VBAK', row: vbakRow }, { name: 'VBAP', row: vbapRow }] };
+      }
+    },
+    {
+      id: 5, ch: 2, name: "Teslimat Yaratma (Delivery)", title: "5. VL01N - Teslimat",
+      content: `<span class="inline-block text-[9px] font-pixel text-neon border border-neon/40 px-2 py-1 pixel-corners mb-1">MODÜL: SD &nbsp;|&nbsp; KATEGORİ: SEVKİYAT (SHIPPING)</span>
+                <p>Siparişi alınan ürünlerin depodan çıkıp müşteriye sevk edilmesi işlemidir. Bu adımda mallar fiziksel olarak depodan ayrılır ve stok düşer (arka planda MIGO'ya benzer bir mal hareketi tetiklenir).</p>
+                <div class="bg-panel p-3 border border-sapBlue/40 pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-sapBlue font-bold block mb-1">📍 SAP Menü Yolu:</span>
+                  Lojistik → Satış ve Dağıtım → Sevkiyat ve Nakliye → Teslimat Yarat → Tek Belge
+                  <div class="mt-2 text-gray-400">İlgili T-Code'lar: <code>VL02N</code> (değiştir/mal çıkışı onayla), <code>VL03N</code> (görüntüle), <code>VL06O</code> (teslimat izleme/toplu işlem)</div>
+                </div>
+                <div class="bg-panel p-3 border border-border pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-sapBlue font-bold block mb-1">Veri Ambarı (ETL) Notu:</span>
+                  Teslimat belgeleri <b>LIKP</b> (Başlık) ve <b>LIPS</b> (Kalem) tablolarında tutulur. <b>VGBEL</b> alanı bu belgeyi referans aldığı satış siparişine bağlar — belge akışını (Document Flow) izlemenin anahtarıdır.
+                </div>
+                <div class="bg-panel p-3 border border-gold/40 pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-gold font-bold block mb-1">⚠ Ön Koşul:</span>
+                  Önce VA01 ile açık bir satış siparişi olmalı.
+                </div>
+                <h3 class="text-sapBlue font-pixel text-[10px] mt-4">SENARYO GÖREVİ</h3>
+                <p>Referanslı teslimat belgesi yaratmak için yaz: <code>VL01N</code></p>`,
+      validation: (c) => c === "VL01N" || c === "/NVL01N", answer: "VL01N",
+      tabs: [
+        { label: "Teslimat", fields: [
+          { id: 'orderRef', label: 'Satış Siparişi', type: 'ref', required: true, sourceTable: 'VBAK', valueField: 'VBELN', display: r => `${r.VBELN} — ${r.KUNNR}`, emptyHint: 'Önce VA01 ile bir satış siparişi oluşturmalısınız.' },
+          { id: 'shipPoint', label: 'Sevk Noktası', type: 'select', required: true, default: '1000', options: [{ v: '1000', t: '1000 — Merkez Sevkiyat' }] },
+          { id: 'pickDate', label: 'Toplama Tarihi', type: 'date', required: true },
+        ]},
+      ],
+      onSave: (v, db) => {
+        if (db.VBAK.length === 0) return { success: false, message: 'Önce VA01 ile bir satış siparişi oluşturmalısınız.' };
+        const vbap = db.VBAP.find(x => String(x.VBELN) === String(v.orderRef));
+        if (!vbap) return { success: false, message: 'Seçilen sipariş için kalem verisi bulunamadı.' };
+        const vbeln = counters.dlv++;
+        const likpRow = { VBELN: vbeln, VSTEL: v.shipPoint, LFDAT: v.pickDate };
+        const lipsRow = { VBELN: vbeln, POSNR: '000010', MATNR: vbap.MATNR, LFIMG: vbap.KWMENG, VGBEL: v.orderRef };
+        db.LIKP.push(likpRow); db.LIPS.push(lipsRow);
+        return { success: true, message: `Teslimat ${vbeln} başarıyla kaydedildi.`, tables: [{ name: 'LIKP', row: likpRow }, { name: 'LIPS', row: lipsRow }] };
+      }
+    },
+    {
+      id: 6, ch: 2, name: "Müşteri Faturası (Billing)", title: "6. VF01 - Fatura Yaratma",
+      content: `<span class="inline-block text-[9px] font-pixel text-neon border border-neon/40 px-2 py-1 pixel-corners mb-1">MODÜL: SD &nbsp;|&nbsp; KATEGORİ: FATURALANDIRMA (BILLING)</span>
+                <p>Ürünler teslim edildikten sonra müşteriye fatura kesilir ve şirketin gelir kaydı oluşur. <b>VF01</b>, SD sürecinin son adımıdır ve muhasebe entegrasyonu (Account Determination) sayesinde otomatik olarak FI modülüne bir muhasebe kaydı gönderir.</p>
+                <div class="bg-panel p-3 border border-sapBlue/40 pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-sapBlue font-bold block mb-1">📍 SAP Menü Yolu:</span>
+                  Lojistik → Satış ve Dağıtım → Fatura → Fatura Yarat
+                  <div class="mt-2 text-gray-400">İlgili T-Code'lar: <code>VF02</code> (değiştir/muhasebeye aktar), <code>VF03</code> (görüntüle), <code>VF05</code> (fatura listesi), <code>VOFA</code> (fatura türü ayarları)</div>
+                </div>
+                <div class="bg-panel p-3 border border-border pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-sapBlue font-bold block mb-1">Veri Ambarı (ETL) Notu:</span>
+                  Faturalar <b>VBRK</b> (Başlık) ve <b>VBRP</b> (Kalem) tablolarına yazılır. "Net Satış Tutarı" genelde VBRK-NETWR alanından gelir ve finansal raporlamada (COPA) doğrudan kullanılır.
+                </div>
+                <div class="bg-panel p-3 border border-gold/40 pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-gold font-bold block mb-1">⚠ Ön Koşul:</span>
+                  Önce VL01N ile bir teslimat yapılmış olmalı.
+                </div>
+                <h3 class="text-sapBlue font-pixel text-[10px] mt-4">SENARYO GÖREVİ</h3>
+                <p>Fatura yaratma işlemini başlatmak için: <code>VF01</code></p>`,
+      validation: (c) => c === "VF01" || c === "/NVF01", answer: "VF01",
+      tabs: [
+        { label: "Fatura", fields: [
+          { id: 'deliveryRef', label: 'Teslimat Belgesi', type: 'ref', required: true, sourceTable: 'LIKP', valueField: 'VBELN', display: r => `${r.VBELN} — ${r.VSTEL}`, emptyHint: 'Önce VL01N ile bir teslimat oluşturmalısınız.' },
+          { id: 'billDate', label: 'Fatura Tarihi', type: 'date', required: true },
+        ]},
+      ],
+      onSave: (v, db) => {
+        if (db.LIKP.length === 0) return { success: false, message: 'Önce VL01N ile bir teslimat oluşturmalısınız.' };
+        const lips = db.LIPS.find(x => String(x.VBELN) === String(v.deliveryRef));
+        if (!lips) return { success: false, message: 'Seçilen teslimat için kalem verisi bulunamadı.' };
+        const vbap = db.VBAP.find(x => String(x.VBELN) === String(lips.VGBEL) && String(x.MATNR) === String(lips.MATNR));
+        const netwr = vbap ? (Number(vbap.NETPR) * Number(lips.LFIMG)) : 0;
+        const vbeln = counters.bill++;
+        const vbrkRow = { VBELN: vbeln, FKART: 'F2', NETWR: netwr.toFixed(2), WAERK: 'TRY' };
+        const vbrpRow = { VBELN: vbeln, POSNR: '000010', MATNR: lips.MATNR, FKIMG: lips.LFIMG, NETWR: netwr.toFixed(2) };
+        db.VBRK.push(vbrkRow); db.VBRP.push(vbrpRow);
+        return { success: true, message: `Fatura ${vbeln} muhasebeye aktarıldı.`, tables: [{ name: 'VBRK', row: vbrkRow }, { name: 'VBRP', row: vbrpRow }] };
+      }
+    },
+    {
+      id: 12, ch: 2, name: "Sipariş Değiştirme", title: "12. VA02 - Satış Siparişi Değiştirme",
+      content: `<span class="inline-block text-[9px] font-pixel text-neon border border-neon/40 px-2 py-1 pixel-corners mb-1">MODÜL: SD &nbsp;|&nbsp; KATEGORİ: BAKIM (ORDER MAINTENANCE)</span>
+                <p>Müşteriler fikrini değiştirir: miktar artar, azalır ya da teslim tarihi kayar. Satış temsilcilerinin en sık kullandığı işlem kodlarından biri <b>VA02</b>'dir — açık (henüz teslim/faturalanmamış) siparişler üzerinde değişiklik yapmayı sağlar.</p>
+                <div class="bg-panel p-3 border border-sapBlue/40 pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-sapBlue font-bold block mb-1">📍 SAP Menü Yolu:</span>
+                  Lojistik → Satış ve Dağıtım → Satış → Sipariş → Değiştir
+                  <div class="mt-2 text-gray-400">İlgili T-Code'lar: <code>VA01</code> (yarat), <code>VA03</code> (görüntüle), <code>VA05N</code> (sipariş listesi - gelişmiş)</div>
+                </div>
+                <div class="bg-panel p-3 border border-border pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-sapBlue font-bold block mb-1">Veri Ambarı (ETL) Notu:</span>
+                  Bu işlem <b>VBAP</b> tablosundaki ilgili kalem satırını UPDATE eder. Gerçek sistemde bir sipariş zaten teslim edilmişse, miktar azaltma genelde sistem tarafından engellenir.
+                </div>
+                <div class="bg-panel p-3 border border-gold/40 pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-gold font-bold block mb-1">⚠ Ön Koşul:</span>
+                  Değiştirilecek bir satış siparişi lazım — önce <b>VA01</b> ile bir sipariş oluşturmuş olmalısın.
+                </div>
+                <h3 class="text-sapBlue font-pixel text-[10px] mt-4">SENARYO GÖREVİ</h3>
+                <p>Bir satış siparişinin miktarını güncellemek için komut satırına yaz: <code>VA02</code></p>`,
+      validation: (c) => c === "VA02" || c === "/NVA02", answer: "VA02",
+      tabs: [
+        { label: "Sipariş Seçimi", fields: [
+          { id: 'orderRef', label: 'Satış Siparişi', type: 'ref', required: true, sourceTable: 'VBAK', valueField: 'VBELN', display: r => `${r.VBELN} — ${r.KUNNR}`, emptyHint: 'Önce VA01 ile bir satış siparişi oluşturmalısınız.' },
+        ]},
+        { label: "Yeni Kalem Verisi", fields: [
+          { id: 'newQty', label: 'Yeni Sipariş Miktarı', type: 'number', required: true, placeholder: 'Örn: 25' },
+        ]},
+      ],
+      onSave: (v, db) => {
+        if (db.VBAK.length === 0) return { success: false, message: 'Önce VA01 ile bir satış siparişi oluşturmalısınız.' };
+        const vbap = db.VBAP.find(x => String(x.VBELN) === String(v.orderRef));
+        if (!vbap) return { success: false, message: 'Seçilen sipariş için kalem verisi bulunamadı.' };
+        vbap.KWMENG = v.newQty;
+        return { success: true, message: `Satış Siparişi ${vbap.VBELN} güncellendi. Yeni miktar: ${v.newQty}.`, tables: [{ name: 'VBAP', row: vbap }] };
+      }
+    },
+
+    // BÖLÜM 3: FI & REPORTING (FİNANS VE RAPORLAMA)
+    {
+      id: 7, ch: 3, name: "Gelen Fatura Girişi (MIRO)", title: "7. MIRO - Lojistik Fatura Kontrolü",
+      content: `<span class="inline-block text-[9px] font-pixel text-gold border border-gold/40 px-2 py-1 pixel-corners mb-1">MODÜL: MM/FI &nbsp;|&nbsp; KATEGORİ: FATURA KONTROLÜ (INVOICE VERIFICATION)</span>
+                <p>Tedarikçiden aldığımız ürünlerin (MIGO) karşılığında gelen tedarikçi faturasını sisteme gireriz. Bu işlem MM ile FI modülünü birbirine bağlar ve "Üç Yönlü Eşleştirme" (3-Way Match: Sipariş / Mal Girişi / Fatura) prensibinin uygulandığı yerdir.</p>
+                <div class="bg-panel p-3 border border-sapBlue/40 pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-sapBlue font-bold block mb-1">📍 SAP Menü Yolu:</span>
+                  Lojistik → Malzeme Yönetimi → Lojistik Fatura Kontrolü → Belge Girişi → MIRO — Girin
+                  <div class="mt-2 text-gray-400">İlgili T-Code'lar: <code>MIR4</code> (fatura görüntüle), <code>MIR7</code> (park et/ön kayıt), <code>MRBR</code> (bloke faturayı serbest bırak)</div>
+                </div>
+                <div class="bg-panel p-3 border border-border pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-sapBlue font-bold block mb-1">Veri Ambarı (ETL) Notu:</span>
+                  Muhasebe belgesi <b>BKPF</b> (Başlık) ve <b>BSEG</b> (Kalem) tablolarına yazılır. Bu, MM tarafındaki fiziksel süreci FI tarafındaki finansal deftere bağlayan köprüdür.
+                </div>
+                <div class="bg-panel p-3 border border-gold/40 pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-gold font-bold block mb-1">⚠ Ön Koşul:</span>
+                  Sipariş için MIGO ile mal girişi yapılmış olmalı.
+                </div>
+                <div class="bg-panel p-3 border border-neon/40 pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-neon font-bold block mb-1">💡 Pratik Bilgi:</span>
+                  Fatura tutarı sipariş tutarından belirgin şekilde sapıyorsa, sistem faturayı otomatik olarak "Bloke" (ödeme engelli) duruma alır — bu yüzden fatura kontrolü, işletmelerde önemli bir iç kontrol noktasıdır.
+                </div>
+                <h3 class="text-sapBlue font-pixel text-[10px] mt-4">SENARYO GÖREVİ</h3>
+                <p>Tedarikçi faturasını girmek için komut satırına yaz: <code>MIRO</code></p>`,
+      validation: (c) => c === "MIRO" || c === "/NMIRO", answer: "MIRO",
+      tabs: [
+        { label: "Fatura Bilgisi", fields: [
+          { id: 'poRef', label: 'Satınalma Siparişi', type: 'ref', required: true, sourceTable: 'EKKO', valueField: 'EBELN', display: r => `${r.EBELN} — ${r.LIFNR}`, emptyHint: 'Önce ME21N ile bir satınalma siparişi oluşturmalısınız.' },
+          { id: 'invoiceAmount', label: 'Fatura Tutarı', type: 'number', required: true, placeholder: 'Örn: 2550.00' },
+          { id: 'taxCode', label: 'Vergi Kodu', type: 'select', required: true, default: 'V1', options: [{ v: 'V0', t: 'V0 — KDV Hariç' }, { v: 'V1', t: 'V1 — %20 KDV' }] },
+        ]},
+      ],
+      onSave: (v, db) => {
+        if (db.EKKO.length === 0) return { success: false, message: 'Önce ME21N ile bir satınalma siparişi oluşturmalısınız.' };
+        const hasGR = db.MSEG.some(m => String(m.EBELN) === String(v.poRef));
+        if (!hasGR) return { success: false, message: 'Bu sipariş için henüz mal girişi (MIGO) yapılmamış. Önce MIGO çalıştırmalısınız.' };
+        const belnr = counters.miro++;
+        const bkpfRow = { BELNR: belnr, BUKRS: '1000', BLART: 'RE', BUDAT: todayStr() };
+        const bseg1 = { BELNR: belnr, BUZEI: '001', HKONT: 'Tedarikçi Hesabı', SHKZG: 'H', WRBTR: v.invoiceAmount };
+        const bseg2 = { BELNR: belnr, BUZEI: '002', HKONT: 'GR/IR Karşılık Hesabı', SHKZG: 'S', WRBTR: v.invoiceAmount };
+        db.BKPF.push(bkpfRow); db.BSEG.push(bseg1); db.BSEG.push(bseg2);
+        return { success: true, message: `Belge ${belnr} şirket kodu 1000'de kaydedildi.`, tables: [{ name: 'BKPF', row: bkpfRow }, { name: 'BSEG', row: bseg1 }, { name: 'BSEG', row: bseg2 }] };
+      }
+    },
+    {
+      id: 8, ch: 3, name: "Yevmiye Kaydı (Journal Entry)", title: "8. FB50 - Yevmiye Kaydı",
+      content: `<span class="inline-block text-[9px] font-pixel text-gold border border-gold/40 px-2 py-1 pixel-corners mb-1">MODÜL: FI &nbsp;|&nbsp; KATEGORİ: MUHASEBE (GENERAL LEDGER)</span>
+                <p>Maliyetleri dağıtmak veya genel giderleri sisteme işlemek için standart FI muhasebe kaydı (Yevmiye) oluşturulur. <b>FB50</b>, MM veya SD gibi bir lojistik süreçten gelmeyen, doğrudan muhasebeci tarafından girilen "manuel" kayıtlar için kullanılır.</p>
+                <div class="bg-panel p-3 border border-sapBlue/40 pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-sapBlue font-bold block mb-1">📍 SAP Menü Yolu:</span>
+                  Muhasebe → Mali Muhasebe → Ana Hesap → Belge Girişi → FB50 — Yazdır ile Gir
+                  <div class="mt-2 text-gray-400">İlgili T-Code'lar: <code>FB01</code> (klasik genel belge girişi), <code>FB03</code> (belge görüntüle), <code>FBL3N</code> (hesap kalemleri), <code>FS10N</code> (hesap bakiyeleri)</div>
+                </div>
+                <div class="bg-panel p-3 border border-border pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-sapBlue font-bold block mb-1">Muhasebenin Altın Kuralı:</span>
+                  Her kayıtta <b>Borç = Alacak</b> olmalıdır. Sistem bunu otomatik kontrol eder; tutarlar eşleşmeden belge kaydedilemez (SAP buna "Zero Balance Check" der).
+                </div>
+                <div class="bg-panel p-3 border border-neon/40 pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-neon font-bold block mb-1">💡 Pratik Bilgi:</span>
+                  BSEG tablosundaki SHKZG alanı "S" (Soll/Borç) veya "H" (Haben/Alacak) değerini taşır — SAP'nin muhasebe mantığının kalbi bu tek karakterlik alandır.
+                </div>
+                <h3 class="text-sapBlue font-pixel text-[10px] mt-4">SENARYO GÖREVİ</h3>
+                <p>G/L Hesaplarına manuel kayıt girmek için işlem kodunu yaz: <code>FB50</code></p>`,
+      validation: (c) => c === "FB50" || c === "/NFB50", answer: "FB50",
+      tabs: [
+        { label: "Yevmiye Kaydı", fields: [
+          { id: 'companyCode', label: 'Şirket Kodu', type: 'select', required: true, default: '1000', options: [{ v: '1000', t: '1000 — Ana Şirket' }] },
+          { id: 'glDebit', label: 'Borç Hesabı (G/L)', type: 'text', required: true, placeholder: 'Örn: 770000 — Genel Gider' },
+          { id: 'amountDebit', label: 'Borç Tutarı', type: 'number', required: true, placeholder: 'Örn: 1500.00' },
+          { id: 'glCredit', label: 'Alacak Hesabı (G/L)', type: 'text', required: true, placeholder: 'Örn: 100000 — Kasa' },
+          { id: 'amountCredit', label: 'Alacak Tutarı', type: 'number', required: true, placeholder: 'Örn: 1500.00' },
+        ]},
+      ],
+      onSave: (v, db) => {
+        if (Number(v.amountDebit) !== Number(v.amountCredit)) {
+          return { success: false, message: `Borç (${v.amountDebit}) ve Alacak (${v.amountCredit}) tutarları eşit olmalıdır. Muhasebenin altın kuralı: Borç = Alacak.` };
+        }
+        const belnr = counters.fb++;
+        const bkpfRow = { BELNR: belnr, BUKRS: v.companyCode, BLART: 'SA', BUDAT: todayStr() };
+        const bseg1 = { BELNR: belnr, BUZEI: '001', HKONT: v.glDebit, SHKZG: 'S', WRBTR: v.amountDebit };
+        const bseg2 = { BELNR: belnr, BUZEI: '002', HKONT: v.glCredit, SHKZG: 'H', WRBTR: v.amountCredit };
+        db.BKPF.push(bkpfRow); db.BSEG.push(bseg1); db.BSEG.push(bseg2);
+        return { success: true, message: `Belge ${belnr} şirket kodu ${v.companyCode}'de kaydedildi.`, tables: [{ name: 'BKPF', row: bkpfRow }, { name: 'BSEG', row: bseg1 }, { name: 'BSEG', row: bseg2 }] };
+      }
+    },
+    {
+      id: 13, ch: 3, name: "Hesap Bakiyesi Görüntüleme", title: "13. FBL3N - G/L Hesap Kalemleri",
+      content: `<span class="inline-block text-[9px] font-pixel text-gold border border-gold/40 px-2 py-1 pixel-corners mb-1">MODÜL: FI &nbsp;|&nbsp; KATEGORİ: RAPORLAMA (ACCOUNT ANALYSIS)</span>
+                <p>Bir muhasebecinin en sık açtığı ekranlardan biri budur: belirli bir G/L hesabına şimdiye kadar hangi kayıtlar düştü, borç/alacak toplamı ve bakiyesi nedir? <b>FBL3N</b> tam olarak bunu gösterir ve MIRO/FB50 ile ürettiğin tüm BSEG kayıtlarını hesap bazında birleştirir.</p>
+                <div class="bg-panel p-3 border border-sapBlue/40 pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-sapBlue font-bold block mb-1">📍 SAP Menü Yolu:</span>
+                  Muhasebe → Mali Muhasebe → Ana Hesap → Hesap → FBL3N — Kalem Görüntüleme/Değiştirme
+                  <div class="mt-2 text-gray-400">İlgili T-Code'lar: <code>FBL1N</code> (tedarikçi hesap kalemleri), <code>FBL5N</code> (müşteri hesap kalemleri), <code>FS10N</code> (hesap bakiyesi - dönemsel)</div>
+                </div>
+                <div class="bg-panel p-3 border border-border pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-sapBlue font-bold block mb-1">Veri Ambarı (ETL) Notu:</span>
+                  Bu rapor <b>BSEG</b> tablosunu G/L Hesabı (HKONT) kırılımında GROUP BY yaparak borç/alacak toplamlarını ve net bakiyeyi hesaplar — klasik bir "aggregation" (toplulaştırma) sorgusudur.
+                </div>
+                <div class="bg-panel p-3 border border-gold/40 pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-gold font-bold block mb-1">⚠ Ön Koşul:</span>
+                  Görüntülenecek veri için önce MIRO veya FB50 ile en az bir muhasebe kaydı oluşturmuş olmalısın.
+                </div>
+                <h3 class="text-sapBlue font-pixel text-[10px] mt-4">SENARYO GÖREVİ</h3>
+                <p>Hesap bakiyelerini görüntülemek için komut satırına yaz: <code>FBL3N</code></p>`,
+      validation: (c) => c === "FBL3N" || c === "/NFBL3N", answer: "FBL3N",
+      isGLBalance: true,
+    },
+    {
+      id: 9, ch: 3, name: "Ham Tablo Görüntüleme", title: "9. SE16N - Veri Görüntüleme",
+      content: `<span class="inline-block text-[9px] font-pixel text-gold border border-gold/40 px-2 py-1 pixel-corners mb-1">MODÜL: BASIS/ABAP &nbsp;|&nbsp; KATEGORİ: SİSTEM YÖNETİMİ</span>
+                <p>Tüm bu süreçler sonucunda veri tabanındaki ham tablolara (Bronze Layer) bakmak istersen sistem yöneticisi ekranlarını kullanırsın. Veri mühendisleri ve ETL uzmanları, SAP tablolarının içini analiz etmek için bu kodu çok sık kullanır. Şu ana kadar ürettiğin tüm belgeler burada, gerçek satırlar olarak birikmiş halde duruyor.</p>
+                <div class="bg-panel p-3 border border-sapBlue/40 pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-sapBlue font-bold block mb-1">📍 SAP Menü Yolu:</span>
+                  Araçlar → ABAP Çalışma Alanı → Genel Bakış → SE16N (veya doğrudan komut alanına yaz)
+                  <div class="mt-2 text-gray-400">İlgili T-Code'lar: <code>SE16</code> (eski/klasik versiyon), <code>SE11</code> (ABAP Dictionary — tablo yapısını gösterir), <code>SM30</code> (tablo bakım görünümü), <code>ST05</code> (SQL Trace)</div>
+                </div>
+                <div class="bg-panel p-3 border border-neon/40 pixel-corners text-xs mt-2 mb-2">
+                  <span class="text-neon font-bold block mb-1">💡 Pratik Bilgi:</span>
+                  Gerçek projelerde SE16N'e doğrudan erişim genelde kısıtlıdır (yetki gerektirir), çünkü ham tabloları görmek hassas veriye erişim demektir. Fonksiyonel danışmanlar çoğu zaman bunun yerine hazır raporları (VA05, ME2N, FBL3N gibi) kullanır.
+                </div>
+                <h3 class="text-sapBlue font-pixel text-[10px] mt-4">SENARYO GÖREVİ</h3>
+                <p>Tablo görüntüleme aracını açmak için yaz: <code>SE16N</code>, sonra içinde veri olan bir tablo seç (örn. MARA, VBAK).</p>`,
+      validation: (c) => c === "SE16N" || c === "/NSE16N", answer: "SE16N",
+      isSE16N: true,
+    }
+  ];
+
+  /* ============================= PERSISTENCE ============================= */
+  function saveProgress() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ xp, completedList: Array.from(completedLessons), db, counters }));
+  }
+
+  function loadProgress() {
+    const savedData = localStorage.getItem(STORAGE_KEY);
+    if (savedData) {
+      try {
+        const parsed = JSON.parse(savedData);
+        xp = parsed.xp || 0;
+        completedLessons = new Set(parsed.completedList || []);
+        if (parsed.db) db = Object.assign(defaultDB(), parsed.db);
+        if (parsed.counters) counters = Object.assign(defaultCounters(), parsed.counters);
+      } catch (e) {
+        console.error("Progress yüklenirken hata oluştu:", e);
+      }
+    }
+  }
+
+  function updateProgressUI() {
+    document.getElementById('xp-text').innerText = `${xp} / ${lessonsData.length * 50}`;
+    document.getElementById('ex-text').innerText = `${completedLessons.size} / ${lessonsData.length}`;
+    document.getElementById('progress-bar').style.width = `${(completedLessons.size / lessonsData.length) * 100}%`;
+
+    completedLessons.forEach(id => {
+      const btn = document.getElementById('btn-lesson-' + id);
+      if (btn) {
+        btn.classList.remove('bg-sapBlue', 'text-white');
+        btn.classList.add('bg-panel2', 'text-sapBlue', 'border', 'border-sapBlue/50');
+        btn.innerHTML = 'Tamamlandı <i class="fa-solid fa-check ml-1"></i>';
+      }
+    });
+  }
+
+  function updateDbSummary() {
+    const el = document.getElementById('db-summary');
+    el.innerHTML = Object.keys(TABLE_META).map(t =>
+      `<div class="flex justify-between"><span>${t}</span><span class="text-neonBlue font-semibold">${(db[t] || []).length} satır</span></div>`
+    ).join('');
+  }
+
+  function resetProgress() {
+    if (confirm("Tüm eğitim ilerlemeni ve ürettiğin verileri sıfırlamak istediğine emin misin?")) {
+      localStorage.removeItem(STORAGE_KEY);
+      location.reload();
+    }
+  }
+
+  /* ============================= LIST RENDER ============================= */
+  function renderLessons() {
+    [1, 2, 3].forEach(chapterId => {
+      const container = document.getElementById(`chapter-${chapterId}-container`);
+      container.innerHTML = "";
+      const chapterLessons = lessonsData.filter(l => l.ch === chapterId);
+      chapterLessons.forEach(lesson => {
+        container.innerHTML += `
+          <div class="exercise-row flex items-center justify-between px-5 py-4 transition-colors border-b border-border" onclick="openLesson(${lesson.id})">
+            <div class="flex items-center gap-3">
+              <span class="w-6 h-6 flex items-center justify-center text-xs font-bold text-sapBlue border border-sapBlue/40 pixel-corners">${lesson.id}</span>
+              <span class="text-sm text-gray-200">${lesson.name}</span>
+            </div>
+            <button id="btn-lesson-${lesson.id}" class="btn-pixel-blue bg-sapBlue text-white font-bold text-xs px-4 py-1.5 pixel-corners hover:brightness-110">Seç</button>
+          </div>
+        `;
+      });
+    });
+  }
+
+  /* ============================= MODAL / LESSON FLOW ============================= */
+  function openLesson(id) {
+    currentLesson = id;
+    const lesson = lessonsData.find(l => l.id === id);
+    document.getElementById('lesson-title').innerText = lesson.title;
+    document.getElementById('lesson-number-badge').innerText = id;
+    document.getElementById('lesson-content').innerHTML = lesson.content;
+
+    const editor = document.getElementById('sql-editor');
+    editor.value = "";
+    checkLiveCode();
+
+    document.getElementById('console-output').innerHTML = '<span class="text-gray-500 font-mono">> SAP Sistemine Bağlanıldı (Client 100). Komut Bekleniyor...</span>';
+    document.getElementById('next-btn').classList.add('hidden');
+    document.getElementById('lesson-modal').classList.add('active');
+    document.body.style.overflow = "hidden";
+
+    setTimeout(() => editor.focus(), 100);
+  }
+
+  function closeLesson() {
+    document.getElementById('lesson-modal').classList.remove('active');
+    document.body.style.overflow = "auto";
+  }
+
+  function checkLiveCode() {
+    const editor = document.getElementById('sql-editor');
+    const container = document.getElementById('editor-container');
+    const codeUpper = editor.value.toUpperCase().trim();
+    const lesson = lessonsData.find(l => l.id === currentLesson);
+
+    if (codeUpper.length === 0) {
+      container.style.borderColor = '#232f46';
+      container.style.boxShadow = 'none';
+    } else if (lesson.validation(codeUpper)) {
+      container.style.borderColor = '#39ff88';
+      container.style.boxShadow = '0 0 12px rgba(57,255,136,0.55)';
+    } else {
+      container.style.borderColor = '#ff5fa2';
+      container.style.boxShadow = '0 0 8px rgba(255,95,162,0.3)';
+    }
+  }
+
+  function showHint() {
+    const lesson = lessonsData.find(l => l.id === currentLesson);
+    const editor = document.getElementById('sql-editor');
+    editor.value = lesson.answer;
+    checkLiveCode();
+
+    document.getElementById('console-output').innerHTML = `
+      <span class="text-gold font-mono block">> 💡 Sistem İpucu: İşlem kodu komut satırına eklendi.</span>
+      <span class="text-gray-500 font-mono">> Ekranı açmak için "Enter" tuşuna basabilirsin.</span>
+    `;
+  }
+
+  function handleEnter(e) {
+    if (e.key === 'Enter') runCode();
+  }
+
+  function runCode() {
+    const codeRaw = document.getElementById('sql-editor').value;
+    const codeUpper = codeRaw.toUpperCase().trim();
+    const consoleOut = document.getElementById('console-output');
+    const lesson = lessonsData.find(l => l.id === currentLesson);
+
+    if (codeRaw.trim().length < 2) {
+      consoleOut.innerHTML = `<span class="text-neonPink font-mono">> Lütfen geçerli bir işlem kodu (T-Code) girin.</span>`;
+      return;
+    }
+
+    if (!lesson.validation(codeUpper)) {
+      consoleOut.innerHTML = `
+        <span class="text-neonPink block font-mono font-bold">> [ HATA ] "${codeUpper}" işlemi bu senaryo için uygun değil veya yetkiniz yok.</span>
+        <div class="mt-3 p-3 bg-panel border border-border pixel-corners font-sans text-sm text-gray-400">
+           Lütfen talimatlarda istenen doğru T-Code değerini girdiğinizden emin olun. (Başına /n koymayı deneyebilirsiniz)
+        </div>`;
+      return;
+    }
+
+    if (lesson.isSE16N) { renderSE16NScreen(); return; }
+    if (lesson.isStockOverview) { renderStockOverviewScreen(); return; }
+    if (lesson.isGLBalance) { renderGLBalanceScreen(); return; }
+    renderTransactionScreen(lesson);
+  }
+
+  /* ============================= FIELD / FORM RENDERING ============================= */
+  function fieldHTML(f) {
+    const idAttr = `tf-${f.id}`;
+    let inputHtml = '';
+    let hint = '';
+    if (f.type === 'text') {
+      inputHtml = `<input type="text" id="${idAttr}" placeholder="${f.placeholder || ''}" class="sap-field-input" />`;
+    } else if (f.type === 'number') {
+      inputHtml = `<input type="number" step="any" id="${idAttr}" placeholder="${f.placeholder || ''}" class="sap-field-input" />`;
+    } else if (f.type === 'date') {
+      inputHtml = `<input type="date" id="${idAttr}" value="${f.default || todayStr()}" class="sap-field-input" />`;
+    } else if (f.type === 'select') {
+      const opts = f.options.map(o => `<option value="${o.v}" ${f.default === o.v ? 'selected' : ''}>${o.t}</option>`).join('');
+      inputHtml = `<select id="${idAttr}" class="sap-field-input">${opts}</select>`;
+    } else if (f.type === 'ref') {
+      const rows = db[f.sourceTable] || [];
+      const seen = new Set(); const uniqueRows = [];
+      rows.forEach(r => { if (!seen.has(r[f.valueField])) { seen.add(r[f.valueField]); uniqueRows.push(r); } });
+      let opts = `<option value="">-- Seçiniz --</option>` + uniqueRows.map(r => `<option value="${r[f.valueField]}">${f.display(r)}</option>`).join('');
+      inputHtml = `<select id="${idAttr}" class="sap-field-input">${opts}</select>`;
+      if (uniqueRows.length === 0) {
+        hint = `<div class="text-[#b30000] text-[11px] mt-1"><i class="fa-solid fa-triangle-exclamation"></i> ${f.emptyHint || 'Önce ilgili kaydı oluşturmalısınız.'}</div>`;
+      }
+    }
+    return `<div class="flex flex-col gap-0.5 ${f.required ? 'sap-field-required' : ''}">
+      <label class="sap-field-label">${f.label}${f.required ? ' <span class="sap-required-mark">*</span>' : ''}</label>
+      ${inputHtml}
+      ${hint}
+    </div>`;
+  }
+
+  function renderTransactionScreen(lesson) {
+    const consoleOut = document.getElementById('console-output');
+    let tabsHtml = '';
+    let contentHtml = '';
+    lesson.tabs.forEach((tab, idx) => {
+      tabsHtml += `<div onclick="switchTab(${idx})" id="tab-btn-${idx}" class="sap-tab ${idx === 0 ? 'active' : ''}">${tab.label}</div>`;
+      contentHtml += `<div id="tab-content-${idx}" class="sap-groupbox ${idx === 0 ? '' : 'hidden'}">
+          <span class="gb-label">${tab.label}</span>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">${tab.fields.map(fieldHTML).join('')}</div>
+        </div>`;
+    });
+
+    consoleOut.innerHTML = `
+      <div class="sap-window pixel-corners overflow-hidden">
+        <div class="sap-titlebar">
+          <span><i class="fa-regular fa-window-maximize mr-1"></i> ${lesson.title}</span>
+          <div class="sap-title-icons">
+            <span class="win-btn">_</span><span class="win-btn">&#9633;</span><span class="win-btn">&times;</span>
+          </div>
+        </div>
+        <div class="sap-menubar">
+          <span>Sistem</span><span>Düzenle</span><span>Görüntüle</span><span>Ayarlar</span><span>Ortam</span><span>Yardım</span>
+        </div>
+        <div class="sap-toolbar">
+          <button type="button" class="sap-tool-btn" onclick="saveTransaction()" title="Kaydet (Ctrl+S)"><i class="fa-solid fa-floppy-disk"></i></button>
+          <div class="sap-tool-sep"></div>
+          <button type="button" class="sap-tool-btn" title="Geri"><i class="fa-solid fa-arrow-left"></i></button>
+          <button type="button" class="sap-tool-btn" title="Çık"><i class="fa-solid fa-door-open"></i></button>
+          <div class="sap-tool-sep"></div>
+          <button type="button" class="sap-tool-btn" title="Yazdır"><i class="fa-solid fa-print"></i></button>
+          <button type="button" class="sap-tool-btn" title="Bul"><i class="fa-solid fa-magnifying-glass"></i></button>
+          <span class="text-[10px] text-gray-600 ml-auto pr-2 whitespace-nowrap">Client 100 / EĞİTİM</span>
+        </div>
+        <div class="sap-tabstrip">${tabsHtml}</div>
+        <div class="sap-body">
+          <div id="tab-contents-wrap">${contentHtml}</div>
+          <div class="flex justify-end">
+            <button onclick="saveTransaction()" class="sap-btn flex items-center gap-2">
+              <i class="fa-solid fa-floppy-disk"></i> Kaydet (Ctrl+S)
+            </button>
+          </div>
+        </div>
+        <div class="sap-statusbar">
+          <i class="fa-regular fa-circle text-gray-400"></i>
+          <span>Giriş bekleniyor</span>
+        </div>
+      </div>
+      <div id="result-area" class="mt-4"></div>
+    `;
+  }
+
+  function switchTab(idx) {
+    const lesson = lessonsData.find(l => l.id === currentLesson);
+    lesson.tabs.forEach((tab, i) => {
+      document.getElementById(`tab-content-${i}`).classList.toggle('hidden', i !== idx);
+      document.getElementById(`tab-btn-${i}`).classList.toggle('active', i === idx);
+    });
+  }
+
+  function errorCard(msg) {
+    return `<div class="sap-window pixel-corners overflow-hidden">
+       <div class="flex items-center gap-2 bg-[#ffe8e8] border-b border-[#c00000] text-[#900000] text-xs font-bold px-3 py-2.5">
+         <i class="fa-solid fa-circle-exclamation"></i> ${msg}
+       </div>
+    </div>`;
+  }
+
+  function tableCardHtml(name, row) {
+    const meta = TABLE_META[name];
+    return `<div class="sap-window pixel-corners overflow-hidden mb-3">
+       <div class="sap-titlebar" style="padding:4px 8px;">
+         <span class="text-[11px]"><i class="fa-solid fa-table-cells mr-1"></i> ${name} <span class="font-normal opacity-80">— ${meta.desc}</span></span>
+       </div>
+       <div class="overflow-x-auto">
+         <table class="sap-alv">
+           <thead><tr>${meta.cols.map(c => `<th>${c}</th>`).join('')}</tr></thead>
+           <tbody><tr>${meta.cols.map(c => `<td>${row[c] !== undefined && row[c] !== '' ? row[c] : '-'}</td>`).join('')}</tr></tbody>
+         </table>
+       </div>
+    </div>`;
+  }
+
+  function saveTransaction() {
+    const lesson = lessonsData.find(l => l.id === currentLesson);
+    const values = {};
+    lesson.tabs.forEach(tab => tab.fields.forEach(f => {
+      const el = document.getElementById(`tf-${f.id}`);
+      let v = el.value;
+      if (f.type === 'number') v = v === '' ? null : parseFloat(v);
+      values[f.id] = v;
+    }));
+
+    const missing = [];
+    lesson.tabs.forEach(tab => tab.fields.forEach(f => {
+      if (f.required && (values[f.id] === '' || values[f.id] === null || values[f.id] === undefined)) missing.push(f.label);
+    }));
+
+    const resultArea = document.getElementById('result-area');
+    if (missing.length > 0) {
+      resultArea.innerHTML = errorCard(`Lütfen zorunlu alanları doldurun: ${missing.join(', ')}`);
+      return;
+    }
+
+    const res = lesson.onSave(values, db);
+    if (!res.success) {
+      resultArea.innerHTML = errorCard(res.message);
+      return;
+    }
+
+    const tablesHtml = res.tables.map(t => tableCardHtml(t.name, t.row)).join('');
+    resultArea.innerHTML = `
+      <div class="sap-window pixel-corners overflow-hidden mb-3">
+        <div class="flex items-center gap-2 bg-[#e3f3e3] border-b border-[#4a8f4a] text-[#1a5c1a] text-xs font-bold px-3 py-2.5">
+          <i class="fa-solid fa-circle-check"></i> ${res.message}
+        </div>
+      </div>
+      ${tablesHtml}
+      <div class="text-gold font-pixel text-xs mt-4 block text-center bg-panel2 p-3 pixel-corners border border-gold/30">✨ TEBRİKLER! +50 SAP PUANI! ✨</div>
+    `;
+
+    if (!completedLessons.has(currentLesson)) {
+      completedLessons.add(currentLesson);
+      xp += 50;
+    }
+    saveProgress();
+    updateProgressUI();
+    updateDbSummary();
+    const curIdx = lessonsData.findIndex(l => l.id === currentLesson);
+    if (curIdx < lessonsData.length - 1) document.getElementById('next-btn').classList.remove('hidden');
+  }
+
+  /* ============================= SE16N SCREEN ============================= */
+  function renderSE16NScreen() {
+    const consoleOut = document.getElementById('console-output');
+    const options = Object.keys(TABLE_META).map(t => `<option value="${t}">${t} — ${TABLE_META[t].desc} (${(db[t] || []).length})</option>`).join('');
+    consoleOut.innerHTML = `
+     <div class="sap-window pixel-corners overflow-hidden">
+        <div class="sap-titlebar">
+          <span><i class="fa-solid fa-table mr-1"></i> SE16N - Genel Tablo Görüntüleme</span>
+          <div class="sap-title-icons">
+            <span class="win-btn">_</span><span class="win-btn">&#9633;</span><span class="win-btn">&times;</span>
+          </div>
+        </div>
+        <div class="sap-menubar">
+          <span>Program</span><span>Düzenle</span><span>Görüntüle</span><span>Ortam</span><span>Yardım</span>
+        </div>
+        <div class="sap-toolbar">
+          <button type="button" class="sap-tool-btn" onclick="showTableData()" title="Çalıştır (F8)"><i class="fa-solid fa-play"></i></button>
+          <div class="sap-tool-sep"></div>
+          <button type="button" class="sap-tool-btn" title="Geri"><i class="fa-solid fa-arrow-left"></i></button>
+          <button type="button" class="sap-tool-btn" title="Çık"><i class="fa-solid fa-door-open"></i></button>
+        </div>
+        <div class="sap-body">
+          <div class="sap-groupbox">
+            <span class="gb-label">Seçim Ekranı</span>
+            <div class="flex gap-3 items-end flex-wrap pt-1">
+              <div class="flex flex-col gap-0.5">
+                <label class="sap-field-label">Tablo/Görünüm Adı</label>
+                <select id="se16n-table" class="sap-field-input" style="min-width:280px;">${options}</select>
+              </div>
+              <button onclick="showTableData()" class="sap-btn flex items-center gap-2">
+                <i class="fa-solid fa-magnifying-glass"></i> Tabloyu Göster (F8)
+              </button>
+            </div>
+          </div>
+          <div id="se16n-result"></div>
+        </div>
+        <div class="sap-statusbar">
+          <i class="fa-regular fa-circle text-gray-400"></i>
+          <span>Hazır</span>
+        </div>
+     </div>
+    `;
+  }
+
+  function showTableData() {
+    const tname = document.getElementById('se16n-table').value;
+    const rows = db[tname] || [];
+    const meta = TABLE_META[tname];
+    const resDiv = document.getElementById('se16n-result');
+
+    if (rows.length === 0) {
+      resDiv.innerHTML = `<div class="sap-window pixel-corners overflow-hidden">
+        <div class="px-3 py-3 text-[#333] text-sm bg-[#fff9d6] border-b border-[#d8c96a] flex items-center gap-2">
+          <i class="fa-solid fa-triangle-exclamation text-[#a8860a]"></i> Bu tabloda henüz veri yok. Önce ilgili T-Code'u çalıştırarak veri üretmelisin.
+        </div>
+      </div>`;
+      return;
+    }
+
+    resDiv.innerHTML = `
+      <div class="sap-window pixel-corners overflow-hidden">
+        <div class="sap-toolbar" style="justify-content:space-between;">
+          <span class="text-[11px] font-bold text-gray-700">${tname} <span class="font-normal">— ${meta.desc}</span></span>
+          <span class="text-[10px] text-gray-600">${rows.length} Girdi Bulundu</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="sap-alv">
+            <thead><tr><th style="width:36px;text-align:center;">#</th>${meta.cols.map(c => `<th>${c}</th>`).join('')}</tr></thead>
+            <tbody>${rows.map((r, i) => `<tr><td style="text-align:center;color:#8a8a8a;">${i + 1}</td>${meta.cols.map(c => `<td>${r[c] !== undefined && r[c] !== '' ? r[c] : '-'}</td>`).join('')}</tr>`).join('')}</tbody>
+          </table>
+        </div>
+      </div>
+    `;
+
+    if (!completedLessons.has(9)) {
+      completedLessons.add(9);
+      xp += 50;
+      saveProgress();
+      updateProgressUI();
+      updateDbSummary();
+      resDiv.innerHTML += `<div class="text-gold font-pixel text-xs mt-4 block text-center bg-panel2 p-3 pixel-corners border border-gold/30">✨ TEBRİKLER! +50 SAP PUANI! ✨</div>`;
+    }
+  }
+
+  /* ============================= MMBE - STOCK OVERVIEW SCREEN ============================= */
+  function renderStockOverviewScreen() {
+    const consoleOut = document.getElementById('console-output');
+    consoleOut.innerHTML = `
+     <div class="sap-window pixel-corners overflow-hidden">
+        <div class="sap-titlebar">
+          <span><i class="fa-solid fa-warehouse mr-1"></i> MMBE - Stok Genel Bakış</span>
+          <div class="sap-title-icons">
+            <span class="win-btn">_</span><span class="win-btn">&#9633;</span><span class="win-btn">&times;</span>
+          </div>
+        </div>
+        <div class="sap-menubar">
+          <span>Program</span><span>Düzenle</span><span>Görüntüle</span><span>Ortam</span><span>Yardım</span>
+        </div>
+        <div class="sap-toolbar">
+          <button type="button" class="sap-tool-btn" onclick="showStockOverview()" title="Çalıştır (F8)"><i class="fa-solid fa-play"></i></button>
+          <div class="sap-tool-sep"></div>
+          <button type="button" class="sap-tool-btn" title="Geri"><i class="fa-solid fa-arrow-left"></i></button>
+          <button type="button" class="sap-tool-btn" title="Çık"><i class="fa-solid fa-door-open"></i></button>
+        </div>
+        <div class="sap-body">
+          <div class="sap-groupbox">
+            <span class="gb-label">Seçim Ekranı</span>
+            <div class="flex gap-3 items-end flex-wrap pt-1">
+              <div class="flex flex-col gap-0.5">
+                <label class="sap-field-label">Fabrika</label>
+                <select id="mmbe-plant" class="sap-field-input" style="min-width:220px;">
+                  <option value="">-- Tümü --</option>
+                  <option value="1000">1000 — İstanbul Fabrikası</option>
+                  <option value="2000">2000 — İzmir Fabrikası</option>
+                </select>
+              </div>
+              <button onclick="showStockOverview()" class="sap-btn flex items-center gap-2">
+                <i class="fa-solid fa-magnifying-glass"></i> Stokları Göster (F8)
+              </button>
+            </div>
+          </div>
+          <div id="mmbe-result"></div>
+        </div>
+        <div class="sap-statusbar">
+          <i class="fa-regular fa-circle text-gray-400"></i>
+          <span>Hazır</span>
+        </div>
+     </div>
+    `;
+  }
+
+  function showStockOverview() {
+    const plantFilter = document.getElementById('mmbe-plant').value;
+    const resDiv = document.getElementById('mmbe-result');
+    let rows = db.MARD.map(m => {
+      const mara = db.MARA.find(a => String(a.MATNR) === String(m.MATNR));
+      return { MATNR: m.MATNR, MAKTX: mara ? mara.MAKTX : '-', WERKS: m.WERKS, LGORT: m.LGORT, LABST: m.LABST, MEINS: mara ? mara.MEINS : '' };
+    });
+    if (plantFilter) rows = rows.filter(r => String(r.WERKS) === String(plantFilter));
+
+    if (rows.length === 0) {
+      resDiv.innerHTML = `<div class="sap-window pixel-corners overflow-hidden">
+        <div class="px-3 py-3 text-[#333] text-sm bg-[#fff9d6] border-b border-[#d8c96a] flex items-center gap-2">
+          <i class="fa-solid fa-triangle-exclamation text-[#a8860a]"></i> Stok verisi bulunamadı. Önce MIGO ile bir mal girişi yapmalısın.
+        </div>
+      </div>`;
+      return;
+    }
+
+    resDiv.innerHTML = `
+      <div class="sap-window pixel-corners overflow-hidden">
+        <div class="sap-toolbar" style="justify-content:space-between;">
+          <span class="text-[11px] font-bold text-gray-700">Serbest Kullanılabilir Stok</span>
+          <span class="text-[10px] text-gray-600">${rows.length} Malzeme Bulundu</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="sap-alv">
+            <thead><tr><th>Malzeme</th><th>Açıklama</th><th>Fabrika</th><th>Depo Yeri</th><th style="text-align:right;">Stok Miktarı</th><th>Birim</th></tr></thead>
+            <tbody>${rows.map(r => `<tr><td>${r.MATNR}</td><td>${r.MAKTX}</td><td>${r.WERKS}</td><td>${r.LGORT}</td><td style="text-align:right;">${r.LABST}</td><td>${r.MEINS}</td></tr>`).join('')}</tbody>
+          </table>
+        </div>
+      </div>
+    `;
+
+    if (!completedLessons.has(11)) {
+      completedLessons.add(11);
+      xp += 50;
+      saveProgress();
+      updateProgressUI();
+      updateDbSummary();
+      resDiv.innerHTML += `<div class="text-gold font-pixel text-xs mt-4 block text-center bg-panel2 p-3 pixel-corners border border-gold/30">✨ TEBRİKLER! +50 SAP PUANI! ✨</div>`;
+      document.getElementById('next-btn').classList.remove('hidden');
+    }
+  }
+
+  /* ============================= FBL3N - G/L BALANCE SCREEN ============================= */
+  function renderGLBalanceScreen() {
+    const consoleOut = document.getElementById('console-output');
+    consoleOut.innerHTML = `
+     <div class="sap-window pixel-corners overflow-hidden">
+        <div class="sap-titlebar">
+          <span><i class="fa-solid fa-scale-balanced mr-1"></i> FBL3N - G/L Hesap Kalemleri</span>
+          <div class="sap-title-icons">
+            <span class="win-btn">_</span><span class="win-btn">&#9633;</span><span class="win-btn">&times;</span>
+          </div>
+        </div>
+        <div class="sap-menubar">
+          <span>Program</span><span>Düzenle</span><span>Görüntüle</span><span>Ortam</span><span>Yardım</span>
+        </div>
+        <div class="sap-toolbar">
+          <button type="button" class="sap-tool-btn" onclick="showGLBalance()" title="Çalıştır (F8)"><i class="fa-solid fa-play"></i></button>
+          <div class="sap-tool-sep"></div>
+          <button type="button" class="sap-tool-btn" title="Geri"><i class="fa-solid fa-arrow-left"></i></button>
+          <button type="button" class="sap-tool-btn" title="Çık"><i class="fa-solid fa-door-open"></i></button>
+        </div>
+        <div class="sap-body">
+          <div class="sap-groupbox">
+            <span class="gb-label">Seçim Ekranı</span>
+            <div class="flex gap-3 items-end flex-wrap pt-1">
+              <div class="flex flex-col gap-0.5">
+                <label class="sap-field-label">Şirket Kodu</label>
+                <select id="fbl3n-bukrs" class="sap-field-input" style="min-width:220px;">
+                  <option value="">-- Tümü --</option>
+                  <option value="1000">1000 — Ana Şirket</option>
+                </select>
+              </div>
+              <button onclick="showGLBalance()" class="sap-btn flex items-center gap-2">
+                <i class="fa-solid fa-magnifying-glass"></i> Çalıştır (F8)
+              </button>
+            </div>
+          </div>
+          <div id="fbl3n-result"></div>
+        </div>
+        <div class="sap-statusbar">
+          <i class="fa-regular fa-circle text-gray-400"></i>
+          <span>Hazır</span>
+        </div>
+     </div>
+    `;
+  }
+
+  function showGLBalance() {
+    const bukrsFilter = document.getElementById('fbl3n-bukrs').value;
+    const resDiv = document.getElementById('fbl3n-result');
+
+    let segRows = db.BSEG;
+    if (bukrsFilter) {
+      const belnrsInScope = new Set(db.BKPF.filter(b => String(b.BUKRS) === String(bukrsFilter)).map(b => b.BELNR));
+      segRows = segRows.filter(s => belnrsInScope.has(s.BELNR));
+    }
+
+    if (segRows.length === 0) {
+      resDiv.innerHTML = `<div class="sap-window pixel-corners overflow-hidden">
+        <div class="px-3 py-3 text-[#333] text-sm bg-[#fff9d6] border-b border-[#d8c96a] flex items-center gap-2">
+          <i class="fa-solid fa-triangle-exclamation text-[#a8860a]"></i> Muhasebe kaydı bulunamadı. Önce MIRO veya FB50 ile bir kayıt oluşturmalısın.
+        </div>
+      </div>`;
+      return;
+    }
+
+    const byAccount = {};
+    segRows.forEach(s => {
+      if (!byAccount[s.HKONT]) byAccount[s.HKONT] = { debit: 0, credit: 0, count: 0 };
+      const amt = Number(s.WRBTR) || 0;
+      if (s.SHKZG === 'S') byAccount[s.HKONT].debit += amt; else byAccount[s.HKONT].credit += amt;
+      byAccount[s.HKONT].count++;
+    });
+    const accountRows = Object.keys(byAccount).map(acc => {
+      const d = byAccount[acc];
+      return { HKONT: acc, KALEM: d.count, BORC: d.debit.toFixed(2), ALACAK: d.credit.toFixed(2), BAKIYE: (d.debit - d.credit).toFixed(2) };
+    });
+
+    resDiv.innerHTML = `
+      <div class="sap-window pixel-corners overflow-hidden">
+        <div class="sap-toolbar" style="justify-content:space-between;">
+          <span class="text-[11px] font-bold text-gray-700">Hesap Bazında Bakiye (Toplulaştırılmış)</span>
+          <span class="text-[10px] text-gray-600">${accountRows.length} Hesap Bulundu</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="sap-alv">
+            <thead><tr><th>G/L Hesabı</th><th style="text-align:right;">Kalem Sayısı</th><th style="text-align:right;">Borç Toplamı</th><th style="text-align:right;">Alacak Toplamı</th><th style="text-align:right;">Bakiye</th></tr></thead>
+            <tbody>${accountRows.map(r => `<tr><td>${r.HKONT}</td><td style="text-align:right;">${r.KALEM}</td><td style="text-align:right;">${r.BORC}</td><td style="text-align:right;">${r.ALACAK}</td><td style="text-align:right;font-weight:bold;">${r.BAKIYE}</td></tr>`).join('')}</tbody>
+          </table>
+        </div>
+      </div>
+    `;
+
+    if (!completedLessons.has(13)) {
+      completedLessons.add(13);
+      xp += 50;
+      saveProgress();
+      updateProgressUI();
+      updateDbSummary();
+      resDiv.innerHTML += `<div class="text-gold font-pixel text-xs mt-4 block text-center bg-panel2 p-3 pixel-corners border border-gold/30">✨ TEBRİKLER! +50 SAP PUANI! ✨</div>`;
+      document.getElementById('next-btn').classList.remove('hidden');
+    }
+  }
+
+  function nextLesson() {
+    const idx = lessonsData.findIndex(l => l.id === currentLesson);
+    if (idx >= 0 && idx < lessonsData.length - 1) openLesson(lessonsData[idx + 1].id);
+  }
+
+  window.onload = () => {
+    loadProgress();
+    renderLessons();
+    updateProgressUI();
+    updateDbSummary();
+  };
+</script>
+
+</body>
+</html>
