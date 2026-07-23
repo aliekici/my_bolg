@@ -32,4 +32,10 @@ export default defineConfig({
 			},
 		},
 	],
+	// Buraya Vite minifier ayarını ekledik
+	vite: {
+		build: {
+			cssMinify: 'esbuild'
+		}
+	}
 });
