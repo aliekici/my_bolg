@@ -6,10 +6,10 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>İnteraktif Eğitimler - DataPlaybook'a</title>
+    <title>İnteraktif Eğitim Merkezi - DataPlaybook'a</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -19,7 +19,7 @@
         <div class="nav-container">
             <a href="/" class="logo">
                 <i class="fa-solid fa-chart-line logo-icon"></i>
-                <span class="logo-text">BI<span class="logo-text-bold">Playbook</span></span>
+                <span class="logo-text">Data<span class="logo-text-bold">Playbook</span></span>
             </a>
             
             <ul class="nav-links">
@@ -30,16 +30,21 @@
             </ul>
 
             <div class="social-icons">
-                <a href="#"><i class="fa-brands fa-github"></i></a>
+                <a href="#" aria-label="Github"><i class="fa-brands fa-github"></i></a>
             </div>
         </div>
     </nav>
 
-    <!-- EĞİTİM MERKEZİ BAŞLIĞI -->
+    <!-- EĞİTİM MERKEZİ BAŞLIĞI (Çakışma Sorunu Giderildi) -->
     <header class="page-header">
         <div class="container">
-            <h1>İnteraktif Eğitim Merkezi</h1>
-            <p>Pratik yaparak öğrenin. Hangi yeteneğinizi geliştirmek istersiniz?</p>
+            <div class="status-badge">
+                <span class="pulse-dot"></span> SİSTEM AKTİF — ÇALIŞMA ORTAMI HAZIR
+            </div>
+            <h1>Dinamik Eğitimler</h1>
+            <p>
+                Teoriyi uygulamayla pekiştirin. Gerçek iş senaryolarını temel alan eğitimlerimizde, kurulum gerektirmeyen sanal laboratuvar ortamında SQL sorgularını yazabilir, SAP ekranlarını birebir deneyimleyebilir ve öğrendiklerinizi anında uygulayabilirsiniz.
+            </p>
         </div>
     </header>
 
@@ -54,6 +59,7 @@
                         <i class="fa-solid fa-database"></i>
                     </div>
                     <div class="course-content">
+                        <div class="card-top-tag">v3.1 / DWH_ENGINE</div>
                         <h3>İnteraktif SQL Eğitimi</h3>
                         <p>Tarayıcı üzerinden gerçek veri setleriyle kod yazarak SQL öğrenin. Sorguları çalıştırın, sonuçları anında görün.</p>
                         <div class="course-meta">
@@ -70,6 +76,7 @@
                         <i class="fa-solid fa-cube"></i>
                     </div>
                     <div class="course-content">
+                        <div class="card-top-tag">v2.0 / ERP_SIM</div>
                         <h3>SAP Modül Pratikleri</h3>
                         <p>SD, MM ve FI modüllerindeki temel veri akışlarını simüle edin ve tablolar arası ilişkileri kavrayın.</p>
                         <div class="course-meta">
@@ -86,6 +93,7 @@
                         <i class="fa-solid fa-chart-pie"></i>
                     </div>
                     <div class="course-content">
+                        <div class="card-top-tag">YAKINDA / QLIK & POWERBI</div>
                         <h3>Dinamik Dashboard Tasarımı</h3>
                         <p>Qlik Sense ve PowerBI mantığıyla veri modelleme ve görselleştirme senaryoları üzerinde çalışın.</p>
                         <div class="course-meta">
@@ -102,6 +110,7 @@
                         <i class="fa-solid fa-network-wired"></i>
                     </div>
                     <div class="course-content">
+                        <div class="card-top-tag">YAKINDA / PIPELINE</div>
                         <h3>ETL Veri Boru Hatları</h3>
                         <p>Farklı kaynaklardan veriyi çekip, temizleyip, dönüştürerek hedef sisteme aktarma (Data Pipeline) egzersizleri.</p>
                         <div class="course-meta">
@@ -139,8 +148,13 @@
     body {
         font-family: 'Inter', sans-serif;
         background-color: var(--bg-dark);
+        background-image: 
+            linear-gradient(rgba(148, 163, 184, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(148, 163, 184, 0.03) 1px, transparent 1px);
+        background-size: 40px 40px;
         color: var(--text-main);
         line-height: 1.6;
+        overflow-x: hidden;
     }
 
     .container {
@@ -156,6 +170,7 @@
         position: sticky;
         top: 0;
         z-index: 1000;
+        backdrop-filter: blur(10px);
     }
 
     .nav-container {
@@ -177,7 +192,7 @@
     }
 
     .logo-icon { font-size: 1.4rem; color: var(--sql-color); }
-    .logo-text { font-size: 1.25rem; }
+    .logo-text { font-size: 1.25rem; font-family: 'Space Grotesk', sans-serif; }
     .logo-text-bold { font-weight: 700; }
 
     .nav-links { display: flex; list-style: none; height: 100%; gap: 1.5rem; }
@@ -192,74 +207,138 @@
     .social-icons a { color: #9ca3af; font-size: 1.1rem; transition: color 0.2s; }
     .social-icons a:hover { color: white; }
 
-    /* HEADER */
+    /* HEADER & STATUS BADGE (Hata Düzeltildi) */
     .page-header {
         padding: 60px 0 40px;
         text-align: center;
-        background: linear-gradient(180deg, rgba(2,6,15,1) 0%, var(--bg-dark) 100%);
+        background: linear-gradient(180deg, rgba(2,6,15,0.8) 0%, var(--bg-dark) 100%);
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        color: var(--bi-color);
+        font-family: monospace;
+        font-size: 0.75rem;
+        padding: 6px 14px;
+        border-radius: 20px;
+        margin-bottom: 1.2rem;
+        letter-spacing: 0.05em;
+    }
+
+    .pulse-dot {
+        width: 8px;
+        height: 8px;
+        background-color: var(--bi-color);
+        border-radius: 50%;
+        box-shadow: 0 0 10px var(--bi-color);
+        animation: pulseAnimation 2s infinite;
+    }
+
+    @keyframes pulseAnimation {
+        0% { transform: scale(0.95); opacity: 0.8; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+        70% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+        100% { transform: scale(0.95); opacity: 0.8; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
 
     .page-header h1 {
-        font-size: 2.5rem;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: clamp(2rem, 4vw, 3rem);
         font-weight: 700;
-        margin-bottom: 10px;
+        margin-bottom: 15px;
+        letter-spacing: -0.02em;
     }
 
     .page-header p {
         color: var(--text-muted);
-        font-size: 1.1rem;
+        font-size: 1.05rem;
+        max-width: 750px;
+        margin: 0 auto;
+        line-height: 1.7;
     }
 
-    /* KURS KARTLARI */
+    /* KURS KARTLARI (Hareket ve Canlılık Eklendi) */
     .courses-section {
-        padding: 40px 0 80px;
+        padding: 30px 0 80px;
     }
 
     .courses-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
         gap: 2rem;
     }
 
     .course-card {
         background-color: #0d1117;
         border: 1px solid var(--border-color);
-        border-radius: 12px;
+        border-radius: 14px;
         display: flex;
-        padding: 1.5rem;
+        padding: 1.8rem;
         gap: 1.5rem;
-        transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s;
     }
+
+    .course-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: transparent;
+        transition: background 0.3s;
+    }
+
+    .course-card:nth-child(1):hover::before { background: var(--sql-color); }
+    .course-card:nth-child(2):hover::before { background: var(--sap-color); }
 
     .course-card:not(.disabled-card):hover {
-        transform: translateY(-4px);
-        border-color: #4b5563;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        transform: translateY(-6px);
+        border-color: rgba(148, 163, 184, 0.3);
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
     }
 
-    /* YAKINDA OLAN KARTLAR İÇİN HAFİF SOLUKLUK */
     .disabled-card {
-        opacity: 0.85;
+        opacity: 0.8;
+        background: linear-gradient(145deg, #0d1117 0%, #080c10 100%);
+    }
+
+    .card-top-tag {
+        font-family: monospace;
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        margin-bottom: 0.6rem;
+        letter-spacing: 0.08em;
     }
 
     .course-icon {
-        width: 70px;
-        height: 70px;
-        border-radius: 10px;
+        width: 68px;
+        height: 68px;
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 2rem;
+        font-size: 1.8rem;
         flex-shrink: 0;
+        transition: transform 0.3s ease;
     }
 
-    .sql-theme { background-color: rgba(245, 158, 11, 0.1); color: var(--sql-color); }
-    .sap-theme { background-color: rgba(59, 130, 246, 0.1); color: var(--sap-color); }
-    .bi-theme  { background-color: rgba(16, 185, 129, 0.1); color: var(--bi-color); }
-    .etl-theme { background-color: rgba(168, 85, 247, 0.1); color: var(--etl-color); }
+    .course-card:hover .course-icon {
+        transform: scale(1.08) rotate(3deg);
+    }
 
-    .disabled-card .bi-theme { background-color: rgba(16, 185, 129, 0.05); color: rgba(16, 185, 129, 0.5); }
-    .disabled-card .etl-theme { background-color: rgba(168, 85, 247, 0.05); color: rgba(168, 85, 247, 0.5); }
+    .sql-theme { background-color: rgba(245, 158, 11, 0.1); color: var(--sql-color); border: 1px solid rgba(245, 158, 11, 0.2); }
+    .sap-theme { background-color: rgba(59, 130, 246, 0.1); color: var(--sap-color); border: 1px solid rgba(59, 130, 246, 0.2); }
+    .bi-theme  { background-color: rgba(16, 185, 129, 0.1); color: var(--bi-color); border: 1px solid rgba(16, 185, 129, 0.2); }
+    .etl-theme { background-color: rgba(168, 85, 247, 0.1); color: var(--etl-color); border: 1px solid rgba(168, 85, 247, 0.2); }
+
+    .disabled-card .bi-theme { background-color: rgba(16, 185, 129, 0.04); color: rgba(16, 185, 129, 0.4); border-color: transparent; }
+    .disabled-card .etl-theme { background-color: rgba(168, 85, 247, 0.04); color: rgba(168, 85, 247, 0.4); border-color: transparent; }
 
     .course-content {
         display: flex;
@@ -268,29 +347,33 @@
     }
 
     .course-content h3 {
-        font-size: 1.3rem;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 1.25rem;
         margin-bottom: 0.5rem;
+        font-weight: 600;
     }
 
     .course-content p {
         color: var(--text-muted);
         font-size: 0.9rem;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1.2rem;
         line-height: 1.5;
     }
 
     .course-meta {
         display: flex;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
+        gap: 0.8rem;
+        margin-bottom: 1.4rem;
+        flex-wrap: wrap;
     }
 
     .course-meta span {
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         color: #9ca3af;
-        background-color: #1f2937;
+        background-color: #161b22;
+        border: 1px solid #21262d;
         padding: 4px 10px;
-        border-radius: 20px;
+        border-radius: 6px;
         display: flex;
         align-items: center;
         gap: 6px;
@@ -298,26 +381,25 @@
 
     .btn-start {
         margin-top: auto;
-        padding: 10px 0;
+        padding: 10px 16px;
         text-align: center;
-        border-radius: 6px;
-        font-size: 0.95rem;
+        border-radius: 8px;
+        font-size: 0.9rem;
         font-weight: 600;
         text-decoration: none;
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 8px;
-        transition: background-color 0.2s, color 0.2s;
+        transition: all 0.2s ease;
     }
 
-    .sql-btn { background-color: rgba(245, 158, 11, 0.15); color: var(--sql-color); }
-    .sql-btn:hover { background-color: var(--sql-color); color: #000; }
+    .sql-btn { background-color: rgba(245, 158, 11, 0.12); color: var(--sql-color); border: 1px solid rgba(245, 158, 11, 0.3); }
+    .sql-btn:hover { background-color: var(--sql-color); color: #000; box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); }
 
-    .sap-btn { background-color: rgba(59, 130, 246, 0.15); color: var(--sap-color); }
-    .sap-btn:hover { background-color: var(--sap-color); color: #fff; }
+    .sap-btn { background-color: rgba(59, 130, 246, 0.12); color: var(--sap-color); border: 1px solid rgba(59, 130, 246, 0.3); }
+    .sap-btn:hover { background-color: var(--sap-color); color: #fff; box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
 
-    /* YAKINDA BUTONU TASARIMI */
     .btn-disabled { 
         background-color: #161b22; 
         color: #6b7280; 
@@ -327,7 +409,7 @@
 
     @media (max-width: 768px) {
         .courses-grid { grid-template-columns: 1fr; }
-        .course-card { flex-direction: column; }
-        .course-icon { width: 60px; height: 60px; font-size: 1.5rem; }
+        .course-card { flex-direction: column; padding: 1.4rem; }
+        .course-icon { width: 56px; height: 56px; font-size: 1.4rem; }
     }
 </style>

@@ -32,10 +32,9 @@ body {
 	line-height: 1.7;
 }
 main {
-	width: 720px;
-	max-width: calc(100% - 2em);
-	margin: auto;
-	padding: 3em 1em;
+    width: 100%;
+    margin: 0;
+    padding: 0;
 }
 h1,
 h2,
@@ -131,7 +130,7 @@ hr.schema-line {
 	background-repeat: repeat-x;
 	margin: 3em 0;
 }
-@media (max-width: 720px) {
+@media (max-width: 100%) {
 	body {
 		font-size: 18px;
 	}

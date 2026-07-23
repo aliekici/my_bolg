@@ -7,17 +7,21 @@ import FormattedDate from '../../components/FormattedDate.astro';
 import Header from '../../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
 
-// Markdown/MDX dosyalarını çekip tarihe göre sıralayan orijinal kodun
-const posts = (await getCollection('blog')).sort(
+// 1. Tüm yazıları tarihe göre sıralayarak çekiyoruz
+const allPosts = (await getCollection('blog')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
+
+// 2. Yazıları başlıktaki modül isimlerine göre filtreliyoruz
+const mmPosts = allPosts.filter(post => post.data.title.includes('MM'));
+const fiPosts = allPosts.filter(post => post.data.title.includes('FI'));
+const sdPosts = allPosts.filter(post => post.data.title.includes('SD'));
 ---
 
 <!doctype html>
 <html lang="tr">
 	<head>
 		<BaseHead title={`Blog | ${SITE_TITLE}`} description={SITE_DESCRIPTION} />
-		<!-- Yeni tasarımımız için fontlar ve ikonlar -->
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -25,7 +29,7 @@ const posts = (await getCollection('blog')).sort(
 		
 		<style>
 			:root {
-				--bg-dark: #0a0e17; 
+				--bg-dark: #0a0e17;
 				--bg-darker: #02060f;
 				--text-main: #f0f6fc;
 				--text-muted: #8b949e;
@@ -42,12 +46,12 @@ const posts = (await getCollection('blog')).sort(
 			}
 
 			.container {
-				max-width: 1100px;
+				max-width: 1400px;
 				margin: 0 auto;
 				padding: 0 20px;
 			}
 
-			/* HEADER (SAYFA BAŞLIĞI) */
+			/* HEADER */
 			.page-header {
 				padding: 80px 0 60px;
 				text-align: center;
@@ -70,20 +74,33 @@ const posts = (await getCollection('blog')).sort(
 				margin: 0 auto;
 			}
 
-			/* BLOG LİSTESİ (IZGARA) */
+			/* MODÜL 3'LÜ IZGARA */
 			.blog-section {
 				padding: 60px 0 100px;
 			}
 
-			.blog-grid {
+			.module-container {
 				display: grid;
-				grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-				gap: 2.5rem;
-				list-style-type: none;
-				margin: 0;
-				padding: 0;
+				grid-template-columns: repeat(3, 1fr);
+				gap: 2rem;
 			}
 
+			.module-header {
+				font-size: 1.5rem;
+				color: var(--accent);
+				border-bottom: 2px solid var(--border-color);
+				padding-bottom: 10px;
+				margin-bottom: 20px;
+				text-align: center;
+			}
+
+			.module-column {
+				display: flex;
+				flex-direction: column;
+				gap: 1.5rem;
+			}
+
+			/* KART TASARIMI */
 			.blog-card {
 				background-color: #0d1117;
 				border: 1px solid var(--border-color);
@@ -92,6 +109,7 @@ const posts = (await getCollection('blog')).sort(
 				transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
 				display: flex;
 				flex-direction: column;
+				height: 100%;
 			}
 
 			.blog-card:hover {
@@ -102,7 +120,7 @@ const posts = (await getCollection('blog')).sort(
 
 			.card-image {
 				position: relative;
-				height: 200px;
+				height: 180px;
 				background-color: #161b22;
 				display: flex;
 				align-items: center;
@@ -117,7 +135,7 @@ const posts = (await getCollection('blog')).sort(
 			}
 
 			.image-placeholder {
-				font-size: 3rem;
+				font-size: 2.5rem;
 				color: #30363d;
 			}
 
@@ -130,11 +148,10 @@ const posts = (await getCollection('blog')).sort(
 				font-size: 0.75rem;
 				font-weight: 600;
 				color: #fff;
-				background-color: rgba(59, 130, 246, 0.8); /* Varsayılan renk */
 			}
 
 			.card-content {
-				padding: 1.5rem;
+				padding: 1.2rem;
 				display: flex;
 				flex-direction: column;
 				flex: 1;
@@ -143,7 +160,7 @@ const posts = (await getCollection('blog')).sort(
 			.post-meta {
 				display: flex;
 				gap: 1rem;
-				margin-bottom: 1rem;
+				margin-bottom: 0.8rem;
 			}
 
 			.post-meta span {
@@ -155,9 +172,9 @@ const posts = (await getCollection('blog')).sort(
 			}
 
 			.card-content h2 {
-				font-size: 1.25rem;
+				font-size: 1.1rem;
 				line-height: 1.4;
-				margin-bottom: 1rem;
+				margin-bottom: 0.8rem;
 				margin-top: 0;
 			}
 
@@ -173,8 +190,8 @@ const posts = (await getCollection('blog')).sort(
 
 			.card-content p {
 				color: var(--text-muted);
-				font-size: 0.95rem;
-				margin-bottom: 1.5rem;
+				font-size: 0.9rem;
+				margin-bottom: 1.2rem;
 				flex: 1;
 			}
 
@@ -185,7 +202,7 @@ const posts = (await getCollection('blog')).sort(
 				color: var(--accent);
 				text-decoration: none;
 				font-weight: 600;
-				font-size: 0.9rem;
+				font-size: 0.85rem;
 				transition: gap 0.2s;
 				margin-top: auto;
 			}
@@ -194,62 +211,131 @@ const posts = (await getCollection('blog')).sort(
 				gap: 12px;
 			}
 
+			/* TABLET VE MOBİL UYUMU */
+			@media (max-width: 992px) {
+				.module-container {
+					grid-template-columns: 1fr;
+				}
+			}
 			@media (max-width: 768px) {
 				.page-header h1 { font-size: 2.2rem; }
 			}
 		</style>
 	</head>
 	<body>
-		<!-- Temanın orijinal Header bileşeni -->
 		<Header />
 		
 		<main>
-			<!-- BLOG BAŞLIĞI -->
 			<header class="page-header">
 				<div class="container">
-					<h1>BIPlaybook Blog</h1>
-					<p>Veri dünyasındaki son trendler, kariyer tavsiyeleri ve sektörel içgörüler.</p>
+					<h1>DataPlaybook'a Blog</h1>
+					<p>Veri dünyasındaki son trendler, SAP eğitimleri ve sektörel içgörüler.</p>
 				</div>
 			</header>
 
-			<!-- DİNAMİK BLOG LİSTESİ -->
 			<section class="blog-section">
 				<div class="container">
-					<ul class="blog-grid">
-						{
-							posts.map((post) => (
-								<li>
+					
+					<!-- EKRANI ÜÇE BÖLEN ANA YAPI -->
+					<div class="module-container">
+						
+						<!-- 1. SÜTUN: SAP MM -->
+						<div>
+							<h2 class="module-header">SAP MM Dersleri</h2>
+							<div class="module-column">
+								{mmPosts.length > 0 ? mmPosts.map((post) => (
 									<article class="blog-card">
 										<div class="card-image">
 											{post.data.heroImage ? (
 												<Image width={720} height={360} src={post.data.heroImage} alt={post.data.title} />
 											) : (
-												<div class="image-placeholder"><i class="fa-solid fa-file-lines"></i></div>
+												<div class="image-placeholder"><i class="fa-solid fa-box"></i></div>
 											)}
-											<span class="category-badge">Makale</span>
+											<span class="category-badge" style="background-color: #10b981;">MM Modülü</span>
 										</div>
 										<div class="card-content">
 											<div class="post-meta">
 												<span>
-													<i class="fa-regular fa-calendar"></i> 
+													<i class="fa-regular fa-calendar"></i>
 													<FormattedDate date={post.data.pubDate} />
 												</span>
 											</div>
 											<h2><a href={`/blog/${post.id}/`}>{post.data.title}</a></h2>
-											<!-- Eğer Markdown içinde açıklama (description) varsa göster, yoksa varsayılan metin yaz -->
-											<p>{post.data.description || 'Bu yazının detaylarını ve kod örneklerini incelemek için tıklayın...'}</p>
+											<p>{post.data.description || 'Detaylar için tıklayın...'}</p>
 											<a href={`/blog/${post.id}/`} class="read-more">Devamını Oku <i class="fa-solid fa-arrow-right"></i></a>
 										</div>
 									</article>
-								</li>
-							))
-						}
-					</ul>
+								)) : <p style="color: var(--text-muted); text-align: center;">Henüz MM dersi eklenmedi.</p>}
+							</div>
+						</div>
+
+						<!-- 2. SÜTUN: SAP FI -->
+						<div>
+							<h2 class="module-header">SAP FI Dersleri</h2>
+							<div class="module-column">
+								{fiPosts.length > 0 ? fiPosts.map((post) => (
+									<article class="blog-card">
+										<div class="card-image">
+											{post.data.heroImage ? (
+												<Image width={720} height={360} src={post.data.heroImage} alt={post.data.title} />
+											) : (
+												<div class="image-placeholder"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+											)}
+											<span class="category-badge" style="background-color: #3b82f6;">FI Modülü</span>
+										</div>
+										<div class="card-content">
+											<div class="post-meta">
+												<span>
+													<i class="fa-regular fa-calendar"></i>
+													<FormattedDate date={post.data.pubDate} />
+												</span>
+											</div>
+											<h2><a href={`/blog/${post.id}/`}>{post.data.title}</a></h2>
+											<p>{post.data.description || 'Detaylar için tıklayın...'}</p>
+											<a href={`/blog/${post.id}/`} class="read-more">Devamını Oku <i class="fa-solid fa-arrow-right"></i></a>
+										</div>
+									</article>
+								)) : <p style="color: var(--text-muted); text-align: center;">Henüz FI dersi eklenmedi.</p>}
+							</div>
+						</div>
+
+						<!-- 3. SÜTUN: SAP SD -->
+						<div>
+							<h2 class="module-header">SAP SD Dersleri</h2>
+							<div class="module-column">
+								{sdPosts.length > 0 ? sdPosts.map((post) => (
+									<article class="blog-card">
+										<div class="card-image">
+											{post.data.heroImage ? (
+												<Image width={720} height={360} src={post.data.heroImage} alt={post.data.title} />
+											) : (
+												<div class="image-placeholder"><i class="fa-solid fa-truck-fast"></i></div>
+											)}
+											<span class="category-badge" style="background-color: #f59e0b;">SD Modülü</span>
+										</div>
+										<div class="card-content">
+											<div class="post-meta">
+												<span>
+													<i class="fa-regular fa-calendar"></i>
+													<FormattedDate date={post.data.pubDate} />
+												</span>
+											</div>
+											<h2><a href={`/blog/${post.id}/`}>{post.data.title}</a></h2>
+											<p>{post.data.description || 'Detaylar için tıklayın...'}</p>
+											<a href={`/blog/${post.id}/`} class="read-more">Devamını Oku <i class="fa-solid fa-arrow-right"></i></a>
+										</div>
+									</article>
+								)) : <p style="color: var(--text-muted); text-align: center;">Henüz SD dersi eklenmedi.</p>}
+							</div>
+						</div>
+
+					</div>
+					<!-- EKRANI ÜÇE BÖLEN ANA YAPI BİTİŞİ -->
+
 				</div>
 			</section>
 		</main>
 
-		<!-- Temanın orijinal Footer bileşeni -->
 		<Footer />
 	</body>
 </html>

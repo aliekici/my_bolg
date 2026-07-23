@@ -1,363 +1,672 @@
 ---
 // src/pages/index.astro
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import FormattedDate from '../components/FormattedDate.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+
+const allPosts = (await getCollection('blog')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+const latestPosts = allPosts.slice(0, 3);
 ---
 
-<!doctype html>
 <html lang="tr">
-<head>
-    <BaseHead title={`Ana Sayfa | ${SITE_TITLE}`} description={SITE_DESCRIPTION || "Veri dünyasını keşfedin."} />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body class="bg-dark text-main">
-    <Header />
+	<head>
+		<BaseHead title={`Ana Sayfa | ${SITE_TITLE}`} description={SITE_DESCRIPTION} />
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+		
+		<style>
+			:root {
+				--bg: #0a0f1a;
+				--bg-panel: #0f1626;
+				--bg-card: #141b2d;
+				--grid-line: rgba(148, 163, 184, 0.07);
+				--border-color: rgba(148, 163, 184, 0.15);
+				--text-main: #edf1f7;
+				--text-muted: #8b96a8;
+				
+				--accent: #ffb454;
+				--accent-glow: rgba(255, 180, 84, 0.2);
+				
+				--font-display: 'Space Grotesk', sans-serif;
+				--font-body: 'Inter', sans-serif;
+				--font-mono: 'JetBrains Mono', monospace;
+			}
 
-    <main>
-        <!-- DİNAMİK HERO ALANI -->
-        <section class="hero relative overflow-hidden">
-            <div class="glow-bg top-glow"></div>
-            <div class="container hero-container reveal fade-bottom">
-                
-                <div class="hero-text">
-                    <div class="badge-modern">
-                        <span class="pulse-dot"></span> İş Zekası & Veri Analitiği Platformu
-                    </div>
-                    <h1 class="hero-title">
-                        Veri Yığınlarını <br>
-                        <span class="text-gradient">Stratejik Kararlara</span> Dönüştürün
-                    </h1>
-                    <p class="hero-desc">
-                        Qlik Sense ile dinamik dashboardlar tasarlayın, SAP mimarisini çözümleyin ve tarayıcı içi interaktif laboratuvarımızda teoriyi anında pratiğe dökün.
-                    </p>
-                    <div class="hero-actions">
-                        <a href="/kategori/bi" class="btn-glow">
-                            İş Zekasını Keşfet <i class="fa-solid fa-arrow-right"></i>
-                        </a>
-                        <a href="/egitimler" class="btn-outline">
-                            <i class="fa-solid fa-flask"></i> İnteraktif Eğitimler
-                        </a>
-                    </div>
-                </div>
+			* { box-sizing: border-box; }
 
-                <!-- DÜZELTİLMİŞ PREMIUM EKOSİSTEM GÖRSELİ -->
-                <div class="hero-visual">
-                    <div class="premium-ecosystem">
-                        <!-- Arka Plan Radar Halkaları -->
-                        <div class="eco-rings">
-                            <div class="ring ring-1"></div>
-                            <div class="ring ring-2"></div>
-                            <div class="ring ring-3"></div>
-                        </div>
+			body {
+				font-family: var(--font-body);
+				background-color: var(--bg);
+				background-image:
+					linear-gradient(var(--grid-line) 1px, transparent 1px),
+					linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+				background-size: 42px 42px;
+				color: var(--text-main);
+				line-height: 1.6;
+				margin: 0;
+			}
 
-                        <!-- Merkez Düğüm: Microsoft SQL Server (Veri Ambarı) -->
-                        <div class="p-node center-node">
-                            <div class="p-icon sql-icon">
-                                <i class="fa-solid fa-database"></i>
-                            </div>
-                            <span class="p-label">Veri Ambarı</span>
-                        </div>
+			a { text-decoration: none; color: inherit; }
+			
+			main {
+				width: 100% !important;
+				max-width: 100% !important;
+				margin: 0 !important;
+				padding: 0 !important;
+			}
 
-                        <!-- Yörünge Düğümleri -->
-                        <!-- SAP -->
-                        <div class="p-node sap-pos">
-                            <div class="p-icon sap-icon">
-                                <img src="https://cdn.simpleicons.org/sap/008EEA" alt="SAP ERP" />
-                            </div>
-                            <span class="p-label">SAP ERP</span>
-                        </div>
+			.container { max-width: 1600px; margin: 0 auto; padding: 0 48px; width: 100%; }
 
-                        <!-- ETL Pipeline -->
-                        <div class="p-node etl-pos">
-                            <div class="p-icon etl-icon">
-                                <i class="fa-solid fa-route"></i>
-                            </div>
-                            <span class="p-label">ETL Pipeline</span>
-                        </div>
+			/* ---------- HERO SECTION ---------- */
+			.hero {
+				padding: 60px 0;
+				position: relative;
+				border-bottom: 1px solid var(--border-color);
+				overflow: hidden;
+			}
 
-                        <!-- Qlik Sense -->
-                        <div class="p-node qlik-pos">
-                            <div class="p-icon qlik-icon">
-                                <img src="https://cdn.simpleicons.org/qlik/009845" alt="Qlik Sense" />
-                            </div>
-                            <span class="p-label">Qlik Sense</span>
-                        </div>
-                    </div>
-                </div>
+			.hero::before {
+				content: '';
+				position: absolute;
+				top: -100px; left: 50%;
+				transform: translateX(-50%);
+				width: 1400px; height: 500px;
+				background: radial-gradient(ellipse at center, rgba(255, 180, 84, 0.1), transparent 70%);
+				pointer-events: none;
+				z-index: -1;
+			}
 
-            </div>
-        </section>
+			.hero-grid {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 4rem;
+				align-items: center;
+			}
 
-        <!-- BENTO GRID: YÖNLENDİRME MERKEZİ -->
-        <section class="bento-section">
-            <div class="container">
-                <div class="section-heading reveal fade-bottom">
-                    <h2>Uzmanlık Rotaları</h2>
-                    <p>Kendinizi geliştirmek istediğiniz alanı seçin. Her rota; özel rehberler, projeler ve simülasyonlar içerir.</p>
-                </div>
+			.hero-badge {
+				display: inline-flex;
+				align-items: center;
+				gap: 8px;
+				font-family: var(--font-mono);
+				font-size: 0.8rem;
+				color: var(--accent);
+				background: rgba(255, 180, 84, 0.1);
+				padding: 6px 16px;
+				border-radius: 20px;
+				border: 1px solid var(--accent-glow);
+				margin-bottom: 1.2rem;
+			}
 
-                <div class="bento-grid">
-                    
-                    <!-- BÜYÜK KART: İŞ ZEKASI -->
-                    <a href="/kategori/bi" class="bento-card bento-large bi-card reveal fade-left delay-100">
-                        <div class="bento-bg"></div>
-                        <div class="card-top">
-                            <div class="icon-box"><i class="fa-solid fa-chart-line"></i></div>
-                            <span class="level-tag">Popüler Rota</span>
-                        </div>
-                        <h3>İş Zekası & Dashboard Tasarımı</h3>
-                        <p>Qlik Sense ve PowerBI pratikleriyle ham veriyi yönetici özetlerine (C-Level) dönüştürme sanatı. Optimizasyonlar ve projeler.</p>
-                        <span class="action-link">Merkeze Git <i class="fa-solid fa-arrow-right"></i></span>
-                    </a>
+			.hero-content h1 {
+				font-family: var(--font-display);
+				font-size: clamp(2.8rem, 4.5vw, 4rem);
+				font-weight: 700;
+				line-height: 1.1;
+				margin: 0 0 1rem 0;
+				letter-spacing: -0.02em;
+			}
 
-                    <!-- BÜYÜK KART: SAP -->
-                    <a href="/kategori/sap" class="bento-card bento-large sap-card reveal fade-right delay-200">
-                        <div class="bento-bg"></div>
-                        <div class="card-top">
-                            <div class="icon-box"><i class="fa-solid fa-cube"></i></div>
-                            <span class="level-tag">Mimari Rota</span>
-                        </div>
-                        <h3>SAP Veri Ekosistemi</h3>
-                        <p>SD, MM ve FI modüllerinin anatomisi. Kurumsal ERP sistemlerinden veri çekme, tablo ilişkileri kurma (Join) ve veri küpleri oluşturma.</p>
-                        <span class="action-link">Merkeze Git <i class="fa-solid fa-arrow-right"></i></span>
-                    </a>
+			.hero-content p {
+				font-size: 1.1rem;
+				color: var(--text-muted);
+				max-width: 640px;
+				margin-bottom: 2rem;
+				line-height: 1.6;
+			}
 
-                    <!-- ORTA KART: İNTERAKTİF EĞİTİMLER -->
-                    <a href="/egitimler" class="bento-card egitim-card reveal fade-up delay-100">
-                        <div class="card-top">
-                            <div class="icon-box"><i class="fa-solid fa-terminal"></i></div>
-                        </div>
-                        <h3>İnteraktif Laboratuvar</h3>
-                        <p>Sadece okumayın, uygulayın. Tarayıcınızda gerçek senaryolarla kod yazarak öğrenin.</p>
-                        <span class="action-link">Eğitimleri Gör</span>
-                    </a>
+			.hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
 
-                    <!-- ORTA KART: BLOG VE VİZYON -->
-                    <a href="/blog" class="bento-card blog-card reveal fade-up delay-200">
-                        <div class="card-top">
-                            <div class="icon-box"><i class="fa-solid fa-book-open"></i></div>
-                        </div>
-                        <h3>Vizyon & Rehberler</h3>
-                        <p>Veri mimarileri (Medallion vs.), kariyer tavsiyeleri ve sektördeki en güncel haberler.</p>
-                        <span class="action-link">Bloga Git</span>
-                    </a>
+			.btn {
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				gap: 8px;
+				padding: 0.8rem 1.8rem;
+				border-radius: 8px;
+				font-weight: 600;
+				font-family: var(--font-display);
+				transition: all 0.2s ease;
+				font-size: 0.95rem;
+			}
 
-                </div>
-            </div>
-        </section>
+			.btn-primary {
+				background-color: var(--accent);
+				color: #0a0f1a;
+				box-shadow: 0 4px 14px var(--accent-glow);
+			}
 
-        <!-- MİNİ İSTATİSTİK / GÜVEN BÖLÜMÜ -->
-        <section class="stats-section reveal fade-bottom delay-300">
-            <div class="container stats-container">
-                <div class="stat-item">
-                    <h4>Pratik Odaklı</h4>
-                    <p>Sıfır kurulum, %100 tarayıcı içi simülasyon</p>
-                </div>
-                <div class="stat-item">
-                    <h4>Gerçek Senaryolar</h4>
-                    <p>Sektörde karşılaşılan gerçek iş problemleri</p>
-                </div>
-                <div class="stat-item">
-                    <h4>Sürekli Güncel</h4>
-                    <p>En yeni teknolojiler ve mimari trendler</p>
-                </div>
-            </div>
-        </section>
-    </main>
+			.btn-primary:hover {
+				transform: translateY(-2px);
+				box-shadow: 0 6px 20px rgba(255, 180, 84, 0.4);
+			}
 
-    <Footer />
+			.btn-secondary {
+				background-color: var(--bg-panel);
+				color: var(--text-main);
+				border: 1px solid var(--border-color);
+			}
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const reveals = document.querySelectorAll('.reveal');
-            const observerOptions = { root: null, rootMargin: '0px', threshold: 0.15 };
-            const observer = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('active');
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, observerOptions);
-            reveals.forEach(reveal => { observer.observe(reveal); });
-        });
-    </script>
-</body>
+			.btn-secondary:hover {
+				background-color: rgba(255, 255, 255, 0.05);
+				border-color: var(--text-muted);
+			}
+
+			/* ---------- DİNAMİK VE HAREKETLİ SAĞ VİTRİN (INTERACTIVE & ANIMATED) ---------- */
+			.hero-visual {
+				background: var(--bg-panel);
+				border: 1px solid var(--border-color);
+				border-radius: 20px;
+				padding: 1.8rem;
+				position: relative;
+				box-shadow: 0 25px 50px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05);
+				animation: panelFloat 6s ease-in-out infinite;
+			}
+
+			@keyframes panelFloat {
+				0%, 100% { transform: translateY(0); }
+				50% { transform: translateY(-6px); }
+			}
+
+			/* Arka plan ışık süzmesi animasyonu */
+			.hero-visual::before {
+				content: '';
+				position: absolute;
+				inset: 0;
+				border-radius: 20px;
+				background: linear-gradient(120deg, transparent 30%, rgba(255, 180, 84, 0.05) 50%, transparent 70%);
+				background-size: 200% 200%;
+				animation: shimmerGlow 5s linear infinite;
+				pointer-events: none;
+			}
+
+			@keyframes shimmerGlow {
+				0% { background-position: -200% -200%; }
+				100% { background-position: 200% 200%; }
+			}
+
+			.showcase-header {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin-bottom: 1.2rem;
+				border-bottom: 1px solid var(--border-color);
+				padding-bottom: 0.8rem;
+				position: relative;
+				z-index: 1;
+			}
+
+			.showcase-title {
+				font-family: var(--font-mono);
+				font-size: 0.8rem;
+				color: var(--text-muted);
+				display: flex;
+				align-items: center;
+				gap: 8px;
+			}
+
+			.showcase-title i { 
+				color: var(--accent); 
+				animation: iconSpin 4s linear infinite;
+			}
+
+			@keyframes iconSpin {
+				0% { transform: rotate(0deg); }
+				25% { transform: scale(1.2); }
+				50% { transform: rotate(0deg); }
+				100% { transform: rotate(0deg); }
+			}
+
+			.live-indicator {
+				display: flex;
+				align-items: center;
+				gap: 6px;
+				font-family: var(--font-mono);
+				font-size: 0.7rem;
+				color: #34d399;
+				background: rgba(52, 211, 153, 0.1);
+				padding: 4px 12px;
+				border-radius: 12px;
+				border: 1px solid rgba(52, 211, 153, 0.3);
+				box-shadow: 0 0 10px rgba(52, 211, 153, 0.15);
+			}
+
+			.indicator-dot {
+				width: 6px; height: 6px;
+				background: #34d399; border-radius: 50%;
+				animation: pulseDot 1.5s infinite;
+			}
+
+			@keyframes pulseDot {
+				0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.8); }
+				70% { box-shadow: 0 0 0 8px rgba(52, 211, 153, 0); }
+				100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+			}
+
+			.features-grid-compact {
+				display: grid;
+				grid-template-columns: repeat(2, 1fr);
+				gap: 1rem;
+				position: relative;
+				z-index: 1;
+			}
+
+			.fcc-card {
+				background: #080c15;
+				border: 1px solid var(--border-color);
+				border-radius: 12px;
+				padding: 1.2rem;
+				display: flex;
+				flex-direction: column;
+				gap: 0.5rem;
+				transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+				cursor: pointer;
+				position: relative;
+				overflow: hidden;
+			}
+
+			/* Kartların üzerine gelince parlayan köşe ışığı efekti */
+			.fcc-card::after {
+				content: '';
+				position: absolute;
+				top: 0; left: 0; width: 100%; height: 2px;
+				background: linear-gradient(90deg, transparent, var(--accent), transparent);
+				opacity: 0;
+				transition: opacity 0.3s ease;
+			}
+
+			.fcc-card:hover {
+				border-color: var(--accent);
+				transform: translateY(-5px) scale(1.02);
+				box-shadow: 0 12px 30px rgba(255, 180, 84, 0.15);
+				background: rgba(20, 27, 45, 0.9);
+			}
+
+			.fcc-card:hover::after {
+				opacity: 1;
+			}
+
+			.fcc-top {
+				display: flex;
+				align-items: center;
+				gap: 10px;
+			}
+
+			.fcc-icon {
+				width: 40px; height: 40px;
+				border-radius: 10px;
+				background: rgba(255, 180, 84, 0.1);
+				color: var(--accent);
+				display: flex; align-items: center; justify-content: center;
+				font-size: 1.1rem;
+				flex-shrink: 0;
+				transition: transform 0.3s ease, background 0.3s ease;
+			}
+
+			.fcc-card:hover .fcc-icon {
+				transform: scale(1.15) rotate(5deg);
+				background: rgba(255, 180, 84, 0.2);
+			}
+
+			.fcc-info h4 {
+				font-family: var(--font-display);
+				font-size: 1rem;
+				margin: 0;
+				color: var(--text-main);
+				transition: color 0.2s;
+			}
+
+			.fcc-card:hover .fcc-info h4 {
+				color: var(--accent);
+			}
+
+			.fcc-info span {
+				font-family: var(--font-mono);
+				font-size: 0.7rem;
+				color: var(--text-muted);
+			}
+
+			.fcc-desc {
+				font-size: 0.85rem;
+				color: var(--text-muted);
+				margin: 0;
+				line-height: 1.4;
+				display: -webkit-box;
+				-webkit-line-clamp: 2;
+				-webkit-box-orient: vertical;
+				overflow: hidden;
+			}
+
+			/* ---------- KONULAR (5 KART) ---------- */
+			.topics { padding: 60px 0; }
+			.topics-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.5rem; }
+
+			.topic-card {
+				background: var(--bg-panel);
+				border: 1px solid var(--border-color);
+				padding: 2rem 1.2rem;
+				border-radius: 14px;
+				text-align: center;
+				transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+			}
+			.topic-card:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: 0 10px 25px rgba(0,0,0,0.25); }
+			.topic-icon {
+				width: 50px; height: 50px; margin: 0 auto 1rem;
+				border-radius: 12px; background: rgba(255, 180, 84, 0.1); color: var(--accent);
+				display: flex; align-items: center; justify-content: center; font-size: 1.25rem;
+			}
+			.topic-card h4 { font-family: var(--font-display); font-size: 1.1rem; margin: 0 0 0.4rem 0; color: var(--text-main); }
+			.topic-card p { font-size: 0.85rem; color: var(--text-muted); margin: 0; line-height: 1.4; }
+
+			/* ---------- DİNAMİK EĞİTİMLER ---------- */
+			.dynamic-section { padding: 40px 0; }
+			.dynamic-panel {
+				background: linear-gradient(135deg, var(--bg-panel) 0%, var(--bg-card) 100%);
+				border: 1px solid var(--border-color);
+				border-radius: 20px;
+				padding: 3.5rem;
+			}
+			.dynamic-panel-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 1.5rem; margin-bottom: 2.5rem; flex-wrap: wrap; }
+			.dynamic-panel-head h2 { font-family: var(--font-display); font-size: 2.2rem; margin: 0 0 0.4rem 0; color: var(--text-main); }
+			.dynamic-panel-head p { color: var(--text-muted); max-width: 600px; margin: 0; font-size: 1rem; }
+
+			.lab-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+			.lab-card {
+				position: relative;
+				background: rgba(255,255,255,0.02);
+				border: 1px solid var(--border-color);
+				border-radius: 14px;
+				padding: 1.8rem;
+				transition: transform 0.3s, border-color 0.3s;
+			}
+			.lab-card:hover {
+				transform: translateY(-3px);
+				border-color: var(--accent);
+			}
+			.lab-status {
+				position: absolute; top: 1.2rem; right: 1.2rem;
+				font-family: var(--font-mono); font-size: 0.65rem;
+				padding: 3px 8px; border-radius: 20px;
+			}
+			.lab-status.active { color: #34d399; background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.3); }
+			.lab-status.soon { color: var(--text-muted); background: rgba(148, 163, 184, 0.08); border: 1px solid var(--border-color); }
+			.lab-card .lab-icon { font-size: 1.3rem; color: var(--accent); margin-bottom: 0.8rem; }
+			.lab-card h4 { font-family: var(--font-display); font-size: 1.05rem; margin: 0 0 0.4rem 0; padding-right: 3rem; color: var(--text-main); }
+			.lab-card p { font-size: 0.85rem; color: var(--text-muted); margin: 0; line-height: 1.4; }
+
+			/* ---------- LATEST POSTS ---------- */
+			.latest-posts { padding: 60px 0; border-top: 1px solid var(--border-color); }
+
+			.section-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2.5rem; }
+			.section-header h2 { font-family: var(--font-display); font-size: 2.2rem; margin: 0; color: var(--text-main); }
+			.view-all { font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted); border-bottom: 1px dashed var(--text-muted); padding-bottom: 2px; }
+			.view-all:hover { color: var(--accent); border-color: var(--accent); }
+
+			.posts-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2rem; }
+
+			.post-card {
+				background: var(--bg-card);
+				border: 1px solid var(--border-color);
+				border-radius: 12px; overflow: hidden;
+				transition: transform 0.3s, box-shadow 0.3s;
+				display: flex; flex-direction: column;
+			}
+			.post-card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.3); border-color: #4b5563; }
+			.post-image { height: 220px; background: var(--bg-panel); border-bottom: 1px solid var(--border-color); }
+			.post-image img { width: 100%; height: 100%; object-fit: cover; }
+			.post-content { padding: 1.8rem; flex: 1; display: flex; flex-direction: column; }
+			.post-meta { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.6rem; }
+			.post-title { font-family: var(--font-display); font-size: 1.2rem; margin: 0 0 0.6rem 0; line-height: 1.4; color: var(--text-main); }
+			.post-desc { font-size: 0.9rem; color: var(--text-muted); margin: 0 0 1.2rem 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+			.post-read { margin-top: auto; font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent); font-weight: 500; }
+
+			/* ---------- CTA SECTION ---------- */
+			.cta-section {
+				margin: 60px 0 80px;
+				background: linear-gradient(135deg, rgba(255, 180, 84, 0.15) 0%, rgba(255, 180, 84, 0.02) 100%);
+				border: 1px solid rgba(255, 180, 84, 0.3);
+				border-radius: 20px;
+				padding: 4rem 2rem; text-align: center;
+			}
+			.cta-section h2 { font-family: var(--font-display); font-size: 2.4rem; margin: 0 0 0.8rem 0; color: #fff; }
+			.cta-section p { font-size: 1.1rem; color: var(--text-muted); max-width: 600px; margin: 0 auto 2rem; }
+
+			@media (max-width: 1200px) {
+				.topics-grid { grid-template-columns: repeat(3, 1fr); }
+				.lab-grid { grid-template-columns: repeat(2, 1fr); }
+			}
+
+			@media (max-width: 992px) {
+				.container { padding: 0 24px; }
+				.hero-grid { grid-template-columns: 1fr; gap: 2.5rem; text-align: center; }
+				.hero-content p { margin-left: auto; margin-right: auto; }
+				.hero-actions { justify-content: center; }
+				.posts-grid { grid-template-columns: repeat(2, 1fr); }
+				.topics-grid { grid-template-columns: repeat(2, 1fr); }
+				.dynamic-panel { padding: 2rem; }
+			}
+
+			@media (max-width: 768px) {
+				.posts-grid { grid-template-columns: 1fr; }
+				.topics-grid { grid-template-columns: 1fr; }
+				.lab-grid { grid-template-columns: 1fr; }
+				.section-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+				.features-grid-compact { grid-template-columns: 1fr; }
+				.hero { padding: 40px 0; }
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		
+		<main>
+			<!-- HERO SECTION -->
+			<section class="hero">
+				<div class="container hero-grid">
+					<div class="hero-content">
+						<span class="hero-badge"><i class="fa-solid fa-bolt"></i> DataPlaybook'a Hoş Geldiniz</span>
+						<h1>Kurumsal Veriyi<br/>İçgörüye Dönüştürün.</h1>
+						<p>SAP ekosistemi, SQL, veri mimarisi, ETL süreçleri ve Qlik üzerine uygulamalı rehberler. ERP tablolarını okumayı, birleştirmeyi ve anlamlı veri modelleri kurmayı keşfedin.</p>
+						<div class="hero-actions">
+							<a href="/kategori/sap" class="btn btn-primary">SAP Derslerine Başla</a>
+							<a href="/dinamik-egitimler" class="btn btn-secondary"><i class="fa-solid fa-flask"></i> Sanal Laboratuvar</a>
+						</div>
+					</div>
+
+					<!-- DİNAMİK VE HAREKETLİ SAĞ VİTRİN -->
+					<div class="hero-visual">
+						<div class="showcase-header">
+							<span class="showcase-title"><i class="fa-solid fa-layer-group"></i> PLATFORMDA NELER VAR?</span>
+							<div class="live-indicator">
+								<span class="indicator-dot"></span> Aktif Modüller
+							</div>
+						</div>
+
+						<div class="features-grid-compact">
+							<a href="/kategori/sap" class="fcc-card">
+								<div class="fcc-top">
+									<div class="fcc-icon"><i class="fa-solid fa-network-wired"></i></div>
+									<div class="fcc-info">
+										<h4>SAP Ekosistemi</h4>
+										<span>FI, MM, SD</span>
+									</div>
+								</div>
+								<p class="fcc-desc">Temel ERP tablolarını okumayı ve modüller arası veri akışını öğrenin.</p>
+							</a>
+
+							<a href="/kategori/sql" class="fcc-card">
+								<div class="fcc-top">
+									<div class="fcc-icon"><i class="fa-solid fa-database"></i></div>
+									<div class="fcc-info">
+										<h4>SQL Atölyesi</h4>
+										<span>Sorgular &amp; Lab</span>
+									</div>
+								</div>
+								<p class="fcc-desc">Karmaşık join yapıları ve büyük veride performans optimizasyonu.</p>
+							</a>
+
+							<a href="/kategori/veri-mimarisi" class="fcc-card">
+								<div class="fcc-top">
+									<div class="fcc-icon"><i class="fa-solid fa-sitemap"></i></div>
+									<div class="fcc-info">
+										<h4>Veri Mimarisi</h4>
+										<span>Medallion Katmanları</span>
+									</div>
+								</div>
+								<p class="fcc-desc">Bronze, Silver ve Gold katmanlarının tasarımı ve yönetimi.</p>
+							</a>
+
+							<a href="/kategori/qlik" class="fcc-card">
+								<div class="fcc-top">
+									<div class="fcc-icon"><i class="fa-solid fa-chart-column"></i></div>
+									<div class="fcc-info">
+										<h4>Qlik İş Zekası</h4>
+										<span>Görselleştirme</span>
+									</div>
+								</div>
+								<p class="fcc-desc">Kurumsal verileri etkileşimli panolara dökün ve KPI oluşturun.</p>
+							</a>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<!-- KONULAR (5 ANA BAŞLIK) -->
+			<section class="topics">
+				<div class="container">
+					<div class="section-header">
+						<div>
+							<h2>Neler Öğreneceksiniz</h2>
+						</div>
+					</div>
+					<div class="topics-grid">
+						<a href="/kategori/sap" class="topic-card">
+							<div class="topic-icon"><i class="fa-solid fa-network-wired"></i></div>
+							<h4>SAP</h4>
+							<p>FI, MM, SD modülleri ve tablo ilişkileri.</p>
+						</a>
+						<a href="/kategori/sql" class="topic-card">
+							<div class="topic-icon"><i class="fa-solid fa-database"></i></div>
+							<h4>SQL</h4>
+							<p>Sorgular, join'ler ve performans mantığı.</p>
+						</a>
+						<a href="/kategori/veri-mimarisi" class="topic-card">
+							<div class="topic-icon"><i class="fa-solid fa-sitemap"></i></div>
+							<h4>Veri Mimarisi</h4>
+							<p>Katmanlı yapı: Bronze, Silver, Gold.</p>
+						</a>
+						<a href="/kategori/etl" class="topic-card">
+							<div class="topic-icon"><i class="fa-solid fa-arrows-spin"></i></div>
+							<h4>ETL</h4>
+							<p>Veriyi çekme, dönüştürme ve yükleme.</p>
+						</a>
+						<a href="/kategori/qlik" class="topic-card">
+							<div class="topic-icon"><i class="fa-solid fa-chart-column"></i></div>
+							<h4>Qlik</h4>
+							<p>Görselleştirme ve interaktif panolar.</p>
+						</a>
+					</div>
+				</div>
+			</section>
+
+			<!-- DİNAMİK EĞİTİMLER -->
+			<section class="dynamic-section">
+				<div class="container">
+					<div class="dynamic-panel">
+						<div class="dynamic-panel-head">
+							<div>
+								<h2>Dinamik Eğitimler</h2>
+								<p>Tabloyu okumakla kalmayın, canlı sanal ortamlarda kendiniz uygulayın. Yeni ortamlar düzenli olarak ekleniyor.</p>
+							</div>
+							<a href="/dinamik-egitimler" class="btn btn-primary"><i class="fa-solid fa-flask"></i> Tüm Ortamlara Git</a>
+						</div>
+
+						<div class="lab-grid">
+							<div class="lab-card">
+								<span class="lab-status active">AKTİF</span>
+								<div class="lab-icon"><i class="fa-solid fa-server"></i></div>
+								<h4>SAP Sanal Ortamı</h4>
+								<p>Gerçekçi bir SAP ekranında işlem yapın, tabloları canlı gözlemleyin.</p>
+							</div>
+							<div class="lab-card">
+								<span class="lab-status active">AKTİF</span>
+								<div class="lab-icon"><i class="fa-solid fa-database"></i></div>
+								<h4>SQL Sanal Ortamı</h4>
+								<p>Temel SQL eğitimi ortamında sorgularınızı yazıp anında sonucunu görün.</p>
+							</div>
+							<div class="lab-card">
+								<span class="lab-status soon">YAKINDA</span>
+								<div class="lab-icon"><i class="fa-solid fa-chart-column"></i></div>
+								<h4>Qlik Sanal Ortamı</h4>
+								<p>Etkileşimli pano ve görselleştirme alıştırmaları hazırlanıyor.</p>
+							</div>
+							<div class="lab-card">
+								<span class="lab-status soon">YAKINDA</span>
+								<div class="lab-icon"><i class="fa-solid fa-arrows-spin"></i></div>
+								<h4>ETL Sanal Ortamı</h4>
+								<p>Bronze / Silver / Gold katmanlarını uçtan uca kurgulayacağınız bir lab.</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<!-- LATEST POSTS -->
+			<section class="latest-posts">
+				<div class="container">
+					<div class="section-header">
+						<div>
+							<h2>Son Eklenen Yazılar</h2>
+						</div>
+						<a href="/blog" class="view-all">Tüm Yazıları Gör <i class="fa-solid fa-arrow-right-long"></i></a>
+					</div>
+
+					<div class="posts-grid">
+						{latestPosts.map((post) => (
+							<a href={`/blog/${post.id}/`} class="post-card">
+								<div class="post-image">
+									{post.data.heroImage ? (
+										<Image width={600} height={300} src={post.data.heroImage} alt={post.data.title} />
+									) : (
+										<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.1); font-size:3rem;">
+											<i class="fa-regular fa-file-code"></i>
+										</div>
+									)}
+								</div>
+								<div class="post-content">
+									<div class="post-meta">
+										<span><i class="fa-regular fa-calendar"></i> <FormattedDate date={post.data.pubDate} /></span>
+									</div>
+									<h3 class="post-title">{post.data.title}</h3>
+									<p class="post-desc">{post.data.description || 'Detayları okumak için tıklayın...'}</p>
+									<span class="post-read">Okumaya Başla &rarr;</span>
+								</div>
+							</a>
+						))}
+					</div>
+				</div>
+			</section>
+
+			<!-- CTA SECTION -->
+			<div class="container">
+				<section class="cta-section">
+					<h2>Teoriyi Pratiğe Dönüştürün</h2>
+					<p>Tabloların nasıl birleştiğini okumak yetmez. Kendi SAP ve SQL yeteneklerinizi sanal ortamımızda hemen şimdi test edin.</p>
+					<a href="/dinamik-egitimler" class="btn btn-primary" style="font-size: 1.05rem; padding: 0.9rem 2.2rem;">
+						<i class="fa-solid fa-play"></i> Dinamik Eğitimlere Git
+					</a>
+				</section>
+			</div>
+			
+		</main>
+
+		<Footer />
+	</body>
 </html>
-
-<style>
-    :root {
-        --bg-dark: #070b14;
-        --bg-card: #0d121c;
-        --border-light: rgba(255, 255, 255, 0.08);
-        --text-main: #f8fafc;
-        --text-muted: #94a3b8;
-        --bi-color: #10b981;  
-        --sap-color: #3b82f6; 
-        --accent: #8b5cf6;    
-    }
-
-    body { margin: 0; overflow-x: hidden; }
-    .bg-dark { background-color: var(--bg-dark); }
-    .text-main { color: var(--text-main); }
-    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-
-    /* --- HERO BÖLÜMÜ --- */
-    .hero { min-height: 85vh; display: flex; align-items: center; position: relative; padding: 60px 0; }
-    .glow-bg { position: absolute; width: 60vw; height: 60vw; background: radial-gradient(circle, rgba(16,185,129,0.08) 0%, rgba(7,11,20,0) 60%); top: -20%; right: -10%; border-radius: 50%; z-index: 0; pointer-events: none; }
-    .hero-container { display: flex; align-items: center; gap: 40px; position: relative; z-index: 1; }
-    .hero-text { flex: 1.1; }
-
-    .badge-modern { display: inline-flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-light); padding: 6px 16px; border-radius: 30px; font-size: 0.85rem; font-weight: 500; color: var(--text-muted); margin-bottom: 24px; backdrop-filter: blur(10px); }
-    .pulse-dot { width: 8px; height: 8px; background-color: var(--bi-color); border-radius: 50%; box-shadow: 0 0 10px var(--bi-color); animation: pulse 2s infinite; }
-    @keyframes pulse { 0% { transform: scale(0.95); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.5; } 100% { transform: scale(0.95); opacity: 1; } }
-
-    .hero-title { font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1; font-weight: 800; margin-bottom: 24px; letter-spacing: -1px; }
-    .text-gradient { background: linear-gradient(135deg, #10b981, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .hero-desc { font-size: 1.15rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 40px; max-width: 90%; }
-    .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
-
-    .btn-glow { background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 14px 28px; border-radius: 12px; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4); transition: all 0.3s; }
-    .btn-glow:hover { transform: translateY(-3px); box-shadow: 0 15px 30px -5px rgba(16, 185, 129, 0.6); }
-    .btn-outline { background: transparent; color: var(--text-main); padding: 14px 28px; border-radius: 12px; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 10px; border: 1px solid var(--border-light); transition: all 0.3s; }
-    .btn-outline:hover { background: rgba(255, 255, 255, 0.05); transform: translateY(-3px); }
-
-    /* --- DÜZELTİLMİŞ EKOSİSTEM GÖRSELİ --- */
-    .hero-visual { flex: 0.9; display: flex; justify-content: center; align-items: center; }
-
-    .premium-ecosystem {
-        position: relative;
-        width: 400px;
-        height: 400px;
-    }
-
-    .eco-rings { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; z-index: 0; pointer-events: none; }
-    .ring { position: absolute; border-radius: 50%; border: 1px dashed rgba(255,255,255,0.08); }
-    .ring-1 { width: 70%; height: 70%; animation: spin-slow 30s linear infinite; }
-    .ring-2 { width: 100%; height: 100%; border: 1px solid rgba(255,255,255,0.03); }
-    .ring-3 { width: 40%; height: 40%; border-style: dotted; border-color: rgba(255,255,255,0.15); animation: spin-slow 20s linear infinite reverse; }
-    @keyframes spin-slow { 100% { transform: rotate(360deg); } }
-
-    /* Düğümler Sabit Boyut ve Pozisyon */
-    .p-node {
-        position: absolute;
-        z-index: 2;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 12px;
-        width: 100px;
-    }
-
-    .p-icon {
-        width: 72px; height: 72px;
-        background: rgba(13, 18, 28, 0.6);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255,255,255,0.12);
-        border-radius: 20px;
-        display: flex; align-items: center; justify-content: center;
-        box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-        transition: transform 0.3s, box-shadow 0.3s;
-    }
-    
-    .p-node:hover .p-icon { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.7); }
-    .p-icon img { width: 36px; height: 36px; object-fit: contain; }
-    .p-icon i { font-size: 2rem; }
-
-    .p-label {
-        font-size: 0.8rem; font-weight: 600; color: var(--text-main);
-        background: rgba(13, 18, 28, 0.8); padding: 6px 14px;
-        border-radius: 20px; border: 1px solid rgba(255,255,255,0.08);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.4); white-space: nowrap; backdrop-filter: blur(5px);
-    }
-
-    /* Animasyon (Y Ekseninde Çakışmayan Süzülme) */
-    @keyframes float-y {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-15px); }
-    }
-
-    /* Nokta Koordinatları (Margin kullanıldı, transform çakışması önlendi) */
-    .center-node { top: 50%; left: 50%; margin-top: -65px; margin-left: -50px; z-index: 3; }
-    .center-node .p-icon { width: 90px; height: 90px; box-shadow: 0 0 40px rgba(204, 41, 43, 0.15); border-color: rgba(204, 41, 43, 0.3); }
-    .center-node .p-icon i { font-size: 2.5rem; color: #CC292B; } /* MS SQL Kırmızı */
-
-    .sap-pos { top: 0%; left: 0%; animation: float-y 6s ease-in-out infinite; }
-    .sap-icon { box-shadow: 0 0 30px rgba(0, 142, 234, 0.15); border-color: rgba(0, 142, 234, 0.3); }
-
-    .etl-pos { top: 25%; right: 0%; animation: float-y 7s ease-in-out infinite 1s; }
-    .etl-icon { box-shadow: 0 0 30px rgba(255, 105, 75, 0.15); border-color: rgba(255, 105, 75, 0.3); }
-    .etl-icon i { color: #FF694B; } /* dbt Turuncu */
-
-    .qlik-pos { bottom: 0%; left: 50%; margin-left: -50px; animation: float-y 5s ease-in-out infinite 0.5s; }
-    .qlik-icon { box-shadow: 0 0 30px rgba(0, 152, 69, 0.15); border-color: rgba(0, 152, 69, 0.3); }
-
-
-    /* --- BENTO GRID BÖLÜMÜ --- */
-    .bento-section { padding: 100px 0; background-color: #05080f; }
-    .section-heading { text-align: center; margin-bottom: 60px; }
-    .section-heading h2 { font-size: 2.5rem; font-weight: 700; margin-bottom: 15px; }
-    .section-heading p { color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
-    .bento-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
-
-    .bento-card { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 24px; padding: 32px; text-decoration: none; color: var(--text-main); position: relative; overflow: hidden; display: flex; flex-direction: column; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-    .bento-large { grid-column: span 2; }
-    .bento-card:not(.bento-large) { grid-column: span 2; }
-    .bento-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 0.4s; z-index: 0; }
-    .bi-card .bento-bg { background: radial-gradient(circle at bottom right, rgba(16,185,129,0.1), transparent 60%); }
-    .sap-card .bento-bg { background: radial-gradient(circle at bottom right, rgba(59,130,246,0.1), transparent 60%); }
-    .bento-card:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.2); }
-    .bento-card:hover .bento-bg { opacity: 1; }
-
-    .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; position: relative; z-index: 1; }
-    .icon-box { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border-light); }
-    .bi-card .icon-box { color: var(--bi-color); }
-    .sap-card .icon-box { color: var(--sap-color); }
-    .egitim-card .icon-box { color: #f59e0b; }
-    .blog-card .icon-box { color: var(--accent); }
-    .level-tag { font-size: 0.75rem; background: rgba(255,255,255,0.05); padding: 4px 12px; border-radius: 20px; color: var(--text-muted); border: 1px solid var(--border-light); }
-    .bento-card h3 { font-size: 1.5rem; margin-bottom: 12px; position: relative; z-index: 1; }
-    .bento-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 24px; flex: 1; position: relative; z-index: 1; }
-    .action-link { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.95rem; position: relative; z-index: 1; transition: gap 0.2s; }
-    .bi-card .action-link { color: var(--bi-color); }
-    .sap-card .action-link { color: var(--sap-color); }
-    .egitim-card .action-link { color: #f59e0b; }
-    .blog-card .action-link { color: var(--accent); }
-    .bento-card:hover .action-link { gap: 12px; }
-
-    /* --- MİNİ İSTATİSTİKLER --- */
-    .stats-section { padding: 40px 0 80px 0; background-color: #05080f; border-bottom: 1px solid var(--border-light); }
-    .stats-container { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; border-top: 1px solid var(--border-light); padding-top: 40px; }
-    .stat-item { flex: 1; min-width: 250px; }
-    .stat-item h4 { font-size: 1.2rem; color: var(--text-main); margin-bottom: 8px; }
-    .stat-item p { color: var(--text-muted); font-size: 0.9rem; }
-
-    /* --- SCROLL REVEAL --- */
-    .reveal { opacity: 0; visibility: hidden; transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
-    .reveal.active { opacity: 1; visibility: visible; transform: translate(0, 0) scale(1); }
-    .fade-bottom { transform: translateY(50px); }
-    .fade-up { transform: translateY(30px); }
-    .fade-left { transform: translateX(-50px); }
-    .fade-right { transform: translateX(50px); }
-    .delay-100 { transition-delay: 100ms; }
-    .delay-200 { transition-delay: 200ms; }
-    .delay-300 { transition-delay: 300ms; }
-
-    /* --- MOBİL UYUM --- */
-    @media (max-width: 992px) {
-        .hero-container { flex-direction: column; text-align: center; gap: 60px; }
-        .hero-desc { margin: 0 auto 30px auto; }
-        .hero-actions { justify-content: center; }
-        .badge-modern { margin: 0 auto 24px auto; }
-        .bento-large { grid-column: span 4; }
-        .bento-card:not(.bento-large) { grid-column: span 2; }
-    }
-    @media (max-width: 768px) {
-        .bento-card:not(.bento-large) { grid-column: span 4; }
-        .hero-title { font-size: 2.2rem; }
-        .premium-ecosystem { transform: scale(0.85); margin: -40px 0; }
-    }
-</style>
