@@ -7,7 +7,7 @@ import { defineConfig, fontProviders } from 'astro/config';
 // https://astro.build/config
 export default defineConfig({
 	// ÖLÜMCÜL HATA BURADA DÜZELTİLDİ: example.com yerine kendi alan adını yazıyoruz
-	site: 'https://www.dataplaybook.com',
+	site: 'https://www.dataplaybook.blog',
 	
 	integrations: [mdx(), sitemap()],
 	fonts: [
