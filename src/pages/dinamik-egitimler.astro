@@ -1,12 +1,18 @@
 ---
 // src/pages/egitimler.astro
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
 ---
 
+<!doctype html>
 <html lang="tr">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>İnteraktif Eğitim Merkezi - DataPlaybook'a</title>
+    <!-- SEO İÇİN BASEHEAD BİLEŞENİ EKLENDİ -->
+    <BaseHead 
+        title="Dinamik Eğitimler | DataPlaybook" 
+        description="SQL, SAP ve veri analizi üzerine kurulum gerektirmeyen, tarayıcı tabanlı interaktif ve uygulamalı eğitim laboratuvarları." 
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -14,28 +20,10 @@
 </head>
 <body>
 
-    <!-- ÜST PANEL (NAVBAR) -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="/" class="logo">
-                <i class="fa-solid fa-chart-line logo-icon"></i>
-                <span class="logo-text">Data<span class="logo-text-bold">Playbook</span></span>
-            </a>
-            
-            <ul class="nav-links">
-                <li><a href="/">Home</a></li>
-                <li><a href="/blog">Blog</a></li>
-                <li><a href="/egitimler" class="active">Eğitimler</a></li>
-                <li><a href="/about">About</a></li>
-            </ul>
+    <!-- ÜST PANEL -->
+    <Header />
 
-            <div class="social-icons">
-                <a href="#" aria-label="Github"><i class="fa-brands fa-github"></i></a>
-            </div>
-        </div>
-    </nav>
-
-    <!-- EĞİTİM MERKEZİ BAŞLIĞI (Çakışma Sorunu Giderildi) -->
+    <!-- EĞİTİM MERKEZİ BAŞLIĞI -->
     <header class="page-header">
         <div class="container">
             <div class="status-badge">
@@ -54,13 +42,14 @@
             <div class="courses-grid">
                 
                 <!-- SQL Kursu -->
-                <div class="course-card">
+                <div class="course-card card-sql">
                     <div class="course-icon sql-theme">
                         <i class="fa-solid fa-database"></i>
                     </div>
                     <div class="course-content">
                         <div class="card-top-tag">v3.1 / DWH_ENGINE</div>
-                        <h3>İnteraktif SQL Eğitimi</h3>
+                        <!-- SEO: H3'ler H2 olarak güncellendi -->
+                        <h2>İnteraktif SQL Eğitimi</h2>
                         <p>Tarayıcı üzerinden gerçek veri setleriyle kod yazarak SQL öğrenin. Sorguları çalıştırın, sonuçları anında görün.</p>
                         <div class="course-meta">
                             <span><i class="fa-solid fa-layer-group"></i> 12 Modül</span>
@@ -70,14 +59,14 @@
                     </div>
                 </div>
 
-                <!-- SAP Kursu -->
-                <div class="course-card">
+                <!-- SAP Kursu (T-Code / ERP Simülasyonu) -->
+                <div class="course-card card-sap">
                     <div class="course-icon sap-theme">
                         <i class="fa-solid fa-cube"></i>
                     </div>
                     <div class="course-content">
                         <div class="card-top-tag">v2.0 / ERP_SIM</div>
-                        <h3>SAP Modül Pratikleri</h3>
+                        <h2>SAP Modül Pratikleri</h2>
                         <p>SD, MM ve FI modüllerindeki temel veri akışlarını simüle edin ve tablolar arası ilişkileri kavrayın.</p>
                         <div class="course-meta">
                             <span><i class="fa-solid fa-layer-group"></i> 8 Modül</span>
@@ -87,14 +76,31 @@
                     </div>
                 </div>
 
+                <!-- SAP ABAP Kursu (Programlama / SE38 Editör Simülasyonu) -->
+                <div class="course-card card-abap">
+                    <div class="course-icon abap-theme">
+                        <i class="fa-solid fa-terminal"></i>
+                    </div>
+                    <div class="course-content">
+                        <div class="card-top-tag">v1.4 / ABAP_RUNTIME</div>
+                        <h2>SAP ABAP Eğitim Simülatörü</h2>
+                        <p>Gerçek SE38 / ABAP editör deneyimiyle kod yazın. DATA, IF, LOOP AT ve SELECT gibi temel ifadeleri F8 ile çalıştırıp çıktısını anında görün.</p>
+                        <div class="course-meta">
+                            <span><i class="fa-solid fa-layer-group"></i> 9 Ders</span>
+                            <span><i class="fa-solid fa-signal"></i> Başlangıç - Orta</span>
+                        </div>
+                        <a href="/sap-abap-ogren" class="btn btn-start abap-btn">Editörü Aç <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </div>
+
                 <!-- İş Zekası / BI Kursu (YAKINDA) -->
-                <div class="course-card disabled-card">
+                <div class="course-card disabled-card card-bi">
                     <div class="course-icon bi-theme">
                         <i class="fa-solid fa-chart-pie"></i>
                     </div>
                     <div class="course-content">
                         <div class="card-top-tag">YAKINDA / QLIK & POWERBI</div>
-                        <h3>Dinamik Dashboard Tasarımı</h3>
+                        <h2>Dinamik Dashboard Tasarımı</h2>
                         <p>Qlik Sense ve PowerBI mantığıyla veri modelleme ve görselleştirme senaryoları üzerinde çalışın.</p>
                         <div class="course-meta">
                             <span><i class="fa-solid fa-layer-group"></i> 5 Proje</span>
@@ -105,13 +111,13 @@
                 </div>
 
                 <!-- ETL Kursu (YAKINDA) -->
-                <div class="course-card disabled-card">
+                <div class="course-card disabled-card card-etl">
                     <div class="course-icon etl-theme">
                         <i class="fa-solid fa-network-wired"></i>
                     </div>
                     <div class="course-content">
                         <div class="card-top-tag">YAKINDA / PIPELINE</div>
-                        <h3>ETL Veri Boru Hatları</h3>
+                        <h2>ETL Veri Boru Hatları</h2>
                         <p>Farklı kaynaklardan veriyi çekip, temizleyip, dönüştürerek hedef sisteme aktarma (Data Pipeline) egzersizleri.</p>
                         <div class="course-meta">
                             <span><i class="fa-solid fa-layer-group"></i> 6 Senaryo</span>
@@ -125,12 +131,14 @@
         </div>
     </section>
 
+    <!-- ALT PANEL -->
+    <Footer />
+
 </body>
 </html>
 
 <style>
     :root {
-        --nav-bg: #0d1117; 
         --bg-dark: #0a0e17; 
         --bg-darker: #02060f;
         --text-main: #f0f6fc;
@@ -139,6 +147,7 @@
         
         --sql-color: #f59e0b;
         --sap-color: #3b82f6;
+        --abap-color: #f43f5e;
         --bi-color: #10b981;
         --etl-color: #a855f7;
     }
@@ -163,51 +172,7 @@
         padding: 0 20px;
     }
 
-    /* NAVBAR */
-    .navbar {
-        background-color: var(--nav-bg);
-        border-bottom: 1px solid #1f2937;
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-        backdrop-filter: blur(10px);
-    }
-
-    .nav-container {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        height: 70px;
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 20px;
-    }
-
-    .logo {
-        color: white;
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .logo-icon { font-size: 1.4rem; color: var(--sql-color); }
-    .logo-text { font-size: 1.25rem; font-family: 'Space Grotesk', sans-serif; }
-    .logo-text-bold { font-weight: 700; }
-
-    .nav-links { display: flex; list-style: none; height: 100%; gap: 1.5rem; }
-    .nav-links li { height: 100%; display: flex; align-items: center; }
-    .nav-links a {
-        color: #e5e7eb; text-decoration: none; font-size: 0.9rem; font-weight: 500;
-        height: 100%; display: flex; align-items: center; border-bottom: 3px solid transparent; transition: color 0.2s;
-    }
-    .nav-links a:hover { color: white; }
-    .nav-links a.active { color: white; font-weight: 600; border-bottom: 3px solid var(--sql-color); }
-
-    .social-icons a { color: #9ca3af; font-size: 1.1rem; transition: color 0.2s; }
-    .social-icons a:hover { color: white; }
-
-    /* HEADER & STATUS BADGE (Hata Düzeltildi) */
+    /* HEADER & STATUS BADGE */
     .page-header {
         padding: 60px 0 40px;
         text-align: center;
@@ -260,7 +225,7 @@
         line-height: 1.7;
     }
 
-    /* KURS KARTLARI (Hareket ve Canlılık Eklendi) */
+    /* KURS KARTLARI */
     .courses-section {
         padding: 30px 0 80px;
     }
@@ -294,8 +259,9 @@
         transition: background 0.3s;
     }
 
-    .course-card:nth-child(1):hover::before { background: var(--sql-color); }
-    .course-card:nth-child(2):hover::before { background: var(--sap-color); }
+    .course-card.card-sql:hover::before  { background: var(--sql-color); }
+    .course-card.card-sap:hover::before  { background: var(--sap-color); }
+    .course-card.card-abap:hover::before { background: var(--abap-color); }
 
     .course-card:not(.disabled-card):hover {
         transform: translateY(-6px);
@@ -332,10 +298,11 @@
         transform: scale(1.08) rotate(3deg);
     }
 
-    .sql-theme { background-color: rgba(245, 158, 11, 0.1); color: var(--sql-color); border: 1px solid rgba(245, 158, 11, 0.2); }
-    .sap-theme { background-color: rgba(59, 130, 246, 0.1); color: var(--sap-color); border: 1px solid rgba(59, 130, 246, 0.2); }
-    .bi-theme  { background-color: rgba(16, 185, 129, 0.1); color: var(--bi-color); border: 1px solid rgba(16, 185, 129, 0.2); }
-    .etl-theme { background-color: rgba(168, 85, 247, 0.1); color: var(--etl-color); border: 1px solid rgba(168, 85, 247, 0.2); }
+    .sql-theme  { background-color: rgba(245, 158, 11, 0.1); color: var(--sql-color); border: 1px solid rgba(245, 158, 11, 0.2); }
+    .sap-theme  { background-color: rgba(59, 130, 246, 0.1); color: var(--sap-color); border: 1px solid rgba(59, 130, 246, 0.2); }
+    .abap-theme { background-color: rgba(244, 63, 94, 0.1); color: var(--abap-color); border: 1px solid rgba(244, 63, 94, 0.2); }
+    .bi-theme   { background-color: rgba(16, 185, 129, 0.1); color: var(--bi-color); border: 1px solid rgba(16, 185, 129, 0.2); }
+    .etl-theme  { background-color: rgba(168, 85, 247, 0.1); color: var(--etl-color); border: 1px solid rgba(168, 85, 247, 0.2); }
 
     .disabled-card .bi-theme { background-color: rgba(16, 185, 129, 0.04); color: rgba(16, 185, 129, 0.4); border-color: transparent; }
     .disabled-card .etl-theme { background-color: rgba(168, 85, 247, 0.04); color: rgba(168, 85, 247, 0.4); border-color: transparent; }
@@ -346,7 +313,8 @@
         flex: 1;
     }
 
-    .course-content h3 {
+    /* SEO: CSS KURALI H3 YERİNE H2 OLARAK GÜNCELLENDİ */
+    .course-content h2 {
         font-family: 'Space Grotesk', sans-serif;
         font-size: 1.25rem;
         margin-bottom: 0.5rem;
@@ -399,6 +367,9 @@
 
     .sap-btn { background-color: rgba(59, 130, 246, 0.12); color: var(--sap-color); border: 1px solid rgba(59, 130, 246, 0.3); }
     .sap-btn:hover { background-color: var(--sap-color); color: #fff; box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
+
+    .abap-btn { background-color: rgba(244, 63, 94, 0.12); color: var(--abap-color); border: 1px solid rgba(244, 63, 94, 0.3); }
+    .abap-btn:hover { background-color: var(--abap-color); color: #fff; box-shadow: 0 0 15px rgba(244, 63, 94, 0.4); }
 
     .btn-disabled { 
         background-color: #161b22; 

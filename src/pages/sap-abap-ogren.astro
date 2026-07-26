@@ -1,0 +1,1498 @@
+---
+// src/pages/sap-abap-ogren.astro
+---
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAP ABAP Eğitim Bootcamp</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style is:global>
+  :root{
+    /* ---- SAP editörü değişkenleri (orijinal, dokunulmadı) ---- */
+    --tb1:#5a8fd6; --tb2:#2c66a8; --tb3:#123a63;
+    --panel:#f3f3f1; --toolbar:#e9e9e6; --border:#b7b7b0;
+    --tabactive:#ffffff; --tabinactive:#dedad2;
+    --edbg:#ffffff; --gutter:#eef0ee; --gutternum:#8a8f87;
+    --kw:#0000ee; --str:#a3144d; --cmt:#1f8b3b; --field:#7a3e9d;
+    --statusbar:#d9d7cf;
+
+    /* ---- dış kabuk teması — SAP marka renkleri ---- */
+    --bg:#0a121c; --bgpanel:#101d2b; --bgpanel2:#15283a; --bgborder:#213b52;
+    --neon:#0a6ed1;      /* SAP Blue — ana vurgu */
+    --neonblue:#4fc3f7;  /* Açık SAP mavisi */
+    --neonpink:#e9730c;  /* SAP Turuncu — ikincil / uyarı vurgusu */
+    --gold:#f0ab00;      /* SAP Altın */
+    --sapblue:#0a6ed1;
+  }
+  *{box-sizing:border-box;}
+
+  /* ==================================================================
+     DIŞ KABUK — "ABAP Bootcamp" tasarım dili (SAP renk paleti).
+     SAP editörünün kendisi bu bölümde YOKTUR; o, dosyanın altında
+     ayrı ve değiştirilmemiş bir blok olarak duruyor (bkz. aşağıdaki not).
+     ================================================================== */
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0; padding:0 0 60px;
+    background:
+      radial-gradient(circle at 12% 0%, rgba(10,110,209,.16), transparent 40%),
+      radial-gradient(circle at 88% 6%, rgba(79,195,247,.10), transparent 42%),
+      var(--bg);
+    font-family:'Outfit',Arial,sans-serif; color:#dbe1ea; min-height:100vh;
+  }
+  .pixel{ font-family:'Press Start 2P', monospace; }
+  a{ color:inherit; }
+  ::-webkit-scrollbar{ width:10px; }
+  ::-webkit-scrollbar-track{ background:var(--bg); }
+  ::-webkit-scrollbar-thumb{ background:var(--bgborder); border-radius:8px; }
+
+  .pixel-corners{
+    clip-path: polygon(0 8px, 8px 8px, 8px 0, calc(100% - 8px) 0, calc(100% - 8px) 8px, 100% 8px,
+      100% calc(100% - 8px), calc(100% - 8px) calc(100% - 8px), calc(100% - 8px) 100%,
+      8px 100%, 8px calc(100% - 8px), 0 calc(100% - 8px));
+  }
+
+  header.topbar{
+    position:sticky; top:0; z-index:50; background:rgba(10,18,28,.92); backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--bgborder); padding:14px 22px;
+    display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+  }
+  header.topbar .brand{ display:flex; align-items:center; gap:10px; }
+  header.topbar .brand .ico{
+    width:32px; height:32px; background:var(--sapblue); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-size:16px; flex:0 0 auto;
+  }
+  header.topbar .brand span{ font-size:10.5px; color:#fff; }
+  .backbtn{
+    display:flex; align-items:center; gap:7px; background:#0e2338; border:1px solid var(--sapblue);
+    color:var(--neonblue); font-size:11px; font-weight:600; padding:9px 16px; cursor:pointer;
+    font-family:inherit; border-radius:2px; letter-spacing:.3px;
+  }
+  .backbtn:hover{ background:#123a5c; color:#fff; }
+
+  /* ---------- Ana sayfa: Ders listesi ---------- */
+  #courseHome{ max-width:1180px; margin:0 auto; padding:44px 16px 8px; }
+  .home-badge{
+    display:inline-block; font-size:9px; letter-spacing:1.2px; color:var(--neonblue);
+    border:1px solid rgba(79,195,247,.4); padding:7px 14px; margin-bottom:22px;
+    background-image:repeating-linear-gradient(45deg, rgba(10,110,209,.14) 0px, rgba(10,110,209,.14) 2px, transparent 2px, transparent 6px);
+  }
+  .home-title{ font-size:44px; color:#fff; margin:0 0 16px; letter-spacing:2px; text-shadow:0 0 18px rgba(10,110,209,.6); }
+  .home-sub{ max-width:620px; margin:0 0 34px; color:#8b96ab; font-size:13.5px; line-height:1.75; }
+
+  .home-layout{ display:flex; gap:20px; align-items:flex-start; }
+
+  .lessons-panel{ flex:1; min-width:0; background:var(--bgpanel); border:1px solid var(--bgborder); }
+  .lessons-panel-head{
+    display:flex; align-items:center; gap:9px; background:linear-gradient(90deg,var(--bgpanel),var(--bgpanel2));
+    border-bottom:1px solid var(--bgborder); padding:16px 18px; font-size:15px; font-weight:700; color:#fff;
+  }
+  .lessons-panel-head .ic{ color:var(--neonblue); font-size:16px; }
+  .lesson-rows{ display:flex; flex-direction:column; }
+  .lesson-row{
+    display:flex; align-items:center; gap:14px; padding:15px 18px; border-bottom:1px solid var(--bgborder);
+  }
+  .lesson-row:last-child{ border-bottom:none; }
+  .lesson-row .lr-num{
+    flex:0 0 auto; width:24px; height:24px; border-radius:50%; background:var(--bgpanel2); color:var(--neonblue);
+    font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; border:1px solid var(--bgborder);
+  }
+  .lesson-row.done .lr-num{ background:var(--neon); color:#fff; border-color:var(--neon); }
+  .lesson-row .lr-title{ flex:1; min-width:0; font-size:13.5px; color:#c7cedb; }
+  .lesson-row .lr-check{ color:var(--gold); font-size:12px; margin-right:2px; }
+  .start-btn{
+    flex:0 0 auto; background:var(--sapblue); border:none; color:#fff; font-size:11.5px; font-weight:700;
+    padding:8px 18px; border-radius:2px; cursor:pointer; font-family:inherit; letter-spacing:.3px;
+  }
+  .start-btn:hover{ background:#0959a8; }
+  .lesson-row.done .start-btn{ background:var(--bgpanel2); color:var(--neonblue); border:1px solid var(--sapblue); }
+  .lesson-row.done .start-btn:hover{ background:#123a5c; }
+
+  .home-sidebar{ width:280px; flex:0 0 280px; display:flex; flex-direction:column; gap:16px; }
+  .avatar-card{ background:var(--bgpanel); border:1px solid var(--bgborder); padding:26px 18px; text-align:center; }
+  .avatar-badge{
+    width:56px; height:56px; margin:0 auto 14px; border-radius:50%; background:linear-gradient(180deg,var(--neon),var(--neonblue));
+    display:flex; align-items:center; justify-content:center; font-size:22px; color:#fff;
+  }
+  .avatar-name{ font-size:13.5px; font-weight:700; color:#fff; margin-bottom:6px; }
+  .avatar-level{ font-size:10.5px; letter-spacing:1px; color:var(--gold); font-weight:700; margin-bottom:14px; }
+  .reset-link{ background:none; border:none; color:#5c6b85; font-size:10.5px; text-decoration:underline; cursor:pointer; font-family:inherit; }
+  .reset-link:hover{ color:var(--neonpink); }
+
+  .progress-card{ background:var(--bgpanel); border:1px solid var(--bgborder); padding:18px; }
+  .progress-card-title{ font-size:9.5px; letter-spacing:1.2px; color:var(--neonblue); font-weight:700; margin-bottom:12px; }
+  .progress-track{ height:6px; background:#0a0e1a; border:1px solid var(--bgborder); overflow:hidden; margin-bottom:14px; }
+  .progress-track i{ display:block; height:100%; width:0%; background:linear-gradient(90deg,var(--sapblue),var(--neonblue)); transition:width .4s ease; }
+  .progress-stats{ display:flex; flex-direction:column; gap:9px; }
+  .progress-stats div{ display:flex; justify-content:space-between; font-size:11.5px; color:#8b96ab; }
+  .progress-stats span:last-child{ color:#dbe1ea; font-weight:600; }
+
+  @media (max-width: 880px){
+    .home-layout{ flex-direction:column; }
+    .home-sidebar{ width:100%; flex:1 1 auto; }
+  }
+
+  /* ---------- Ders görünümü (mevcut yapı) ---------- */
+  #lessonView{ display:none; }
+  .course{ width:100%; max-width:1180px; margin:32px auto 0; padding:0 16px; display:flex; gap:18px; align-items:flex-start; }
+
+  /* ---------- Sidebar (ders listesi) ---------- */
+  .sidebar{ width:280px; flex:0 0 280px; background:var(--bgpanel); border:1px solid var(--bgborder); position:sticky; top:88px; }
+  .sidebar-head{ background:linear-gradient(90deg,var(--bgpanel),var(--bgpanel2)); border-bottom:1px solid var(--bgborder); padding:14px 14px 12px; }
+  .sidebar-head .sh-eyebrow{ font-size:9px; color:var(--sapblue); letter-spacing:1.2px; margin-bottom:8px; }
+  .sidebar-head .sh-progress-row{ display:flex; align-items:center; justify-content:space-between; font-size:10px; color:#8b96ab; margin-bottom:6px; }
+  .sidebar-head .sh-bar{ height:6px; background:#0a0e1a; border:1px solid var(--bgborder); overflow:hidden; }
+  .sidebar-head .sh-bar i{ display:block; height:100%; width:0%; background:linear-gradient(90deg,var(--sapblue),var(--neonblue)); transition:width .4s ease; }
+
+  .lesson-list{ list-style:none; margin:0; padding:8px; display:flex; flex-direction:column; gap:4px; max-height:520px; overflow-y:auto; }
+  .lesson-item{ display:flex; gap:10px; align-items:flex-start; padding:9px 10px; cursor:pointer; border:1px solid transparent; border-radius:2px; }
+  .lesson-item:hover{ background:#1b2436; border-color:var(--bgborder); }
+  .lesson-item.active{ background:#182236; border-color:rgba(10,110,209,.5); box-shadow:0 0 0 1px rgba(10,110,209,.15) inset; }
+  .lesson-num{ flex:0 0 auto; width:22px; height:22px; background:#1b2436; color:#8b96ab; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; border:1px solid var(--bgborder);}
+  .lesson-item.active .lesson-num{ background:var(--sapblue); color:#fff; border-color:var(--sapblue); }
+  .lesson-item.done .lesson-num{ background:var(--neon); color:#fff; border-color:var(--neon); }
+  .lesson-txt{ font-size:12px; color:#c7cedb; line-height:1.4; }
+  .lesson-txt .lt{ display:block; font-size:9px; color:#5c6b85; text-transform:uppercase; letter-spacing:.6px; margin-bottom:2px;}
+  .sidebar-foot{ padding:11px 14px; border-top:1px solid var(--bgborder); font-size:10px; color:#5c6b85; display:flex; align-items:center; justify-content:space-between; gap:8px;}
+  .sidebar-foot button{ background:none; border:1px solid var(--bgborder); color:#8b96ab; font-size:9px; padding:5px 8px; cursor:pointer; font-family:inherit; }
+  .sidebar-foot button:hover{ border-color:var(--neonpink); color:var(--neonpink); }
+
+  /* ---------- Main column ---------- */
+  .main-col{ flex:1; min-width:0; display:flex; flex-direction:column; gap:16px; }
+
+  .lesson-panel{ background:var(--bgpanel); border:1px solid var(--bgborder); padding:20px 22px; }
+  .lesson-panel .lp-eyebrow{ font-size:9px; letter-spacing:1.2px; color:var(--sapblue); font-weight:700; text-transform:uppercase; }
+  .lesson-panel h2{ margin:6px 0 12px; font-size:19px; color:#fff; }
+  .obj-list{ margin:0 0 14px; padding:0; list-style:none; display:flex; flex-direction:column; gap:6px; }
+  .obj-list li{ font-size:12.5px; color:#b7c0d1; padding-left:22px; position:relative; line-height:1.5; }
+  .obj-list li::before{ content:'✓'; position:absolute; left:0; top:0; color:var(--neon); font-weight:700; }
+  .lp-text p{ font-size:13px; color:#9aa5b8; line-height:1.75; margin:0 0 11px; }
+  .lp-text code, .inline-code{ background:var(--bgpanel2); border:1px solid var(--bgborder); border-radius:3px; padding:1px 6px; font:12px/1.4 'Consolas','Courier New',monospace; color:var(--neonblue); }
+
+  .syntax-box{ background:#0a1120; border:1px solid var(--bgborder); border-radius:4px; padding:11px 14px; margin:10px 0 4px; font:12.5px/1.6 'Consolas','Courier New',monospace; color:#d7e6f7; overflow-x:auto; }
+  .syntax-box .sx-title{ display:block; font-family:'Outfit',Arial,sans-serif; font-size:9.5px; letter-spacing:1px; text-transform:uppercase; color:var(--gold); margin-bottom:6px; }
+
+  .lesson-nav{ display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:16px; }
+  .navbtn{
+    display:flex; align-items:center; gap:6px; background:var(--bgpanel2); border:1px solid var(--bgborder);
+    border-radius:2px; padding:8px 14px; font-size:12px; color:#c7cedb; cursor:pointer; font-family:inherit;
+    box-shadow:3px 3px 0 0 rgba(0,0,0,.35); transition:transform .08s ease, box-shadow .08s ease;
+  }
+  .navbtn:hover{ border-color:var(--sapblue); color:#fff; }
+  .navbtn:active{ transform:translate(3px,3px); box-shadow:0 0 0 0 transparent; }
+  .navbtn:disabled{ opacity:.35; cursor:default; }
+  .navbtn.primary{ background:#0c2136; border-color:var(--neon); color:var(--neonblue); }
+  .navbtn.primary:hover{ background:#123256; color:#fff; }
+  .lesson-progress{ font-size:11px; color:#5c6b85; }
+
+  .disclaimer{ max-width:1180px; margin:26px auto 0; padding:0 16px; text-align:center; font-size:11px; color:#5c6b85; font-style:italic; line-height:1.6; }
+
+  /* ---------- Kutlama katmanı ---------- */
+  .celebrate-overlay{ position:fixed; inset:0; background:rgba(5,8,16,.86); display:none; align-items:center; justify-content:center; z-index:200; padding:20px;}
+  .celebrate-overlay.show{ display:flex; }
+  .celebrate-card{ background:var(--bgpanel); border:1px solid var(--gold); max-width:380px; padding:32px 26px; text-align:center; }
+  .celebrate-card .cc-badge{ width:56px;height:56px; margin:0 auto 16px; background:linear-gradient(180deg,var(--gold),#a97b00); display:flex; align-items:center; justify-content:center; font-size:26px; }
+  .celebrate-card h3{ color:#fff; font-size:14px; margin:0 0 10px; letter-spacing:.5px; }
+  .celebrate-card p{ color:#9aa5b8; font-size:12.5px; line-height:1.65; margin:0 0 18px; }
+  .celebrate-card button{ background:var(--sapblue); border:none; color:#fff; padding:10px 22px; font-size:12px; cursor:pointer; font-family:inherit; }
+  .celebrate-card button:hover{ background:#0959a8; }
+
+  @media (max-width: 880px){
+    .course{ flex-direction:column; }
+    .sidebar{ width:100%; flex:1 1 auto; position:static; }
+    .lesson-list{ max-height:230px; }
+  }
+
+  /* ==================================================================
+     SAP ABAP EDİTÖRÜ — GERÇEKÇİ GÖRÜNÜM (BİREBİR KORUNDU)
+     Aşağıdaki kurallar orijinal dosyadan DEĞİŞTİRİLMEDEN alınmıştır;
+     SE38/SAP GUI hissini bozmamak için dokunulmamıştır.
+     ================================================================== */
+  /* ---------- SAP window (mevcut simülatör) ---------- */
+  .sapwin{
+    width:100%;
+    border:1px solid #0f2f52; border-radius:3px;
+    box-shadow:0 10px 28px rgba(20,30,50,.28), 0 1px 0 #fff inset;
+    overflow:hidden; background:var(--panel);
+  }
+  .titlebar{
+    background:linear-gradient(180deg, var(--tb1), var(--tb2) 55%, var(--tb3));
+    color:#fff; font-size:12.5px; font-weight:600; padding:6px 10px;
+    display:flex; align-items:center; justify-content:space-between;
+    text-shadow:0 1px 1px rgba(0,0,0,.35);
+  }
+  .titlebar .dots{ display:flex; gap:6px; }
+  .titlebar .dots span{ width:9px; height:9px; border-radius:50%; background:rgba(255,255,255,.35); display:inline-block; }
+
+  .menubar{
+    background:var(--panel); border-bottom:1px solid var(--border);
+    display:flex; gap:14px; padding:4px 10px; font-size:11.5px; color:#333;
+  }
+  .menubar span{ cursor:default; padding:2px 4px; border-radius:2px; }
+  .menubar span:hover{ background:#cfe0f5; }
+
+  .toolbar{
+    background:var(--toolbar); border-bottom:1px solid var(--border);
+    display:flex; align-items:center; gap:6px; padding:6px 8px; flex-wrap:wrap;
+  }
+  .okcode{
+    display:flex; align-items:center; gap:6px; background:#fff;
+    border:1px solid #9aa3ad; border-radius:2px; padding:2px 6px; margin-right:10px;
+  }
+  .okcode svg{ width:12px; height:12px; }
+  .okcode input{
+    border:none; outline:none; font-size:12px; font-family:inherit; width:150px; color:#222;
+  }
+  .tbtn{
+    display:flex; align-items:center; gap:5px; background:#f6f6f4; border:1px solid #c7c7c0;
+    border-radius:3px; padding:4px 9px; font-size:11.5px; color:#28313a; cursor:pointer;
+  }
+  .tbtn:hover{ background:#dfeaf7; border-color:#7fa8d6; }
+  .tbtn:active{ background:#c9def2; }
+  .tbtn svg{ width:14px; height:14px; }
+  .tbtn.primary{ background:#eef7ea; border-color:#8fc47a; }
+  .tbtn.primary:hover{ background:#dcefd3; }
+  .sep{ width:1px; align-self:stretch; background:var(--border); margin:0 4px; }
+
+  .tabstrip{ display:flex; background:var(--panel); border-bottom:1px solid var(--border); padding:0 8px; }
+  .tab{ padding:6px 16px; font-size:11.5px; color:#7c7c74; border:1px solid transparent; border-bottom:none; cursor:default; }
+  .tab.active{ background:var(--tabactive); color:#1c1c1c; border-color:var(--border); border-radius:3px 3px 0 0; margin-bottom:-1px; border-bottom:1px solid var(--tabactive); }
+
+  .screen{ background:var(--edbg); min-height:340px; display:none; }
+  .screen.show{ display:block; }
+
+  .editor-area{ display:flex; }
+  .gutter{
+    background:var(--gutter); color:var(--gutternum); font:12.5px/1.55 'Consolas','Courier New',monospace;
+    text-align:right; padding:10px 8px 10px 4px; user-select:none; min-width:34px;
+    white-space:pre;
+  }
+  .editor-wrap{ position:relative; flex:1; overflow:hidden; }
+  .editor-wrap pre, .editor-wrap textarea{
+    margin:0; padding:10px 12px; font:12.5px/1.55 'Consolas','Courier New',monospace;
+    white-space:pre; overflow:auto; height:340px; width:100%;
+    border:none; box-sizing:border-box;
+  }
+  .hl-layer{ position:absolute; top:0; left:0; pointer-events:none; color:#1b1b1b; background:transparent; }
+  .code-input{ position:relative; z-index:1; background:transparent; color:transparent; caret-color:#111; resize:none; outline:none; }
+  .kw{ color:var(--kw); font-weight:700; }
+  .str{ color:var(--str); }
+  .cmt{ color:var(--cmt); font-style:italic; }
+
+  .output-toolbar{ display:flex; align-items:center; gap:8px; padding:6px 10px; background:#fafaf8; border-bottom:1px solid var(--border); }
+  .output-toolbar .rname{ font-size:11px; color:#666; }
+  .listhead{ padding:10px 14px 4px; font:12px/1.5 'Consolas','Courier New',monospace; color:#444; border-bottom:1px solid #ddd; }
+  .listbody{ padding:10px 14px; font:13px/1.65 'Consolas','Courier New',monospace; color:#111; min-height:260px; white-space:pre-wrap; }
+  .listbody .err{ color:#b3261e; }
+
+  .statusbar{
+    background:var(--statusbar); border-top:1px solid var(--border);
+    display:flex; font-size:10.5px; color:#3a3f36;
+  }
+  .statusbar div{ padding:4px 10px; border-right:1px solid #c3c1b8; }
+  .statusbar div:last-child{ border-right:none; margin-left:auto; }
+  .dot{ width:6px; height:6px; border-radius:50%; background:#e0a400; display:inline-block; margin-right:5px; }
+</style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="ico">▣</div>
+      <span class="pixel">SAP ABAP EĞİTİM SİMÜLATÖRÜ</span>
+    </div>
+    <button class="backbtn" id="btnHeaderBack">← Geri Dön</button>
+  </header>
+
+  <!-- ================= ANA SAYFA: DERS LİSTESİ ================= -->
+  <div id="courseHome">
+    <span class="home-badge">💾 İLERLEME TARAYICIDA SAKLANIYOR</span>
+    <h1 class="home-title pixel">ABAP</h1>
+    <p class="home-sub">İlerlemen artık tarayıcında saklanıyor. İstediğin zaman çıkıp geri dönebilirsin! Soldaki listeden bir ders seçip başlayın; örnek kodu F8 ile çalıştırarak çıktıyı görün.</p>
+
+    <div class="home-layout">
+      <div class="lessons-panel">
+        <div class="lessons-panel-head"><span class="ic">🗄️</span> 1. Dersler</div>
+        <div class="lesson-rows" id="lessonRows"></div>
+      </div>
+
+      <div class="home-sidebar">
+        <div class="avatar-card">
+          <div class="avatar-badge" id="avatarBadge">:)</div>
+          <div class="avatar-name">Yerel Öğrenci</div>
+          <div class="avatar-level" id="avatarLevel">SEVİYE 1</div>
+          <button class="reset-link" id="btnResetProgress2">İlerlemeyi Sıfırla</button>
+        </div>
+        <div class="progress-card">
+          <div class="progress-card-title">DERS İLERLEMESİ</div>
+          <div class="progress-track"><i id="homeProgressFill"></i></div>
+          <div class="progress-stats">
+            <div><span>Dersler</span><span id="statLessons">0 / 9</span></div>
+            <div><span>Kazanılan XP</span><span id="statXP">0 / 225</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="disclaimer">
+      Bu araç SAP ABAP öğrenimini kolaylaştırmak için hazırlanmış bir <strong>simülasyon arayüzüdür</strong>; gerçek bir SAP sistemine bağlı değildir ve SAP SE ile ilişkili ya da onaylı değildir. "SAP" adı yalnızca referans amacıyla anılmaktadır.
+    </div>
+  </div>
+
+  <!-- ================= DERS GÖRÜNÜMÜ ================= -->
+  <div id="lessonView">
+  <div class="course">
+
+    <!-- ---------- SIDEBAR ---------- -->
+    <div class="sidebar">
+      <div class="sidebar-head">
+        <div class="sh-eyebrow pixel">DERS PLANI</div>
+        <div class="sh-progress-row">
+          <span id="sidebarProgress">Ders 1 / 9</span>
+          <span id="sidebarPercent">0%</span>
+        </div>
+        <div class="sh-bar"><i id="sidebarBar"></i></div>
+      </div>
+      <ul class="lesson-list" id="lessonList"></ul>
+      <div class="sidebar-foot">
+        <span>İlerlemeniz tarayıcınızda saklanır.</span>
+        <button id="btnResetProgress" title="Tüm ilerlemeyi sıfırla">Sıfırla</button>
+      </div>
+    </div>
+
+    <!-- ---------- MAIN COLUMN ---------- -->
+    <div class="main-col">
+
+      <div class="lesson-panel">
+        <div class="lp-eyebrow" id="lpEyebrow">Ders 1</div>
+        <h2 id="lpTitle">—</h2>
+        <ul class="obj-list" id="lpObjectives"></ul>
+        <div class="lp-text" id="lpText"></div>
+        <div id="lpSyntax"></div>
+        <div class="lesson-nav">
+          <button class="navbtn" id="btnPrev">← Önceki Ders</button>
+          <span class="lesson-progress" id="lpProgress">Ders 1 / 9</span>
+          <button class="navbtn primary" id="btnNext">Sonraki Ders →</button>
+        </div>
+      </div>
+
+      <div class="sapwin">
+        <div class="titlebar">
+          <span id="titlebarText">SAP — ABAP Editör: Include ZTEST_EGITIM</span>
+          <div class="dots"><span></span><span></span><span></span></div>
+        </div>
+
+        <div class="menubar">
+          <span>Program</span><span>Düzen</span><span>Git</span><span>Yardımcı Programlar</span><span>Ortam</span><span>Sistem</span><span>Yardım</span>
+        </div>
+
+        <div class="toolbar">
+          <div class="okcode">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M4 12l6 6L20 6" stroke="#2e8b3d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <input id="okcode" type="text" placeholder="/nse38" />
+          </div>
+          <button class="tbtn" id="btnSave" title="Kaydet (Ctrl+S)">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="1.5" fill="#4a75b0"/><rect x="6" y="4.5" width="9" height="6" fill="#fff"/><rect x="6" y="14" width="12" height="6" fill="#dfe8f2"/></svg>
+            Kaydet
+          </button>
+          <button class="tbtn" id="btnActivate" title="Aktive Et (Ctrl+F3)">
+            <svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6" stroke="#2e8b3d" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Aktive Et
+          </button>
+          <div class="sep"></div>
+          <button class="tbtn primary" id="btnRun" title="Çalıştır (F8)">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#e2a325"/><path d="M10 8l6 4-6 4V8z" fill="#fff"/></svg>
+            Çalıştır (F8)
+          </button>
+          <button class="tbtn" id="btnBack" title="Geri (F3)">
+            <svg viewBox="0 0 24 24"><path d="M20 12H6M11 6l-6 6 6 6" stroke="#3d7a34" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Geri
+          </button>
+          <button class="tbtn" id="btnReset" title="Bu dersin örneğini yeniden yükle">
+            <svg viewBox="0 0 24 24"><path d="M4 4v6h6M20 20v-6h-6M4.5 10A8 8 0 0119.8 8M19.5 14A8 8 0 014.2 16" stroke="#555" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>
+            Dersin Örneğini Yükle
+          </button>
+        </div>
+
+        <div class="tabstrip">
+          <div class="tab active">Kaynak Kod</div>
+          <div class="tab">Özellikler</div>
+          <div class="tab">Varyantlar</div>
+          <div class="tab">Dokümantasyon</div>
+        </div>
+
+        <div class="screen show" id="screenEditor">
+          <div class="editor-area">
+            <div class="gutter" id="gutter">1</div>
+            <div class="editor-wrap">
+              <pre class="hl-layer" id="hlLayer"></pre>
+              <textarea class="code-input" id="codeInput" spellcheck="false"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="screen" id="screenOutput">
+          <div class="output-toolbar">
+            <button class="tbtn" id="btnBack2" title="Geri (F3)">
+              <svg viewBox="0 0 24 24"><path d="M20 12H6M11 6l-6 6 6 6" stroke="#3d7a34" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Geri
+            </button>
+            <span class="rname" id="rname">Program: ZTEST_EGITIM</span>
+          </div>
+          <div class="listhead" id="listhead"></div>
+          <div class="listbody" id="listbody"></div>
+        </div>
+
+        <div class="statusbar">
+          <div><span class="dot"></span>Simülasyon Modu</div>
+          <div>Sistem: TRN</div>
+          <div>İstemci: 100</div>
+          <div>Kullanıcı: OGRENCI</div>
+          <div id="clock">--:--:--</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <!-- Kutlama katmanı: 9 dersin tamamı bitirildiğinde açılır -->
+  <div class="celebrate-overlay" id="celebrateOverlay">
+    <div class="celebrate-card">
+      <div class="cc-badge">🏅</div>
+      <h3 class="pixel">TÜM DERSLER TAMAMLANDI</h3>
+      <p>9 dersin tamamını bitirdiniz ve ABAP'ın temellerini — değişkenlerden SELECT/LOOP ile veri işlemeye kadar — uygulamalı olarak gördünüz. İlerlemeniz tarayıcınızda saklandı, istediğiniz zaman geri dönüp tekrar edebilirsiniz.</p>
+      <button id="btnCloseCelebrate">Devam Et</button>
+    </div>
+  </div>
+
+<script>
+/* =========================================================
+   DERS İÇERİKLERİ (Ders 1..9)
+   ========================================================= */
+const LESSONS = [
+{
+  title:"ABAP'a Giriş ve İlk Programınız",
+  program:"ZTEST_DERS1",
+  objectives:[
+    "Bir ABAP programının temel iskeletini (REPORT ifadesi) tanımak",
+    "DATA ile değişken tanımlamayı öğrenmek",
+    "WRITE komutuyla ekrana çıktı vermeyi öğrenmek"
+  ],
+  text:[
+    "ABAP (Advanced Business Application Programming), SAP sistemlerinde iş mantığını yazmak için kullanılan üçüncü nesil bir programlama dilidir. Her ABAP raporu genellikle <code class='inline-code'>REPORT</code> ifadesiyle başlar; bu ifade programın adını bildirir ve sistemin bu kodu bağımsız çalıştırılabilir bir liste raporu olarak tanımasını sağlar.",
+    "<code class='inline-code'>DATA</code> ifadesi ile bir değişken tanımlarsınız. <code class='inline-code'>TYPE</code> anahtar kelimesi değişkenin veri tipini belirtir, <code class='inline-code'>VALUE</code> ise başlangıç değerini atar.",
+    "<code class='inline-code'>WRITE</code> komutu, çalışma zamanında oluşan liste ekranına çıktı basar. Başına konan <code class='inline-code'>/</code> karakteri yeni bir satırdan başlanmasını sağlar; virgülle ayrılan değerler aynı satırda art arda yazdırılır."
+  ],
+  syntax:[
+    "REPORT zprogram_adi.\n\nDATA: lv_degisken TYPE string VALUE 'Merhaba'.\n\nWRITE: / lv_degisken."
+  ],
+  code:
+`REPORT ztest_ders1.
+
+DATA: lv_isim TYPE string VALUE 'Dunya'.
+
+WRITE: / 'Merhaba,', lv_isim.
+WRITE: / 'ABAP dunyasina hos geldiniz!'.
+`
+},
+{
+  title:"Değişkenler, Sabitler ve Veri Tipleri",
+  program:"ZTEST_DERS2",
+  objectives:[
+    "Sık kullanılan temel veri tiplerini tanımak (string, i)",
+    "Tek bir DATA bloğunda birden fazla değişken tanımlamayı öğrenmek",
+    "Sayısal ve metinsel VALUE atamaları arasındaki farkı görmek"
+  ],
+  text:[
+    "ABAP'ta en sık karşılaşacağınız temel tipler arasında metin için <code class='inline-code'>string</code>, tam sayı için <code class='inline-code'>i</code> ve tek karakter/karakter dizisi için <code class='inline-code'>c</code> bulunur. Gerçek SAP sisteminde bunlara ek olarak <code class='inline-code'>p</code> (packed number), <code class='inline-code'>d</code> (tarih) gibi birçok tip daha vardır; bu eğitimde odak, en sık kullanılan tiplerdir.",
+    "Birden fazla değişkeni <code class='inline-code'>DATA:</code> ile başlayan tek bir blokta, aralarına virgül koyarak tanımlayabilirsiniz. Bu, kodun daha derli toplu görünmesini sağlar.",
+    "Metinsel bir <code class='inline-code'>VALUE</code> tek tırnak içine alınır (<code class='inline-code'>'Istanbul'</code>), sayısal bir <code class='inline-code'>VALUE</code> ise tırnaksız yazılır (<code class='inline-code'>28</code>)."
+  ],
+  syntax:[
+    "DATA: lv_ad    TYPE string VALUE 'Ahmet',\n      lv_yas   TYPE i      VALUE 28."
+  ],
+  code:
+`REPORT ztest_ders2.
+
+DATA: lv_ad    TYPE string VALUE 'Ahmet',
+      lv_yas   TYPE i      VALUE 28,
+      lv_sehir TYPE string VALUE 'Istanbul'.
+
+WRITE: / 'Ad    :', lv_ad.
+WRITE: / 'Yas   :', lv_yas.
+WRITE: / 'Sehir :', lv_sehir.
+`
+},
+{
+  title:"Operatörler ve Aritmetik İşlemler",
+  program:"ZTEST_DERS3",
+  objectives:[
+    "Atama operatörü (=) ile hesaplama yapmayı öğrenmek",
+    "ADD komutuyla bir değişkene değer eklemeyi öğrenmek",
+    "CONCATENATE ile metinleri birleştirmeyi öğrenmek"
+  ],
+  text:[
+    "ABAP'ta iki değişkeni toplamak veya çıkarmak için doğrudan atama içinde <code class='inline-code'>+</code> ve <code class='inline-code'>-</code> operatörlerini kullanabilirsiniz: <code class='inline-code'>lv_toplam = lv_a + lv_b.</code>",
+    "Klasik ABAP'ta ayrıca <code class='inline-code'>ADD ... TO ...</code> ve <code class='inline-code'>SUBTRACT ... FROM ...</code> ifadeleri de yaygındır ve aynı işlemi daha açıklayıcı biçimde yapar.",
+    "İki veya daha fazla metni birleştirmek için <code class='inline-code'>CONCATENATE</code> kullanılır. <code class='inline-code'>SEPARATED BY</code> eklentisi, parçalar arasına bir ayraç (örneğin boşluk) koymanızı sağlar."
+  ],
+  syntax:[
+    "lv_toplam = lv_a + lv_b.\nADD 1 TO lv_toplam.\n\nCONCATENATE 'Toplam:' lv_toplam INTO lv_mesaj SEPARATED BY ' '."
+  ],
+  code:
+`REPORT ztest_ders3.
+
+DATA: lv_a      TYPE i VALUE 10,
+      lv_b      TYPE i VALUE 5,
+      lv_toplam TYPE i,
+      lv_fark   TYPE i,
+      lv_mesaj  TYPE string.
+
+lv_toplam = lv_a + lv_b.
+lv_fark   = lv_a - lv_b.
+
+ADD 1 TO lv_toplam.
+
+CONCATENATE 'Toplam:' lv_toplam INTO lv_mesaj SEPARATED BY ' '.
+
+WRITE: / 'A =', lv_a.
+WRITE: / 'B =', lv_b.
+WRITE: / 'Toplam (A+B) =', lv_toplam.
+WRITE: / 'Fark (A-B)   =', lv_fark.
+WRITE: / lv_mesaj.
+`
+},
+{
+  title:"Koşullu İfadeler: IF / ELSEIF / ELSE",
+  program:"ZTEST_DERS4",
+  objectives:[
+    "Koşullu dallanma mantığını (IF / ELSEIF / ELSE / ENDIF) öğrenmek",
+    "Karşılaştırma operatörlerini (=, >, >=, <, <=, <>) kullanmak",
+    "ELSEIF zinciriyle birden çok senaryoyu yönetmek"
+  ],
+  text:[
+    "<code class='inline-code'>IF</code> bloğu, bir koşul doğruysa içindeki kodu çalıştırır. Koşul yanlışsa sırasıyla <code class='inline-code'>ELSEIF</code> dalları denenir; hiçbiri doğru değilse varsa <code class='inline-code'>ELSE</code> dalı çalışır. Blok her zaman <code class='inline-code'>ENDIF</code> ile kapanır.",
+    "ABAP'ta karşılaştırma operatörleri hem sembolik (<code class='inline-code'>=</code>, <code class='inline-code'>&gt;</code>, <code class='inline-code'>&gt;=</code>, <code class='inline-code'>&lt;</code>, <code class='inline-code'>&lt;=</code>, <code class='inline-code'>&lt;&gt;</code>) hem de kelime (<code class='inline-code'>EQ</code>, <code class='inline-code'>GT</code>, <code class='inline-code'>GE</code>, <code class='inline-code'>LT</code>, <code class='inline-code'>LE</code>, <code class='inline-code'>NE</code>) biçiminde yazılabilir. Bu simülatör her iki biçimi de tanır.",
+    "Bir alanın boş olup olmadığını kontrol etmek için <code class='inline-code'>IS INITIAL</code> / <code class='inline-code'>IS NOT INITIAL</code> ifadesi kullanılır."
+  ],
+  syntax:[
+    "IF lv_puan >= 90.\n  lv_not = 'AA'.\nELSEIF lv_puan >= 70.\n  lv_not = 'BB'.\nELSE.\n  lv_not = 'FF'.\nENDIF."
+  ],
+  code:
+`REPORT ztest_ders4.
+
+DATA: lv_puan TYPE i VALUE 72,
+      lv_not  TYPE string.
+
+IF lv_puan >= 90.
+  lv_not = 'AA'.
+ELSEIF lv_puan >= 80.
+  lv_not = 'BA'.
+ELSEIF lv_puan >= 70.
+  lv_not = 'BB'.
+ELSEIF lv_puan >= 60.
+  lv_not = 'CB'.
+ELSE.
+  lv_not = 'FF'.
+ENDIF.
+
+WRITE: / 'Puan     :', lv_puan.
+WRITE: / 'Harf Notu:', lv_not.
+`
+},
+{
+  title:"Döngüler: DO...ENDDO ve WHILE...ENDWHILE",
+  program:"ZTEST_DERS5",
+  objectives:[
+    "Sabit sayıda tekrar için DO...ENDDO kullanmayı öğrenmek",
+    "Koşula bağlı tekrar için WHILE...ENDWHILE kullanmayı öğrenmek",
+    "Sistem alanı sy-index'i tanımak"
+  ],
+  text:[
+    "<code class='inline-code'>DO n TIMES ... ENDDO</code> bloğu, içindeki kodu tam olarak n kez çalıştırır. Döngü sırasında kaçıncı tekrarda olduğunuzu <code class='inline-code'>sy-index</code> sistem alanından okuyabilirsiniz.",
+    "<code class='inline-code'>WHILE koşul ... ENDWHILE</code> bloğu ise koşul doğru olduğu sürece tekrarlanır; koşul yanlış olduğu an döngü sona erer. Döngü içinde sayaç değişkenini güncellemeyi unutmazsanız sonsuz döngüden kaçınmış olursunuz.",
+    "Hangi döngü tipini seçeceğiniz, tekrar sayısının önceden belli olup olmamasına bağlıdır: sayı belliyse DO, bir koşula bağlıysa WHILE tercih edilir."
+  ],
+  syntax:[
+    "DO 5 TIMES.\n  WRITE: / sy-index.\nENDDO.\n\nWHILE lv_sayac <= 10.\n  lv_sayac = lv_sayac + 1.\nENDWHILE."
+  ],
+  code:
+`REPORT ztest_ders5.
+
+DATA: lv_sayac  TYPE i,
+      lv_toplam TYPE i VALUE 0.
+
+WRITE: / '1den 5e kadar sayma (DO):'.
+DO 5 TIMES.
+  WRITE: / sy-index.
+ENDDO.
+
+WRITE: / '---------------------------'.
+WRITE: / '1den 10a kadar toplam (WHILE):'.
+
+lv_sayac = 1.
+WHILE lv_sayac <= 10.
+  lv_toplam = lv_toplam + lv_sayac.
+  lv_sayac  = lv_sayac + 1.
+ENDWHILE.
+
+WRITE: / 'Toplam =', lv_toplam.
+`
+},
+{
+  title:"Yapılar ve Dahili Tablolar",
+  program:"ZTEST_DERS6",
+  objectives:[
+    "TYPES ile kendi veri yapınızı (structure) tanımlamak",
+    "Dahili tabloya (internal table) APPEND ile satır eklemek",
+    "Work area (çalışma alanı) kavramını anlamak"
+  ],
+  text:[
+    "<code class='inline-code'>TYPES: BEGIN OF ... END OF</code> bloğu, birden fazla alanı bir arada tutan kendi veri yapınızı (structure) tanımlamanızı sağlar. Bu, gerçek dünyadaki bir 'satır'ı (örneğin bir ürün kaydını) modellemenin standart yoludur.",
+    "<code class='inline-code'>DATA ... TYPE TABLE OF ...</code> ile bu yapıdan birden çok satır tutabilen bir dahili tablo (internal table) oluşturulur. Tabloya tek tek satır eklemek için önce bir work area (çalışma alanı) doldurulur, sonra <code class='inline-code'>APPEND work_area TO tablo.</code> ile tabloya eklenir.",
+    "Bir work area'nın belirli bir alanına erişmek/atamak için tire (<code class='inline-code'>-</code>) kullanılır: <code class='inline-code'>wa_urun-ad = 'Klavye'.</code>"
+  ],
+  syntax:[
+    "TYPES: BEGIN OF ty_urun,\n         ad    TYPE string,\n         fiyat TYPE i,\n       END OF ty_urun.\n\nDATA: it_sepet TYPE TABLE OF ty_urun,\n      wa_urun  TYPE ty_urun.\n\nwa_urun-ad = 'Klavye'.\nAPPEND wa_urun TO it_sepet."
+  ],
+  code:
+`REPORT ztest_ders6.
+
+TYPES: BEGIN OF ty_urun,
+         ad    TYPE string,
+         fiyat TYPE i,
+       END OF ty_urun.
+
+DATA: it_sepet TYPE TABLE OF ty_urun,
+      wa_urun  TYPE ty_urun.
+
+wa_urun-ad    = 'Klavye'.
+wa_urun-fiyat = 450.
+APPEND wa_urun TO it_sepet.
+
+wa_urun-ad    = 'Mouse'.
+wa_urun-fiyat = 180.
+APPEND wa_urun TO it_sepet.
+
+wa_urun-ad    = 'Monitor'.
+wa_urun-fiyat = 3200.
+APPEND wa_urun TO it_sepet.
+
+WRITE: / 'Sepetteki Urunler:'.
+LOOP AT it_sepet INTO wa_urun.
+  WRITE: / wa_urun-ad, wa_urun-fiyat.
+ENDLOOP.
+`
+},
+{
+  title:"Veritabanından Veri Okuma: SELECT",
+  program:"ZTEST_DERS7",
+  objectives:[
+    "SELECT ifadesiyle veritabanından veri okumayı öğrenmek",
+    "INTO TABLE ile sonuçları dahili tabloya aktarmayı öğrenmek",
+    "UP TO n ROWS ile sonuç sayısını sınırlamayı öğrenmek"
+  ],
+  text:[
+    "Gerçek SAP sistemlerinde veriler veritabanı tablolarında (örneğin malzeme ana verisi için <code class='inline-code'>MARA</code>, müşteri verisi için <code class='inline-code'>KNA1</code>) tutulur. <code class='inline-code'>SELECT ... FROM tablo INTO TABLE itab.</code> ifadesi bu verileri okuyup bir dahili tabloya aktarır.",
+    "Bu simülatörde gerçek bir veritabanı yerine, eğitim amaçlı küçük bir <strong>demo veri kümesi</strong> kullanılır (MARA, KNA1, VBAK). Sözdizimi gerçek ABAP ile birebir aynıdır.",
+    "<code class='inline-code'>UP TO n ROWS</code> eklentisi, performans için sonucu ilk n satırla sınırlar — büyük tablolarda test amaçlı sıkça kullanılan bir tekniktir."
+  ],
+  syntax:[
+    "SELECT matnr mtart matkl meins\n  FROM mara\n  INTO TABLE it_malzeme\n  UP TO 5 ROWS."
+  ],
+  code:
+`REPORT zders7_malzeme.
+
+DATA: it_malzeme TYPE TABLE OF mara,
+      wa_malzeme TYPE mara.
+
+SELECT matnr mtart matkl meins FROM mara INTO TABLE it_malzeme UP TO 5 ROWS.
+
+WRITE: / 'Malzeme No', 'Tip', 'Grup', 'Birim'.
+WRITE: / '-----------------------------------------------'.
+
+LOOP AT it_malzeme INTO wa_malzeme.
+  WRITE: / wa_malzeme-matnr, wa_malzeme-mtart, wa_malzeme-matkl, wa_malzeme-meins.
+ENDLOOP.
+`
+},
+{
+  title:"LOOP AT...ENDLOOP ile Tablo İşleme",
+  program:"ZTEST_DERS8",
+  objectives:[
+    "LOOP AT ile dahili tablo satırlarını tek tek işlemeyi öğrenmek",
+    "sy-tabix ile mevcut satır numarasına erişmeyi öğrenmek",
+    "Döngü içinde IF ile filtreleme yapmayı öğrenmek"
+  ],
+  text:[
+    "<code class='inline-code'>LOOP AT itab INTO wa. ... ENDLOOP.</code> yapısı, dahili tablonun her satırını sırayla work area'ya (wa) kopyalayarak döngü gövdesini çalıştırır. Bu, ABAP'ta veri işlemenin en temel desenidir.",
+    "Döngü içindeyken <code class='inline-code'>sy-tabix</code> sistem alanı, o an işlenen satırın tablo içindeki sırasını (1, 2, 3, ...) verir.",
+    "LOOP gövdesi içine bir <code class='inline-code'>IF</code> koyarak, yalnızca belirli koşulu sağlayan satırları işleyebilir veya yazdırabilirsiniz — bu, raporlama senaryolarında çok sık kullanılan bir filtreleme tekniğidir."
+  ],
+  syntax:[
+    "LOOP AT it_musteri INTO wa_musteri.\n  IF wa_musteri-ort01 = 'Istanbul'.\n    WRITE: / sy-tabix, wa_musteri-name1.\n  ENDIF.\nENDLOOP."
+  ],
+  code:
+`REPORT zders8_filtre.
+
+DATA: it_musteri TYPE TABLE OF kna1,
+      wa_musteri TYPE kna1,
+      lv_sayac   TYPE i VALUE 0.
+
+SELECT kunnr name1 ort01 land1 FROM kna1 INTO TABLE it_musteri.
+
+WRITE: / 'Istanbuldaki Musteriler:'.
+WRITE: / '-----------------------------------'.
+
+LOOP AT it_musteri INTO wa_musteri.
+  IF wa_musteri-ort01 = 'Istanbul'.
+    lv_sayac = lv_sayac + 1.
+    WRITE: / sy-tabix, wa_musteri-name1, wa_musteri-ort01.
+  ENDIF.
+ENDLOOP.
+
+WRITE: / '-----------------------------------'.
+WRITE: / 'Toplam Istanbul musterisi:', lv_sayac.
+`
+},
+{
+  title:"Mini Proje: Satış Siparişi Raporu",
+  program:"ZDERS9_RAPOR",
+  objectives:[
+    "SELECT, LOOP, IF ve aritmetik işlemleri bir arada kullanmak",
+    "Gerçek bir iş senaryosunu (satış siparişi raporu) simüle etmek",
+    "Toplam ve sayaç değişkenleriyle özet bilgi üretmek"
+  ],
+  text:[
+    "Bu son derste, önceki derslerde öğrendiğiniz her şeyi tek bir programda birleştiriyoruz: veritabanından veri okuma (<code class='inline-code'>SELECT</code>), satır satır işleme (<code class='inline-code'>LOOP AT</code>), koşullu dallanma (<code class='inline-code'>IF</code>) ve aritmetik biriktirme (<code class='inline-code'>+</code>).",
+    "Örnek program, sipariş tablosundaki (VBAK) her siparişi listeler; tutarı 20.000'in üzerinde olanları 'BÜYÜK SİPARİŞ' olarak işaretler ve sonunda toplam tutar ile büyük sipariş sayısını özetler. Bu desen, gerçek dünyadaki birçok ABAP raporunun temelini oluşturur.",
+    "Kodu değiştirip eşik değerini (20000) veya filtre alanını kendiniz deneyerek yorumlayıcının nasıl tepki verdiğini gözlemleyebilirsiniz."
+  ],
+  syntax:[
+    "LOOP AT it_siparis INTO wa_siparis.\n  lv_toplam_tutar = lv_toplam_tutar + wa_siparis-netwr.\n  IF wa_siparis-netwr >= 20000.\n    lv_buyuk_siparis = lv_buyuk_siparis + 1.\n  ENDIF.\nENDLOOP."
+  ],
+  code:
+`REPORT zders9_rapor.
+
+DATA: it_siparis       TYPE TABLE OF vbak,
+      wa_siparis       TYPE vbak,
+      lv_toplam_tutar  TYPE i VALUE 0,
+      lv_buyuk_siparis TYPE i VALUE 0.
+
+SELECT vbeln erdat kunnr netwr FROM vbak INTO TABLE it_siparis.
+
+WRITE: / 'Siparis No', 'Tarih', 'Musteri', 'Tutar', 'Durum'.
+WRITE: / '---------------------------------------------------------'.
+
+LOOP AT it_siparis INTO wa_siparis.
+  lv_toplam_tutar = lv_toplam_tutar + wa_siparis-netwr.
+
+  IF wa_siparis-netwr >= 20000.
+    lv_buyuk_siparis = lv_buyuk_siparis + 1.
+    WRITE: / wa_siparis-vbeln, wa_siparis-erdat, wa_siparis-kunnr, wa_siparis-netwr, 'BUYUK SIPARIS'.
+  ELSE.
+    WRITE: / wa_siparis-vbeln, wa_siparis-erdat, wa_siparis-kunnr, wa_siparis-netwr, 'Normal'.
+  ENDIF.
+ENDLOOP.
+
+WRITE: / '---------------------------------------------------------'.
+WRITE: / 'Toplam Siparis Tutari  :', lv_toplam_tutar.
+WRITE: / 'Buyuk Siparis Sayisi   :', lv_buyuk_siparis.
+`
+}
+];
+
+/* ---------- Mock veritabanı ---------- */
+const MOCK_TABLES = {
+  mara: [
+    {matnr:'000000000010000001', mtart:'FERT', matkl:'MODA-01', meins:'ST'},
+    {matnr:'000000000010000002', mtart:'FERT', matkl:'MODA-02', meins:'ST'},
+    {matnr:'000000000010000003', mtart:'HAWA', matkl:'AKS-01', meins:'ST'},
+    {matnr:'000000000010000004', mtart:'ROH',  matkl:'HAM-01', meins:'KG'},
+    {matnr:'000000000010000005', mtart:'FERT', matkl:'MODA-03', meins:'ST'},
+    {matnr:'000000000010000006', mtart:'HALB', matkl:'YARI-01', meins:'ST'},
+    {matnr:'000000000010000007', mtart:'FERT', matkl:'MODA-04', meins:'ST'}
+  ],
+  kna1: [
+    {kunnr:'0000100001', name1:'Anadolu Tekstil A.S.', ort01:'Istanbul', land1:'TR'},
+    {kunnr:'0000100002', name1:'Ege Giyim Ltd.',        ort01:'Izmir',    land1:'TR'},
+    {kunnr:'0000100003', name1:'Karadeniz Konfeksiyon', ort01:'Trabzon',  land1:'TR'},
+    {kunnr:'0000100004', name1:'Basoglu Ticaret',       ort01:'Ankara',   land1:'TR'},
+    {kunnr:'0000100005', name1:'Akdeniz Moda A.S.',     ort01:'Antalya',  land1:'TR'}
+  ],
+  vbak: [
+    {vbeln:'0000001001', erdat:'20260112', kunnr:'0000100001', netwr:'15750.00'},
+    {vbeln:'0000001002', erdat:'20260115', kunnr:'0000100002', netwr:'8420.50'},
+    {vbeln:'0000001003', erdat:'20260201', kunnr:'0000100003', netwr:'23990.00'},
+    {vbeln:'0000001004', erdat:'20260306', kunnr:'0000100001', netwr:'4200.00'},
+    {vbeln:'0000001005', erdat:'20260406', kunnr:'0000100004', netwr:'61200.75'}
+  ]
+};
+
+/* =========================================================
+   Mini ABAP yorumlayıcı (eğitim amaçlı, gerçek derleyici değildir)
+   ========================================================= */
+function stripComments(source){
+  return source.split('\n').map(line=>{
+    if(/^\s*\*/.test(line)) return '';
+    const idx = line.indexOf('"');
+    if(idx !== -1) return line.slice(0, idx);
+    return line;
+  }).join('\n');
+}
+function splitStatements(source){
+  const statements = []; let current=''; let inString=false;
+  for(let i=0;i<source.length;i++){
+    const ch = source[i];
+    if(ch === "'"){ inString = !inString; current+=ch; continue; }
+    if(ch === '.' && !inString){
+      const prev = source[i-1], next = source[i+1];
+      const isDecimal = /[0-9]/.test(prev||'') && /[0-9]/.test(next||'');
+      if(isDecimal){ current+=ch; continue; }
+      const t = current.trim();
+      if(t.length) statements.push(t);
+      current='';
+      continue;
+    }
+    current += ch;
+  }
+  if(current.trim().length) statements.push(current.trim());
+  return statements;
+}
+function splitTopLevel(str, sep){
+  const parts=[]; let current=''; let inString=false;
+  for(let i=0;i<str.length;i++){
+    const ch = str[i];
+    if(ch === "'"){ inString = !inString; current+=ch; continue; }
+    if(ch === sep && !inString){ parts.push(current.trim()); current=''; continue; }
+    current += ch;
+  }
+  if(current.trim().length) parts.push(current.trim());
+  return parts;
+}
+function getField(obj, name){
+  if(!obj) return undefined;
+  const key = Object.keys(obj).find(k => k.toLowerCase() === name.toLowerCase());
+  return key ? obj[key] : undefined;
+}
+
+/* ---- deger cozumleme (degisken / literal / sy-index / wa-alan) ---- */
+function resolveValue(token, vars){
+  token = (token||'').trim();
+  const strMatch = token.match(/^'([^']*)'$/);
+  if(strMatch) return strMatch[1];
+  if(/^-?\d+(\.\d+)?$/.test(token)) return token;
+  if(/^sy-index$/i.test(token)) return vars['__sy_index__']!==undefined ? String(vars['__sy_index__']) : '0';
+  if(/^sy-tabix$/i.test(token)) return vars['__sy_tabix__']!==undefined ? String(vars['__sy_tabix__']) : '0';
+  if(token.includes('-')){
+    const [waName, field] = token.split('-');
+    const wa = vars[waName.trim()];
+    const val = getField(wa, (field||'').trim());
+    return val;
+  }
+  if(Object.prototype.hasOwnProperty.call(vars, token)) return vars[token];
+  return undefined;
+}
+function resolveWriteItem(item, vars){
+  item = item.trim().replace(/^\//,'').trim();
+  if(!item) return null;
+  const strMatch = item.match(/^'([^']*)'$/);
+  if(strMatch) return strMatch[1];
+  if(/^sy-index$/i.test(item)) return vars['__sy_index__']!==undefined ? String(vars['__sy_index__']) : '0';
+  if(/^sy-tabix$/i.test(item)) return vars['__sy_tabix__']!==undefined ? String(vars['__sy_tabix__']) : '0';
+  if(item.includes('-')){
+    const [waName, field] = item.split('-');
+    const wa = vars[waName.trim()];
+    const val = getField(wa, field.trim());
+    return val !== undefined ? String(val) : `<${item}>`;
+  }
+  if(Object.prototype.hasOwnProperty.call(vars, item)) return String(vars[item]);
+  return `<${item}>`;
+}
+
+/* ---- basit aritmetik ifade (yalnizca bosluklarla ayrilan + / - operatorlerini boler,
+        boylece 'wa-alan' gibi tire iceren alan referanslarini bozmaz) ---- */
+function evalExpression(expr, vars){
+  expr = (expr||'').trim();
+  const parts = expr.split(/\s+(\+|-)\s+/).filter(x=>x!=='');
+  let result = resolveValue(parts[0], vars);
+  result = (result!==undefined && !isNaN(parseFloat(result)) && /^-?\d+(\.\d+)?$/.test(String(result).trim())) ? parseFloat(result) : result;
+  for(let i=1;i<parts.length;i+=2){
+    const op = parts[i];
+    const rawVal = resolveValue(parts[i+1], vars);
+    const num = parseFloat(rawVal);
+    const base = parseFloat(result);
+    if(op==='+') result = (isNaN(base)?0:base) + (isNaN(num)?0:num);
+    else result = (isNaN(base)?0:base) - (isNaN(num)?0:num);
+  }
+  return result;
+}
+
+/* ---- kosul degerlendirme (=, <>, >, <, >=, <=, EQ/NE/GT/LT/GE/LE, IS INITIAL) ---- */
+function evalCondition(cond, vars){
+  cond = (cond||'').trim();
+  let m = cond.match(/^(.+?)\s+IS\s+(NOT\s+)?INITIAL$/i);
+  if(m){
+    const val = resolveValue(m[1].trim(), vars);
+    const isEmpty = (val===undefined || val===null || val==='' || val==='0');
+    return m[2] ? !isEmpty : isEmpty;
+  }
+  const opMap = {'EQ':'==','NE':'!=','GT':'>','LT':'<','GE':'>=','LE':'<='};
+  let left, opSym, right;
+  const symMatch = cond.match(/^(.+?)\s*(>=|<=|<>|=|>|<)\s*(.+)$/);
+  if(symMatch){ left=symMatch[1].trim(); opSym=symMatch[2]; right=symMatch[3].trim(); }
+  else{
+    const wordMatch = cond.match(/^(.+?)\s+(EQ|NE|GT|LT|GE|LE)\s+(.+)$/i);
+    if(wordMatch){ left=wordMatch[1].trim(); opSym=opMap[wordMatch[2].toUpperCase()]; right=wordMatch[3].trim(); }
+  }
+  if(!opSym) return false;
+  if(opSym==='=') opSym='==';
+  if(opSym==='<>') opSym='!=';
+  const lv = resolveValue(left, vars);
+  const rv = resolveValue(right, vars);
+  const lNumeric = lv!==undefined && /^-?\d+(\.\d+)?$/.test(String(lv).trim());
+  const rNumeric = rv!==undefined && /^-?\d+(\.\d+)?$/.test(String(rv).trim());
+  let a, b;
+  if(lNumeric && rNumeric){ a=parseFloat(lv); b=parseFloat(rv); }
+  else{ a = lv===undefined?'':String(lv); b = rv===undefined?'':String(rv); }
+  switch(opSym){
+    case '==': return a==b;
+    case '!=': return a!=b;
+    case '>':  return a>b;
+    case '<':  return a<b;
+    case '>=': return a>=b;
+    case '<=': return a<=b;
+  }
+  return false;
+}
+
+/* ---- tekil (blok icermeyen) ifadeler ---- */
+function processStatement(stmt, vars, output){
+  if(/^REPORT\b/i.test(stmt)) return;
+  if(/^TYPES:?/i.test(stmt)) return;
+  if(/^DATA:?/i.test(stmt)){
+    const declPart = stmt.replace(/^DATA:?/i,'').trim();
+    const decls = splitTopLevel(declPart, ',');
+    decls.forEach(d=>{
+      d = d.trim();
+      if(!d) return;
+      let mm = d.match(/^(\w+)\s+TYPE\s+[\w\-\(\)]+\s+VALUE\s+'([^']*)'/i);
+      if(mm){ vars[mm[1]] = mm[2]; return; }
+      mm = d.match(/^(\w+)\s+TYPE\s+[\w\-\(\)]+\s+VALUE\s+(-?\d+(\.\d+)?)/i);
+      if(mm){ vars[mm[1]] = mm[2]; return; }
+      mm = d.match(/^(\w+)\s+TYPE\s+(?:STANDARD\s+TABLE\s+OF|TABLE\s+OF)\s+/i);
+      if(mm){ vars[mm[1]] = vars[mm[1]] || []; return; }
+      mm = d.match(/^(\w+)\s+TYPE\s+/i);
+      if(mm){ if(!(mm[1] in vars)) vars[mm[1]] = ''; return; }
+    });
+    return;
+  }
+  if(/^SELECT\b/i.test(stmt)){
+    const m = stmt.match(/^SELECT\s+(.+?)\s+FROM\s+(\w+)\s+INTO\s+TABLE\s+(?:@DATA\()?(\w+)\)?(?:\s+UP TO\s+(\d+)\s+ROWS)?/i);
+    if(!m){ output.push('[HATA] SELECT ifadesi cozumlenemedi: ' + stmt); return; }
+    const fields = m[1].trim();
+    const table = m[2].toLowerCase();
+    const itabName = m[3];
+    const upTo = m[4] ? parseInt(m[4],10) : null;
+    const rows = MOCK_TABLES[table];
+    if(!rows){ output.push(`[HATA] '${table}' tablosu demo veritabaninda tanimli degil.`); vars[itabName]=[]; return; }
+    let sliced = upTo ? rows.slice(0, upTo) : rows.slice();
+    if(fields !== '*'){
+      const fieldList = fields.split(/\s+/).map(f=>f.toLowerCase());
+      sliced = sliced.map(r=>{
+        const o={};
+        fieldList.forEach(f=>{ const k=Object.keys(r).find(kk=>kk.toLowerCase()===f); if(k) o[k]=r[k]; });
+        return o;
+      });
+    } else {
+      sliced = sliced.map(r=>({...r}));
+    }
+    vars[itabName] = sliced;
+    return;
+  }
+  if(/^WRITE:?/i.test(stmt)){
+    const rest = stmt.replace(/^WRITE:?/i,'').trim();
+    const items = splitTopLevel(rest, ',');
+    const parts = items.map(it=>resolveWriteItem(it, vars)).filter(x=>x!==null);
+    output.push(parts.join('   '));
+    return;
+  }
+  if(/^ADD\b/i.test(stmt)){
+    const m = stmt.match(/^ADD\s+(.+?)\s+TO\s+(\w+)$/i);
+    if(m){
+      const val = evalExpression(m[1], vars);
+      const cur = parseFloat(vars[m[2]]); const add = parseFloat(val);
+      vars[m[2]] = (isNaN(cur)?0:cur) + (isNaN(add)?0:add);
+    }
+    return;
+  }
+  if(/^SUBTRACT\b/i.test(stmt)){
+    const m = stmt.match(/^SUBTRACT\s+(.+?)\s+FROM\s+(\w+)$/i);
+    if(m){
+      const val = evalExpression(m[1], vars);
+      const cur = parseFloat(vars[m[2]]); const sub = parseFloat(val);
+      vars[m[2]] = (isNaN(cur)?0:cur) - (isNaN(sub)?0:sub);
+    }
+    return;
+  }
+  if(/^CLEAR\b/i.test(stmt)){
+    const m = stmt.match(/^CLEAR\s+(\w+)$/i);
+    if(m){ vars[m[1]] = Array.isArray(vars[m[1]]) ? [] : ''; }
+    return;
+  }
+  if(/^CONCATENATE\b/i.test(stmt)){
+    const m = stmt.match(/^CONCATENATE\s+(.+?)\s+INTO\s+(\w+)(?:\s+SEPARATED BY\s+'([^']*)')?$/i);
+    if(m){
+      const tokens = m[1].trim().split(/\s+/);
+      const parts = tokens.map(t=>{ const v = resolveValue(t, vars); return v===undefined?'':String(v); });
+      const sep = m[3]!==undefined ? m[3] : '';
+      vars[m[2]] = parts.join(sep);
+    }
+    return;
+  }
+  if(/^APPEND\b/i.test(stmt)){
+    const m = stmt.match(/^APPEND\s+(\w+)\s+TO\s+(\w+)$/i);
+    if(m){
+      if(!Array.isArray(vars[m[2]])) vars[m[2]] = [];
+      const src = vars[m[1]];
+      vars[m[2]].push(typeof src==='object' && src!==null ? {...src} : src);
+    }
+    return;
+  }
+  const mAssign = stmt.match(/^([\w-]+)\s*=\s*(.+)$/);
+  if(mAssign){
+    const left = mAssign[1];
+    const val = evalExpression(mAssign[2], vars);
+    if(left.includes('-')){
+      const [waName, field] = left.split('-');
+      if(typeof vars[waName] !== 'object' || vars[waName]===null || Array.isArray(vars[waName])) vars[waName] = {};
+      vars[waName][field] = val;
+    } else {
+      vars[left] = val;
+    }
+    return;
+  }
+}
+
+/* ---- blok yapisini agaca donusturen ayristirici (IF/DO/WHILE/LOOP) ---- */
+function parseBlock(stmts, idx, enderRegex){
+  const nodes = [];
+  while(idx < stmts.length){
+    const s = stmts[idx].trim();
+    if(enderRegex.test(s)) return {nodes, idx};
+
+    if(/^IF\b/i.test(s)){
+      const branches = [];
+      let cond = s.replace(/^IF\s+/i,'');
+      let r = parseBlock(stmts, idx+1, /^(ELSEIF|ELSE|ENDIF)\b/i);
+      branches.push({cond, body:r.nodes});
+      idx = r.idx;
+      while(idx < stmts.length && /^ELSEIF\b/i.test(stmts[idx].trim())){
+        const c2 = stmts[idx].trim().replace(/^ELSEIF\s+/i,'');
+        const r2 = parseBlock(stmts, idx+1, /^(ELSEIF|ELSE|ENDIF)\b/i);
+        branches.push({cond:c2, body:r2.nodes});
+        idx = r2.idx;
+      }
+      let elseBody = [];
+      if(idx < stmts.length && /^ELSE$/i.test(stmts[idx].trim())){
+        const r3 = parseBlock(stmts, idx+1, /^ENDIF\b/i);
+        elseBody = r3.nodes;
+        idx = r3.idx;
+      }
+      idx = idx+1; // ENDIF'i atla
+      nodes.push({type:'if', branches, elseBody});
+      continue;
+    }
+
+    if(/^DO\b/i.test(s)){
+      const m = s.match(/^DO\s+(\d+)\s+TIMES$/i);
+      const times = m ? parseInt(m[1],10) : 0;
+      const r = parseBlock(stmts, idx+1, /^ENDDO$/i);
+      idx = r.idx+1;
+      nodes.push({type:'do', times, body:r.nodes});
+      continue;
+    }
+
+    if(/^WHILE\b/i.test(s)){
+      const cond = s.replace(/^WHILE\s+/i,'');
+      const r = parseBlock(stmts, idx+1, /^ENDWHILE$/i);
+      idx = r.idx+1;
+      nodes.push({type:'while', cond, body:r.nodes});
+      continue;
+    }
+
+    if(/^LOOP\s+AT\b/i.test(s)){
+      const m = s.match(/^LOOP\s+AT\s+(\w+)\s+INTO\s+(\w+)/i);
+      const r = parseBlock(stmts, idx+1, /^ENDLOOP$/i);
+      idx = r.idx+1;
+      nodes.push({type:'loop', itab: m?m[1]:null, wa: m?m[2]:null, body:r.nodes});
+      continue;
+    }
+
+    nodes.push({type:'simple', text:s});
+    idx++;
+  }
+  return {nodes, idx};
+}
+
+/* ---- agac yorumlayici ---- */
+function runNodes(nodes, vars, output){
+  for(const node of nodes){
+    if(node.type==='simple'){
+      processStatement(node.text, vars, output);
+    } else if(node.type==='if'){
+      let executed = false;
+      for(const br of node.branches){
+        if(evalCondition(br.cond, vars)){ runNodes(br.body, vars, output); executed=true; break; }
+      }
+      if(!executed) runNodes(node.elseBody, vars, output);
+    } else if(node.type==='do'){
+      for(let i=1;i<=node.times;i++){ vars['__sy_index__']=i; runNodes(node.body, vars, output); }
+    } else if(node.type==='while'){
+      let guard = 0;
+      while(evalCondition(node.cond, vars) && guard < 1000){ runNodes(node.body, vars, output); guard++; }
+      if(guard>=1000) output.push('[HATA] WHILE dongusu 1000 tekrari astigi icin durduruldu.');
+    } else if(node.type==='loop'){
+      const rows = node.itab ? (vars[node.itab] || []) : [];
+      let tabix = 0;
+      for(const row of rows){
+        tabix++;
+        if(node.wa) vars[node.wa] = row;
+        vars['__sy_tabix__'] = tabix;
+        runNodes(node.body, vars, output);
+      }
+    }
+  }
+}
+
+function executeAbap(sourceCode){
+  const cleaned = stripComments(sourceCode);
+  const stmts = splitStatements(cleaned);
+  const vars = {}; const output = [];
+  try{
+    const tree = parseBlock(stmts, 0, /^\u0000NEVER\u0000$/).nodes;
+    runNodes(tree, vars, output);
+  }catch(e){
+    output.push('[HATA] Yorumlayici bir sorunla karsilasti: ' + e.message);
+  }
+  return output;
+}
+
+/* ---------- Sozdizimi renklendirme ---------- */
+const KEYWORDS = ['REPORT','DATA','TYPES','BEGIN','OF','END','SELECT','FROM','INTO','TABLE','STANDARD','UP','TO','ROWS',
+  'WRITE','LOOP','AT','ENDLOOP','VALUE','TYPE','IF','ELSEIF','ELSE','ENDIF','DO','TIMES','ENDDO','WHILE','ENDWHILE',
+  'ADD','SUBTRACT','CLEAR','CONCATENATE','SEPARATED','BY','APPEND','FROM','IS','NOT','INITIAL','EQ','NE','GT','LT','GE','LE'];
+const KW_REGEX = new RegExp('\\b(' + KEYWORDS.join('|') + ')\\b', 'gi');
+function escapeHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function highlight(code){
+  let e = escapeHtml(code);
+  e = e.replace(/^(\s*)(\*.*)$/gm, '$1<span class="cmt">$2</span>');
+  e = e.replace(/"(.*)$/gm, '<span class="cmt">"$1</span>');
+  e = e.replace(/'([^']*)'/g, "<span class=\"str\">'$1'</span>");
+  e = e.replace(KW_REGEX, '<span class="kw">$1</span>');
+  return e;
+}
+function updateGutter(code){
+  const lines = code.split('\n').length;
+  let out = '';
+  for(let i=1;i<=lines;i++) out += i + '\n';
+  document.getElementById('gutter').textContent = out.trim() ? out : '1';
+}
+
+/* =========================================================
+   UI baglama
+   ========================================================= */
+const codeInput = document.getElementById('codeInput');
+const hlLayer = document.getElementById('hlLayer');
+const gutter = document.getElementById('gutter');
+
+function refreshEditor(){
+  hlLayer.innerHTML = highlight(codeInput.value) + '\n';
+  updateGutter(codeInput.value);
+}
+codeInput.addEventListener('input', refreshEditor);
+codeInput.addEventListener('scroll', ()=>{
+  hlLayer.scrollTop = codeInput.scrollTop;
+  hlLayer.scrollLeft = codeInput.scrollLeft;
+  gutter.scrollTop = codeInput.scrollTop;
+});
+codeInput.addEventListener('keydown', (e)=>{
+  if(e.key === 'F8'){ e.preventDefault(); runProgram(); }
+  if(e.key === 'Tab'){ e.preventDefault();
+    const s = codeInput.selectionStart, en = codeInput.selectionEnd;
+    codeInput.value = codeInput.value.slice(0,s) + '  ' + codeInput.value.slice(en);
+    codeInput.selectionStart = codeInput.selectionEnd = s+2;
+    refreshEditor();
+  }
+});
+
+const screenEditor = document.getElementById('screenEditor');
+const screenOutput = document.getElementById('screenOutput');
+const listhead = document.getElementById('listhead');
+const listbody = document.getElementById('listbody');
+const rname = document.getElementById('rname');
+
+function runProgram(){
+  const reportMatch = codeInput.value.match(/^REPORT\s+(\w+)/im);
+  const pname = reportMatch ? reportMatch[1].toUpperCase() : 'ZTEST_EGITIM';
+  rname.textContent = 'Program: ' + pname;
+  const now = new Date();
+  listhead.textContent = pname + '                 Tarih: ' + now.toLocaleDateString('tr-TR') + '                 Sayfa: 1';
+  const out = executeAbap(codeInput.value);
+  listbody.innerHTML = out.map(l => l.startsWith('[HATA]') ? '<span class="err">'+escapeHtml(l)+'</span>' : escapeHtml(l)).join('\n') || '(cikti yok)';
+  screenEditor.classList.remove('show');
+  screenOutput.classList.add('show');
+}
+document.getElementById('btnRun').addEventListener('click', runProgram);
+document.getElementById('btnBack').addEventListener('click', ()=>{
+  screenOutput.classList.remove('show'); screenEditor.classList.add('show');
+});
+document.getElementById('btnBack2').addEventListener('click', ()=>{
+  screenOutput.classList.remove('show'); screenEditor.classList.add('show');
+});
+document.getElementById('btnReset').addEventListener('click', ()=>{
+  loadLesson(currentLesson, true);
+});
+let saveTimer;
+document.getElementById('btnSave').addEventListener('click', ()=>{
+  const btn = document.getElementById('btnSave');
+  const old = btn.innerHTML;
+  clearTimeout(saveTimer);
+  btn.querySelector('svg').style.display='none';
+  btn.innerHTML = btn.innerHTML.replace('Kaydet','Kaydedildi ✓');
+  saveTimer = setTimeout(()=>{ btn.innerHTML = old; }, 1200);
+});
+document.getElementById('btnActivate').addEventListener('click', ()=>{
+  const btn = document.getElementById('btnActivate');
+  const old = btn.innerHTML;
+  btn.innerHTML = old.replace('Aktive Et','Aktif ✓');
+  setTimeout(()=>{ btn.innerHTML = old; }, 1200);
+});
+document.getElementById('okcode').addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter'){ e.preventDefault(); codeInput.focus(); }
+});
+
+function tickClock(){
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('tr-TR');
+}
+setInterval(tickClock, 1000);
+tickClock();
+
+/* =========================================================
+   Ders (lesson) navigasyonu
+   ========================================================= */
+let currentLesson = 0;
+const completedLessons = new Set();
+
+function renderSidebar(){
+  const list = document.getElementById('lessonList');
+  list.innerHTML = '';
+  LESSONS.forEach((l, i)=>{
+    const li = document.createElement('li');
+    li.className = 'lesson-item' + (i===currentLesson ? ' active' : '') + (completedLessons.has(i) ? ' done' : '');
+    li.innerHTML = `<span class="lesson-num">${completedLessons.has(i) && i!==currentLesson ? '✓' : i+1}</span>
+      <span class="lesson-txt"><span class="lt">Ders ${i+1}</span>${l.title}</span>`;
+    li.addEventListener('click', ()=> loadLesson(i, true));
+    list.appendChild(li);
+  });
+  document.getElementById('sidebarProgress').textContent = `Ders ${currentLesson+1} / ${LESSONS.length}`;
+}
+
+function renderLessonPanel(){
+  const l = LESSONS[currentLesson];
+  document.getElementById('lpEyebrow').textContent = 'Ders ' + (currentLesson+1) + ' / ' + LESSONS.length;
+  document.getElementById('lpTitle').textContent = l.title;
+  document.getElementById('lpObjectives').innerHTML = l.objectives.map(o=>`<li>${o}</li>`).join('');
+  document.getElementById('lpText').innerHTML = l.text.map(p=>`<p>${p}</p>`).join('');
+  document.getElementById('lpSyntax').innerHTML = (l.syntax||[]).map(s=>
+    `<div class="syntax-box"><span class="sx-title">Sözdizimi</span>${escapeHtml(s)}</div>`
+  ).join('');
+  document.getElementById('lpProgress').textContent = `Ders ${currentLesson+1} / ${LESSONS.length}`;
+  document.getElementById('titlebarText').textContent = 'SAP — ABAP Editör: Include ' + l.program;
+  document.getElementById('okcode').value = '';
+  document.getElementById('btnPrev').disabled = currentLesson===0;
+  document.getElementById('btnNext').textContent = currentLesson===LESSONS.length-1 ? 'Dersi Tamamla ✓' : 'Sonraki Ders →';
+}
+
+function loadLesson(i, forceCodeReload){
+  currentLesson = Math.max(0, Math.min(LESSONS.length-1, i));
+  renderSidebar();
+  renderLessonPanel();
+  if(forceCodeReload){
+    codeInput.value = LESSONS[currentLesson].code;
+    refreshEditor();
+    screenOutput.classList.remove('show');
+    screenEditor.classList.add('show');
+  }
+}
+
+document.getElementById('btnPrev').addEventListener('click', ()=>{
+  if(currentLesson>0) loadLesson(currentLesson-1, true);
+});
+document.getElementById('btnNext').addEventListener('click', ()=>{
+  completedLessons.add(currentLesson);
+  if(currentLesson < LESSONS.length-1) loadLesson(currentLesson+1, true);
+  else { renderSidebar(); }
+});
+
+/* =========================================================
+   ANA SAYFA (ders listesi) <-> DERS GÖRÜNÜMÜ geçişleri
+   ========================================================= */
+const courseHome = document.getElementById('courseHome');
+const lessonView = document.getElementById('lessonView');
+
+function goToLessonView(i){
+  courseHome.style.display = 'none';
+  lessonView.style.display = 'block';
+  loadLesson(i, true);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function goToHome(){
+  lessonView.style.display = 'none';
+  courseHome.style.display = 'block';
+  renderHome();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function renderHome(){
+  const rows = document.getElementById('lessonRows');
+  rows.innerHTML = '';
+  LESSONS.forEach((l,i)=>{
+    const done = completedLessons.has(i);
+    const row = document.createElement('div');
+    row.className = 'lesson-row' + (done ? ' done' : '');
+    row.innerHTML = `
+      <span class="lr-num">${done ? '✓' : i+1}</span>
+      <span class="lr-title">${l.title}</span>
+      <button class="start-btn">${done ? 'Tekrarla' : (completedLessons.size>0 ? 'Devam Et' : 'Başla')}</button>
+    `;
+    row.querySelector('.start-btn').addEventListener('click', ()=> goToLessonView(i));
+    rows.appendChild(row);
+  });
+
+  const total = LESSONS.length;
+  const done = completedLessons.size;
+  const pct = Math.round((done/total)*100);
+  const xp = done * 25;
+  const level = Math.floor(xp/100) + 1;
+
+  document.getElementById('statLessons').textContent = `${done} / ${total}`;
+  document.getElementById('statXP').textContent = `${xp} / ${total*25}`;
+  document.getElementById('homeProgressFill').style.width = pct + '%';
+  document.getElementById('avatarLevel').textContent = 'SEVİYE ' + level;
+  document.getElementById('avatarBadge').textContent = done===total ? '🏅' : ':)';
+}
+
+document.getElementById('btnHeaderBack').addEventListener('click', ()=>{
+  if(lessonView.style.display === 'block'){
+    goToHome();
+  } else {
+    if(document.referrer){ window.history.back(); }
+  }
+});
+
+renderHome();
+</script>
+
+<script>
+/* =========================================================
+   GELİŞTİRME EKİ — XP / İlerleme Kalıcılığı (localStorage)
+   Bu blok, yukarıdaki SAP ABAP editörü/yorumlayıcı koduna
+   HİÇBİR ŞEKİLDE dokunmaz; onu saran, tamamen ek bir katmandır.
+   Amaç: ders ilerlemesini ve basit bir XP/seviye sistemini
+   tarayıcıda kalıcı hale getirmek.
+   ========================================================= */
+(function(){
+  const STORAGE_KEY = 'abap_egitim_ilerleme_v1';
+  const XP_PER_LESSON = 25;
+
+  function readSaved(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    }catch(e){ return null; }
+  }
+  function persist(){
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        completed: Array.from(completedLessons),
+        current: currentLesson
+      }));
+    }catch(e){ /* localStorage yoksa (gizli sekme vb.) sessizce yok say */ }
+  }
+
+  function updateGamificationUI(){
+    const total = LESSONS.length;
+    const done = completedLessons.size;
+    const pct = Math.round((done/total)*100);
+    const xp = done * XP_PER_LESSON;
+    const level = Math.floor(xp/100) + 1;
+
+    const sidebarPercent = document.getElementById('sidebarPercent');
+    const sidebarBar     = document.getElementById('sidebarBar');
+    if(sidebarPercent) sidebarPercent.textContent = pct + '%';
+    if(sidebarBar)     sidebarBar.style.width = pct + '%';
+
+    // Ana sayfa istatistikleri de güncel tutulur (görünür olsun ya da olmasın).
+    renderHome();
+  }
+
+  // renderSidebar'ı sarmalayarak, orijinal render'dan sonra ilerleme
+  // çubuklarını da güncelliyoruz. Orijinal fonksiyonun içeriği aynen kalır.
+  const _renderSidebar = renderSidebar;
+  renderSidebar = function(){
+    _renderSidebar();
+    updateGamificationUI();
+  };
+
+  // loadLesson'u sarmalayarak her ders geçişinde ilerlemeyi kaydediyoruz.
+  const _loadLesson = loadLesson;
+  loadLesson = function(i, forceCodeReload){
+    _loadLesson(i, forceCodeReload);
+    persist();
+  };
+
+  // Son dersten sonra "Sonraki Ders" butonu loadLesson çağırmadığı için
+  // (renderSidebar çağırıyor) burada ayrıca dinliyoruz: kayıt + kutlama.
+  document.getElementById('btnNext').addEventListener('click', function(){
+    persist();
+    if(completedLessons.size === LESSONS.length){
+      document.getElementById('celebrateOverlay').classList.add('show');
+    }
+  });
+  document.getElementById('btnCloseCelebrate').addEventListener('click', function(){
+    document.getElementById('celebrateOverlay').classList.remove('show');
+    goToHome();
+  });
+
+  function resetProgress(){
+    if(!confirm('Tüm ders ilerlemeniz sıfırlansın mı? Bu işlem geri alınamaz.')) return;
+    completedLessons.clear();
+    try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
+    loadLesson(0, true);
+    renderHome();
+  }
+  document.getElementById('btnResetProgress').addEventListener('click', resetProgress);
+  document.getElementById('btnResetProgress2').addEventListener('click', resetProgress);
+
+  // Sayfa ilk yüklendiğinde kayıtlı ilerlemeyi geri yükle.
+  const saved = readSaved();
+  if(saved){
+    (saved.completed || []).forEach(i=>{ if(i>=0 && i<LESSONS.length) completedLessons.add(i); });
+    const startAt = (typeof saved.current === 'number') ? saved.current : 0;
+    currentLesson = startAt;
+    renderHome();
+  } else {
+    updateGamificationUI();
+  }
+})();
+</script>
+</body>
+</html>
