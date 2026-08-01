@@ -6,8 +6,8 @@ import { defineConfig, fontProviders } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
-	// ÖLÜMCÜL HATA BURADA DÜZELTİLDİ: example.com yerine kendi alan adını yazıyoruz
-	site: 'https://www.dataplaybook.blog',
+
+	site: 'https://dataplaybook.blog',
 	
 	integrations: [mdx(), sitemap()],
 	fonts: [
@@ -34,7 +34,7 @@ export default defineConfig({
 			},
 		},
 	],
-	// Buraya Vite minifier ayarını ekledik
+
 	vite: {
 		build: {
 			cssMinify: 'esbuild'

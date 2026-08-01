@@ -4,6 +4,7 @@ description: "SAP FI, MM ve SD modüllerinde en sık kullanılan tabloları ve t
 pubDate: 2026-07-25
 category: "SAP"
 tags: ["SAP", "T-Code", "SAP Tabloları", "SAP FI", "SAP MM", "SAP SD"]
+heroImage: ../../assets/covers/cover-tcode-rehberi.png
 ---
 
 ## Neden Bir T-Code ve Tablo Rehberine İhtiyaç Var?

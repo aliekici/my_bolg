@@ -4,6 +4,7 @@ description: "SAP'nin en önemli üç modülü olan FI, MM ve SD'nin birbirleriy
 pubDate: 2026-07-24
 category: "SAP"
 tags: ["SAP", "SAP FI", "SAP MM", "SAP SD", "ERP Entegrasyonu", "O2C", "P2P"]
+heroImage: ../../assets/covers/cover-fi-mm-sd.png
 ---
 
 ## SAP Modülleri Neden Birlikte Ele Alınmalı?

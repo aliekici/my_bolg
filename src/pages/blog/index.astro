@@ -5,26 +5,24 @@ import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import Header from '../../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
+import { SITE_TITLE } from '../../consts';
 
-// 1. Tüm yazıları tarihe göre sıralayarak çekiyoruz
+// Tüm yazıları tarihe göre sıralayarak çekiyoruz (Alt kısımdaki akış için)
 const allPosts = (await getCollection('blog')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
-
-// 2. Yazıları başlıktaki modül isimlerine göre filtreliyoruz
-const mmPosts = allPosts.filter(post => post.data.title.includes('MM'));
-const fiPosts = allPosts.filter(post => post.data.title.includes('FI'));
-const sdPosts = allPosts.filter(post => post.data.title.includes('SD'));
 ---
 
 <!doctype html>
 <html lang="tr">
 	<head>
-		<BaseHead title={`Blog | ${SITE_TITLE}`} description={SITE_DESCRIPTION} />
+		<BaseHead
+			title={`Eğitim Laboratuvarı | ${SITE_TITLE}`}
+			description="SAP Modülleri ve Qlik İş Zekası üzerine uygulamalı eğitim rotanızı seçin."
+		/>
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 		
 		<style>
@@ -34,7 +32,16 @@ const sdPosts = allPosts.filter(post => post.data.title.includes('SD'));
 				--text-main: #f0f6fc;
 				--text-muted: #8b949e;
 				--border-color: #30363d;
-				--accent: #f59e0b;
+				
+				/* SAP Modül Renkleri */
+				--color-mm: #10b981; /* Yeşil */
+				--color-sd: #ec4899; /* Pembe */
+				--color-fi: #3b82f6; /* Mavi */
+				
+				/* Qlik & Data Renkleri */
+				--color-qlik: #009845; /* Qlik Kurumsal Yeşil */
+				--color-data: #f59e0b; /* Bronze/Gold */
+				--color-bi: #8b5cf6; /* Mor - Analitik */
 			}
 
 			body {
@@ -46,179 +53,200 @@ const sdPosts = allPosts.filter(post => post.data.title.includes('SD'));
 			}
 
 			.container {
-				max-width: 1400px;
+				max-width: 1200px;
 				margin: 0 auto;
 				padding: 0 20px;
 			}
 
-			/* HEADER */
-			.page-header {
-				padding: 80px 0 60px;
-				text-align: center;
-				background: linear-gradient(180deg, rgba(2,6,15,1) 0%, var(--bg-dark) 100%);
+			/* YÖNLENDİRME (HERO) ALANI - IZGARA ARKA PLAN */
+			.hub-section {
+				padding: 80px 0;
+				background-color: var(--bg-darker);
+				background-image: 
+					linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+					linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+				background-size: 30px 30px;
 				border-bottom: 1px solid var(--border-color);
 			}
 
-			.page-header h1 {
-				font-size: 2.8rem;
+			.selection-header {
+				text-align: center;
+				margin-bottom: 60px;
+			}
+
+			.section-label {
+				font-family: 'JetBrains Mono', monospace;
+				font-size: 0.9rem;
+				letter-spacing: 3px;
+				color: var(--text-muted);
+				text-transform: uppercase;
+				margin-bottom: 15px;
+				display: block;
+			}
+
+			.hub-title {
+				font-size: 3rem;
 				font-weight: 700;
 				margin-bottom: 15px;
-				letter-spacing: -1px;
 				color: var(--text-main);
+				letter-spacing: -1px;
 			}
 
-			.page-header p {
-				color: var(--text-muted);
-				font-size: 1.15rem;
-				max-width: 600px;
-				margin: 0 auto;
+			.path-group {
+				margin-bottom: 60px;
+			}
+			
+			.path-group:last-child {
+				margin-bottom: 0;
 			}
 
-			/* MODÜL 3'LÜ IZGARA */
-			.blog-section {
-				padding: 60px 0 100px;
+			.path-title {
+				font-family: 'JetBrains Mono', monospace;
+				font-size: 1.2rem;
+				color: var(--text-main);
+				border-bottom: 1px dashed var(--border-color);
+				padding-bottom: 10px;
+				margin-bottom: 30px;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
 			}
 
-			.module-container {
+			.module-cards {
 				display: grid;
 				grid-template-columns: repeat(3, 1fr);
 				gap: 2rem;
 			}
 
-			.module-header {
-				font-size: 1.5rem;
-				color: var(--accent);
-				border-bottom: 2px solid var(--border-color);
-				padding-bottom: 10px;
-				margin-bottom: 20px;
-				text-align: center;
-			}
-
-			.module-column {
-				display: flex;
-				flex-direction: column;
-				gap: 1.5rem;
-			}
-
-			/* KART TASARIMI */
-			.blog-card {
-				background-color: #0d1117;
+			/* MODÜL KARTLARI */
+			.module-route-card {
+				background: rgba(13, 17, 23, 0.7);
 				border: 1px solid var(--border-color);
-				border-radius: 12px;
-				overflow: hidden;
-				transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
-				display: flex;
-				flex-direction: column;
-				height: 100%;
-			}
-
-			.blog-card:hover {
-				transform: translateY(-5px);
-				border-color: #4b5563;
-				box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-			}
-
-			.card-image {
-				position: relative;
-				height: 180px;
-				background-color: #161b22;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				border-bottom: 1px solid var(--border-color);
-			}
-
-			.card-image img {
-				width: 100%;
-				height: 100%;
-				object-fit: cover;
-			}
-
-			.image-placeholder {
-				font-size: 2.5rem;
-				color: #30363d;
-			}
-
-			.category-badge {
-				position: absolute;
-				top: 15px;
-				left: 15px;
-				padding: 5px 12px;
-				border-radius: 20px;
-				font-size: 0.75rem;
-				font-weight: 600;
-				color: #fff;
-			}
-
-			.card-content {
-				padding: 1.2rem;
-				display: flex;
-				flex-direction: column;
-				flex: 1;
-			}
-
-			.post-meta {
-				display: flex;
-				gap: 1rem;
-				margin-bottom: 0.8rem;
-			}
-
-			.post-meta span {
-				font-size: 0.8rem;
-				color: var(--text-muted);
-				display: flex;
-				align-items: center;
-				gap: 6px;
-			}
-
-			.card-content h2 {
-				font-size: 1.1rem;
-				line-height: 1.4;
-				margin-bottom: 0.8rem;
-				margin-top: 0;
-			}
-
-			.card-content h2 a {
-				color: var(--text-main);
+				border-radius: 8px;
+				padding: 30px;
 				text-decoration: none;
-				transition: color 0.2s;
+				transition: all 0.3s ease;
+				position: relative;
+				overflow: hidden;
+				display: flex;
+				flex-direction: column;
+				backdrop-filter: blur(10px);
 			}
 
-			.card-content h2 a:hover {
-				color: var(--accent);
+			.module-route-card::before {
+				content: '';
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 3px;
 			}
 
-			.card-content p {
-				color: var(--text-muted);
-				font-size: 0.9rem;
-				margin-bottom: 1.2rem;
-				flex: 1;
-			}
+			/* Hover Efektleri ve Renk Tanımlamaları */
+			.module-route-card.mm:hover { border-color: var(--color-mm); transform: translateY(-5px); box-shadow: 0 10px 30px rgba(16, 185, 129, 0.1); }
+			.module-route-card.mm::before { background-color: var(--color-mm); }
+			.mm .mod-badge { color: var(--color-mm); }
 
-			.read-more {
-				display: inline-flex;
+			.module-route-card.sd:hover { border-color: var(--color-sd); transform: translateY(-5px); box-shadow: 0 10px 30px rgba(236, 72, 153, 0.1); }
+			.module-route-card.sd::before { background-color: var(--color-sd); }
+			.sd .mod-badge { color: var(--color-sd); }
+
+			.module-route-card.fi:hover { border-color: var(--color-fi); transform: translateY(-5px); box-shadow: 0 10px 30px rgba(59, 130, 246, 0.1); }
+			.module-route-card.fi::before { background-color: var(--color-fi); }
+			.fi .mod-badge { color: var(--color-fi); }
+
+			.module-route-card.qlik:hover { border-color: var(--color-qlik); transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0, 152, 69, 0.1); }
+			.module-route-card.qlik::before { background-color: var(--color-qlik); }
+			.qlik .mod-badge { color: var(--color-qlik); }
+
+			.module-route-card.data:hover { border-color: var(--color-data); transform: translateY(-5px); box-shadow: 0 10px 30px rgba(245, 158, 11, 0.1); }
+			.module-route-card.data::before { background-color: var(--color-data); }
+			.data .mod-badge { color: var(--color-data); }
+
+			.mod-badge {
+				font-family: 'JetBrains Mono', monospace;
+				font-size: 0.85rem;
+				font-weight: 700;
+				margin-bottom: 15px;
+				display: flex;
 				align-items: center;
 				gap: 8px;
-				color: var(--accent);
-				text-decoration: none;
+			}
+
+			.module-route-card h3 {
+				color: var(--text-main);
+				font-size: 1.4rem;
+				margin: 0 0 10px 0;
+			}
+
+			.module-route-card p {
+				color: var(--text-muted);
+				font-size: 0.95rem;
+				margin-bottom: 25px;
+				flex-grow: 1;
+			}
+
+			.go-link {
+				display: inline-flex;
+				align-items: center;
+				gap: 5px;
 				font-weight: 600;
-				font-size: 0.85rem;
-				transition: gap 0.2s;
-				margin-top: auto;
+				font-size: 0.9rem;
+				color: var(--text-main);
+				padding-top: 15px;
+				border-top: 1px solid rgba(255,255,255,0.05);
 			}
 
-			.read-more:hover {
-				gap: 12px;
+			.module-route-card:hover .go-link { gap: 10px; }
+			
+			.go-link i { font-size: 0.8rem; }
+
+			/* NORMAL BLOG LİSTESİ */
+			.blog-list-section {
+				padding: 80px 0;
 			}
 
-			/* TABLET VE MOBİL UYUMU */
-			@media (max-width: 992px) {
-				.module-container {
-					grid-template-columns: 1fr;
-				}
+			.post-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+				gap: 2rem;
 			}
-			@media (max-width: 768px) {
-				.page-header h1 { font-size: 2.2rem; }
+
+			.post-card {
+				background-color: #0d1117;
+				border: 1px solid var(--border-color);
+				border-radius: 8px;
+				padding: 20px;
+				text-decoration: none;
+				transition: border-color 0.2s;
+			}
+
+			.post-card:hover { border-color: #4b5563; }
+
+			.post-date {
+				font-family: 'JetBrains Mono', monospace;
+				font-size: 0.8rem;
+				color: var(--text-muted);
+				margin-bottom: 10px;
+				display: block;
+			}
+
+			.post-title {
+				font-size: 1.15rem;
+				color: var(--text-main);
+				margin: 0 0 10px 0;
+				font-weight: 600;
+			}
+
+			.post-desc {
+				font-size: 0.9rem;
+				color: var(--text-muted);
+				margin: 0;
+			}
+
+			@media (max-width: 900px) {
+				.module-cards { grid-template-columns: 1fr; }
+				.hub-title { font-size: 2.2rem; }
 			}
 		</style>
 	</head>
@@ -226,112 +254,91 @@ const sdPosts = allPosts.filter(post => post.data.title.includes('SD'));
 		<Header />
 		
 		<main>
-			<header class="page-header">
-				<div class="container">
-					<h1>DataPlaybook'a Blog</h1>
-					<p>Veri dünyasındaki son trendler, SAP eğitimleri ve sektörel içgörüler.</p>
-				</div>
-			</header>
-
-			<section class="blog-section">
+			<section class="hub-section">
 				<div class="container">
 					
-					<!-- EKRANI ÜÇE BÖLEN ANA YAPI -->
-					<div class="module-container">
-						
-						<!-- 1. SÜTUN: SAP MM -->
-						<div>
-							<h2 class="module-header">SAP MM Dersleri</h2>
-							<div class="module-column">
-								{mmPosts.length > 0 ? mmPosts.map((post) => (
-									<article class="blog-card">
-										<div class="card-image">
-											{post.data.heroImage ? (
-												<Image width={720} height={360} src={post.data.heroImage} alt={post.data.title} />
-											) : (
-												<div class="image-placeholder"><i class="fa-solid fa-box"></i></div>
-											)}
-											<span class="category-badge" style="background-color: #10b981;">MM Modülü</span>
-										</div>
-										<div class="card-content">
-											<div class="post-meta">
-												<span>
-													<i class="fa-regular fa-calendar"></i>
-													<FormattedDate date={post.data.pubDate} />
-												</span>
-											</div>
-											<h2><a href={`/blog/${post.id}/`}>{post.data.title}</a></h2>
-											<p>{post.data.description || 'Detaylar için tıklayın...'}</p>
-											<a href={`/blog/${post.id}/`} class="read-more">Devamını Oku <i class="fa-solid fa-arrow-right"></i></a>
-										</div>
-									</article>
-								)) : <p style="color: var(--text-muted); text-align: center;">Henüz MM dersi eklenmedi.</p>}
-							</div>
-						</div>
-
-						<!-- 2. SÜTUN: SAP FI -->
-						<div>
-							<h2 class="module-header">SAP FI Dersleri</h2>
-							<div class="module-column">
-								{fiPosts.length > 0 ? fiPosts.map((post) => (
-									<article class="blog-card">
-										<div class="card-image">
-											{post.data.heroImage ? (
-												<Image width={720} height={360} src={post.data.heroImage} alt={post.data.title} />
-											) : (
-												<div class="image-placeholder"><i class="fa-solid fa-file-invoice-dollar"></i></div>
-											)}
-											<span class="category-badge" style="background-color: #3b82f6;">FI Modülü</span>
-										</div>
-										<div class="card-content">
-											<div class="post-meta">
-												<span>
-													<i class="fa-regular fa-calendar"></i>
-													<FormattedDate date={post.data.pubDate} />
-												</span>
-											</div>
-											<h2><a href={`/blog/${post.id}/`}>{post.data.title}</a></h2>
-											<p>{post.data.description || 'Detaylar için tıklayın...'}</p>
-											<a href={`/blog/${post.id}/`} class="read-more">Devamını Oku <i class="fa-solid fa-arrow-right"></i></a>
-										</div>
-									</article>
-								)) : <p style="color: var(--text-muted); text-align: center;">Henüz FI dersi eklenmedi.</p>}
-							</div>
-						</div>
-
-						<!-- 3. SÜTUN: SAP SD -->
-						<div>
-							<h2 class="module-header">SAP SD Dersleri</h2>
-							<div class="module-column">
-								{sdPosts.length > 0 ? sdPosts.map((post) => (
-									<article class="blog-card">
-										<div class="card-image">
-											{post.data.heroImage ? (
-												<Image width={720} height={360} src={post.data.heroImage} alt={post.data.title} />
-											) : (
-												<div class="image-placeholder"><i class="fa-solid fa-truck-fast"></i></div>
-											)}
-											<span class="category-badge" style="background-color: #f59e0b;">SD Modülü</span>
-										</div>
-										<div class="card-content">
-											<div class="post-meta">
-												<span>
-													<i class="fa-regular fa-calendar"></i>
-													<FormattedDate date={post.data.pubDate} />
-												</span>
-											</div>
-											<h2><a href={`/blog/${post.id}/`}>{post.data.title}</a></h2>
-											<p>{post.data.description || 'Detaylar için tıklayın...'}</p>
-											<a href={`/blog/${post.id}/`} class="read-more">Devamını Oku <i class="fa-solid fa-arrow-right"></i></a>
-										</div>
-									</article>
-								)) : <p style="color: var(--text-muted); text-align: center;">Henüz SD dersi eklenmedi.</p>}
-							</div>
-						</div>
-
+					<!-- SEÇİM BAŞLIĞI -->
+					<div class="selection-header">
+						<span class="section-label">DATAPLAYBOOK LABORATUVARI</span>
+						<h1 class="hub-title">Uzmanlık Alanını Seç</h1>
+						<p style="color: var(--text-muted); max-width: 500px; margin: 0 auto;">
+							Ham veriyi anlamlı bir hikayeye dönüştürmek için ilerlemek istediğin laboratuvar rotasını belirle.
+						</p>
 					</div>
-					<!-- EKRANI ÜÇE BÖLEN ANA YAPI BİTİŞİ -->
+					
+					<!-- ROTA 1: SAP -->
+					<div class="path-group">
+						<div class="path-title">
+							<span>[01] SAP ERP EKOSİSTEMİ</span>
+							<a href="/kategori/sap" style="color: var(--text-muted); font-size: 0.85rem; text-decoration: none;">Tüm SAP İçerikleri →</a>
+						</div>
+						<div class="module-cards">
+							<a href="/kategori/sap" class="module-route-card mm">
+								<div class="mod-badge">● MM · MALZEME YÖNETİMİ</div>
+								<h3>Satınalma & Stok</h3>
+								<p>Tablolardan akan malzeme verisini, satınalma siparişlerini ve stok hareketlerini uçtan uca incele.</p>
+								<div class="go-link">SAP Laboratuvarına Git <i class="fa-solid fa-chevron-right"></i></div>
+							</a>
 
+							<a href="/kategori/sap" class="module-route-card sd">
+								<div class="mod-badge">● SD · SATIŞ VE DAĞITIM</div>
+								<h3>Satış & Sevkiyat</h3>
+								<p>Siparişten faturaya giden yolda koşul teknikleri, müşteri verileri ve modül entegrasyonlarını test et.</p>
+								<div class="go-link">SAP Laboratuvarına Git <i class="fa-solid fa-chevron-right"></i></div>
+							</a>
+
+							<a href="/kategori/sap" class="module-route-card fi">
+								<div class="mod-badge">● FI · FİNANSAL MUHASEBE</div>
+								<h3>Finans & Muhasebe</h3>
+								<p>Defteri kebir kayıtları ve operasyonel modüllerin (MM/SD) finans tarafındaki yansımalarını gör.</p>
+								<div class="go-link">SAP Laboratuvarına Git <i class="fa-solid fa-chevron-right"></i></div>
+							</a>
+						</div>
+					</div>
+
+					<!-- ROTA 2: QLIK & İŞ ZEKASI -->
+					<div class="path-group">
+						<div class="path-title">
+							<span>[02] İŞ ZEKASI (BI) & RAPORLAMA</span>
+							<a href="/kategori/qlik" style="color: var(--text-muted); font-size: 0.85rem; text-decoration: none;">Tüm BI İçerikleri →</a>
+						</div>
+						<div class="module-cards" style="grid-template-columns: repeat(2, 1fr);">
+							<a href="/kategori/qlik" class="module-route-card qlik">
+								<div class="mod-badge">● QLIK · DASHBOARD & ANALİZ</div>
+								<h3>Qlik Raporlama</h3>
+								<p>Uygulamalı Qlik projeleriyle karmaşık verileri okumayı, modellemeyi ve interaktif dashboard'lara dönüştürmeyi keşfet.</p>
+								<div class="go-link">BI Laboratuvarına Git <i class="fa-solid fa-chevron-right"></i></div>
+							</a>
+
+							<a href="/kategori/qlik" class="module-route-card data">
+								<div class="mod-badge">● DATA · VERİ AMBARI</div>
+								<h3>Bronze, Silver, Gold</h3>
+								<p>Veri mimarisinde katmanlı yapıların (Data Warehouse) nasıl inşa edildiğini ve raporlamaya nasıl hazırlandığını öğren.</p>
+								<div class="go-link">Mimariyi İncele <i class="fa-solid fa-chevron-right"></i></div>
+							</a>
+						</div>
+					</div>
+
+				</div>
+			</section>
+
+			<!-- TÜM BLOG YAZILARI (ZAMAN AKIŞI) -->
+			<section class="blog-list-section">
+				<div class="container">
+					<span class="section-label">— BLOG AKIŞI</span>
+					<h2 style="margin-bottom: 30px; font-size: 2rem;">Son Eklenen Notlar</h2>
+					
+					<div class="post-grid">
+						{allPosts.map((post) => (
+							<a href={`/blog/${post.id}/`} class="post-card">
+								<span class="post-date">
+									<FormattedDate date={post.data.pubDate} />
+								</span>
+								<h3 class="post-title">{post.data.title}</h3>
+								<p class="post-desc">{post.data.description}</p>
+							</a>
+						))}
+					</div>
 				</div>
 			</section>
 		</main>

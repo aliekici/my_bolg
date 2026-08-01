@@ -143,24 +143,30 @@ const latestPosts = allPosts.slice(0, 3);
 						<div class="dynamic-panel-head">
 							<div>
 								<h2>Dinamik Eğitimler</h2>
-								<p>Tabloyu okumakla kalmayın, canlı sanal ortamlarda kendiniz uygulayın. Yeni ortamlar düzenli olarak ekleniyor.</p>
+								<p><strong>100% Ücretsiz, kurulum gerektirmez.</strong> Tabloyu okumakla kalmayın, canlı sanal ortamlarda kendiniz uygulayın — hepsi doğrudan tarayıcınızda çalışır.</p>
 							</div>
 							<a href="/dinamik-egitimler" class="btn btn-primary"><i class="fa-solid fa-flask"></i> Tüm Ortamlara Git</a>
 						</div>
 
 						<div class="lab-grid">
-							<div class="lab-card">
-								<span class="lab-status active">AKTİF</span>
+							<a href="/sap-ogren" class="lab-card">
+								<span class="lab-status active">ÜCRETSİZ</span>
 								<div class="lab-icon"><i class="fa-solid fa-server"></i></div>
 								<h4>SAP Sanal Ortamı</h4>
-								<p>Gerçekçi bir SAP ekranında işlem yapın, tabloları canlı gözlemleyin.</p>
-							</div>
-							<div class="lab-card">
-								<span class="lab-status active">AKTİF</span>
+								<p>Kurulum yok, kayıt yok. Gerçekçi bir SAP ekranında işlem yapın, tabloları canlı gözlemleyin.</p>
+							</a>
+							<a href="/sql-ogren" class="lab-card">
+								<span class="lab-status active">ÜCRETSİZ</span>
 								<div class="lab-icon"><i class="fa-solid fa-database"></i></div>
 								<h4>SQL Sanal Ortamı</h4>
-								<p>Temel SQL eğitimi ortamında sorgularınızı yazıp anında sonucunu görün.</p>
-							</div>
+								<p>Kurulum yok, kayıt yok. Temel SQL eğitimi ortamında sorgularınızı yazıp anında sonucunu görün.</p>
+							</a>
+							<a href="/sap-abap-ogren" class="lab-card">
+								<span class="lab-status active">ÜCRETSİZ</span>
+								<div class="lab-icon"><i class="fa-solid fa-code"></i></div>
+								<h4>SAP ABAP Sanal Ortamı</h4>
+								<p>Kurulum yok, kayıt yok. Tarayıcınızda ABAP editörü ve SAP ortamında kod yazıp çalıştırın.</p>
+							</a>
 							<div class="lab-card">
 								<span class="lab-status soon">YAKINDA</span>
 								<div class="lab-icon"><i class="fa-solid fa-chart-column"></i></div>
@@ -586,13 +592,15 @@ const latestPosts = allPosts.slice(0, 3);
 	.dynamic-panel-head h2 { font-family: var(--font-display); font-size: 2.2rem; margin: 0 0 0.4rem 0; color: var(--text-main); }
 	.dynamic-panel-head p { color: var(--text-muted); max-width: 600px; margin: 0; font-size: 1rem; }
 
-	.lab-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+	.lab-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; }
 	.lab-card {
 		position: relative;
+		display: block;
 		background: rgba(255,255,255,0.02);
 		border: 1px solid var(--border-color);
 		border-radius: 14px;
 		padding: 1.8rem;
+		text-decoration: none;
 		transition: transform 0.3s, border-color 0.3s;
 	}
 	.lab-card:hover {
